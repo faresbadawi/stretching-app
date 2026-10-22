@@ -35,18 +35,13 @@ Eigene Übungen, Fotos und Programme liegen im Browser des jeweiligen Geräts (l
 | `tools/update-sw.mjs` | Trägt Dateiliste und Cache-Version in `sw.js` ein |
 | `js/notifications.js` | Platzhalter für spätere Push-Benachrichtigungen |
 
-## Frauen-Figuren ergänzen
+## Weitere Bildvariante ergänzen (optional)
 
-In den Optionen gibt es „Figuren: Männlich / Weiblich“. Bei „Weiblich“ färbt sich die App rosa. Solange für eine Übung kein weibliches Bild vorhanden ist, wird das männliche gezeigt.
+Die Daten sind dafür vorbereitet, in der Oberfläche gibt es aktuell aber nur eine Variante.
 
-Bilder einspielen: Alle Bilder in einen Ordner legen, benannt wie die Originale (z. B. `kobra_stretch.png`), dann
-
-```bash
-python3 tools/import-images.py woman /pfad/zum/ordner
-node tools/update-sw.mjs
-```
-
-Das Skript verkleinert die Bilder, legt sie unter `images/woman/` ab und trägt sie in `data/exercises.json` ein.
+1. Bilder nach `images/<variante>/` legen, gleiche Dateinamen wie in `images/man/`.
+2. In `data/exercises.json` unter `variants` den Schlüssel ergänzen und bei jeder Übung unter `images` den Pfad eintragen.
+3. In `js/views.js` bei „Darstellung“ eine Auswahl für `variant` ergänzen und `node tools/update-sw.mjs` ausführen.
 
 ## Übungen ändern / ergänzen
 

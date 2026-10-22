@@ -57,7 +57,11 @@ export async function init() {
   }
   if (!state.workouts) state.workouts = defaultWorkouts(v1?.duration ?? 30, v1?.rest ?? 10);
   if (!state.workouts.some((w) => w.id === state.activeWorkout)) state.activeWorkout = state.workouts[0]?.id ?? null;
-  if (!base.variants[state.settings.variant]) state.settings.variant = 'man';
+  if (!base.variants[state.settings.variant]) {
+    // Frühere Version hatte eine weibliche Variante (rosa); sie wurde entfernt.
+    if (state.settings.variant === 'woman' && state.settings.accent === 'pink') state.settings.accent = 'blue';
+    state.settings.variant = 'man';
+  }
   save();
 }
 
