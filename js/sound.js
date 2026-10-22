@@ -59,8 +59,43 @@ function blip(freq, delay = 0, vol = 0.3) {
   osc.stop(t0 + 0.2);
 }
 
+// Applaus: viele kurze, gefilterte Rauschstöße, die anschwellen und ausklingen.
+function applause(dur = 3.6, vol = 0.55) {
+  if (!ready()) return;
+  const sr = ctx.sampleRate;
+  const buf = ctx.createBuffer(1, sr, sr);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < sr; i++) data[i] = Math.random() * 2 - 1;
+  const t0 = ctx.currentTime + 0.05;
+  for (let i = 0; i < 190; i++) {
+    const t = t0 + Math.random() * dur;
+    const env = Math.pow(Math.sin(Math.PI * Math.min(1, (t - t0) / dur)), 0.7);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.playbackRate.value = 0.8 + Math.random() * 0.5;
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 1200 + Math.random() * 2600;
+    bp.Q.value = 0.8;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol * env * (0.25 + Math.random() * 0.75)), t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05 + Math.random() * 0.05);
+    src.connect(bp).connect(g).connect(master);
+    src.start(t, Math.random() * 0.8, 0.12);
+  }
+}
+
 function buzz(pattern) {
   if (settings().vibrate && navigator.vibrate) navigator.vibrate(pattern);
+}
+
+// Bevorzugt eine männliche deutsche Stimme; sonst wird die Tonhöhe abgesenkt.
+const MALE = /martin|markus|stefan|conrad|hans|yannick|jörg|jorg|thomas|klaus|daniel|dieter|male|männlich/i;
+const FEMALE = /anna|petra|marlene|vicki|helena|sabine|female|weiblich|katja|hedda|steffi|amelie|viktoria|linda|elke|google deutsch/i;
+function pickVoice() {
+  const de = speechSynthesis.getVoices().filter((v) => v.lang && v.lang.toLowerCase().startsWith('de'));
+  return de.find((v) => MALE.test(v.name)) || de.find((v) => !FEMALE.test(v.name)) || de[0] || null;
 }
 
 export function speak(text, delay = 0) {
@@ -71,8 +106,10 @@ export function speak(text, delay = 0) {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
       u.lang = 'de-DE';
+      u.pitch = 0.55; // tief
+      u.rate = 0.96;  // ruhig und kraftvoll
       u.volume = Math.min(1, s.volume + 0.2);
-      const voice = speechSynthesis.getVoices().find((v) => v.lang && v.lang.toLowerCase().startsWith('de'));
+      const voice = pickVoice();
       if (voice) u.voice = voice;
       speechSynthesis.speak(u);
     } catch { /* ignorieren */ }
@@ -97,6 +134,7 @@ export const cue = {
   finish() {
     [523, 659, 784, 1046].forEach((f, i) => bell(f, i * 0.16, 0.34, 1.8));
     bell(1568, 0.7, 0.2, 2);
+    applause();
     buzz([150, 70, 150, 70, 350]);
   },
   preview() { this.start(); setTimeout(() => this.side(), 900); setTimeout(() => this.tick(1), 1700); }

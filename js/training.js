@@ -6,6 +6,9 @@ import { exerciseDetail } from './views.js';
 
 const RING = 2 * Math.PI * 136;
 let s = null; // laufende Sitzung
+const pick = (list) => list[Math.floor(Math.random() * list.length)];
+const GO = ['Los geht\'s!', 'Volle Konzentration!', 'Atme tief und ruhig.', 'Du machst das super!', 'Mit Kraft und Ruhe!'];
+const HALF = ['Halte durch!', 'Bleib dran, du schaffst das!', 'Atme weiter, gleich geschafft!', 'Stark, weiter so!'];
 
 const setIcon = (el, name) => el.replaceChildren(icon(name));
 
@@ -112,6 +115,7 @@ const elapsed = () => (s.paused ? s.elapsedAtPause : performance.now() - s.start
 function enter(playCue = true) {
   const seg = s.segs[s.i];
   s.lastLeft = null;
+  s.half = false;
   const tr = $('training');
   tr.classList.remove('work', 'rest', 'prep');
   tr.classList.add(seg.type);
@@ -144,13 +148,13 @@ function enter(playCue = true) {
 
   if (seg.type === 'prep') {
     snd.cue.prep();
-    snd.speak(`Mach dich bereit. Erste Übung: ${ex.name}`, 350);
+    snd.speak(`Mach dich bereit! Erste Übung: ${ex.name}. Du schaffst das!`, 350);
   } else if (playCue) {
     if (seg.type === 'work') {
-      if (seg.side > 0) { snd.cue.side(); snd.speak('Seite wechseln', 500); } else snd.cue.start();
+      if (seg.side > 0) { snd.cue.side(); snd.speak('Seite wechseln! Weiter so!', 500); } else { snd.cue.start(); snd.speak(pick(GO), 1300); }
     } else {
       snd.cue.rest();
-      snd.speak(`Pause. Als Nächstes: ${ex.name}`, 600);
+      snd.speak(`Stark! Pause. Als Nächstes: ${ex.name}`, 600);
     }
   }
 }
@@ -183,6 +187,7 @@ function tick() {
     seg = s.segs[s.i];
     el = elapsed();
   }
+  if (!s.half && seg.type === 'work' && seg.dur >= 20 && el >= seg.dur * 500) { s.half = true; snd.speak(pick(HALF)); }
   const left = Math.ceil((seg.dur * 1000 - el) / 1000);
   if (left !== s.lastLeft) {
     const first = s.lastLeft === null;
@@ -234,7 +239,7 @@ function finish() {
   const seconds = s.total;
   const count = s.count;
   snd.cue.finish();
-  snd.speak('Geschafft! Gut gemacht.', 900);
+  snd.speak('Geschafft! Das war richtig stark!', 1200);
   stop();
   addHistory({ workoutId: w.id, name: w.name, seconds, count });
   $('done-text').textContent = `${w.name}: ${count} Übungen in ca. ${Math.max(1, Math.round(seconds / 60))} Minuten.`;

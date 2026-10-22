@@ -359,13 +359,13 @@ dialog.sheet.closing::backdrop { animation: fade .19s reverse forwards; }
 @media (max-height: 680px) { .t-next .thumb { display: none; } .t-next { min-height: 44px; } .t-ctl.main { width: 70px; height: 70px; } }
 
 /* Geschafft */
-.done { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 24px; color: #fff; }
+.finish { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 24px; color: #fff; }
 .done-box { text-align: center; width: min(100%, 420px); animation: viewIn .5s; }
 .done-icon { width: 112px; height: 112px; margin: 0 auto 18px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .18); animation: pop .7s cubic-bezier(.2, 1.6, .4, 1); }
 .done-icon .ico { width: 58px; height: 58px; }
 @keyframes pop { from { transform: scale(.3); opacity: 0; } }
-.done h1 { font-size: 2.3rem; font-weight: 800; }
-.done p { opacity: .9; margin: 6px 0 20px; }
+.finish h1 { font-size: 2.3rem; font-weight: 800; }
+.finish p { opacity: .9; margin: 6px 0 20px; }
 .done-week { background: rgba(255, 255, 255, .16); border-radius: 22px; padding: 14px; margin-bottom: 22px; backdrop-filter: blur(8px); }
 .done-week .week-days { margin: 0 0 10px; }
 .done-week .day { color: rgba(255, 255, 255, .8); }
