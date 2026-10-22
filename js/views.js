@@ -166,7 +166,7 @@ function openWorkoutEditor(existing) {
       items.length ? items.map(({ it, ex }, i) =>
         h('div', { class: 'ex-row' },
           thumb(ex),
-          h('div', { class: 'name' }, h('b', {}, ex.name), h('small', {}, ex.category + (ex.perSide ? ' · beidseitig' : ''))),
+          h('div', { class: 'name' }, h('b', {}, ex.name), h('small', {}, ex.category + (ex.perSide ? ' · links & rechts' : ''))),
           iconBtn('close', 'Entfernen', () => { d.items.splice(i, 1); draw(); }, 'sm danger'),
           h('div', { class: 'line2' },
             stepper({ value: it.duration || ex.duration || d.duration, min: 10, max: 180, step: 5, unit: ' s', label: 'Zeit', onChange: (v) => { it.duration = v; } }),
@@ -298,7 +298,7 @@ export function exerciseDetail(ex, { readOnly = false, onClose } = {}) {
     foot,
     body: h('div', {},
       h('div', { class: 'detail-pic' }, ex.image ? h('img', { src: ex.image, alt: ex.name, draggable: 'false' }) : placeholder(ex.category)),
-      h('div', {}, h('span', { class: 'pill' }, ex.category || 'Ohne Kategorie'), ex.perSide ? h('span', { class: 'pill' }, 'beidseitig') : null, ex.duration ? h('span', { class: 'pill' }, ex.duration + ' s') : null),
+      h('div', {}, h('span', { class: 'pill' }, ex.category || 'Ohne Kategorie'), ex.perSide ? h('span', { class: 'pill' }, 'links & rechts') : null, ex.duration ? h('span', { class: 'pill' }, ex.duration + ' s') : null),
       ex.description ? h('p', { class: 'muted' }, ex.description) : null,
       ex.steps?.length ? h('ol', { class: 'steps' }, ex.steps.map((x) => h('li', {}, x))) : null)
   });
@@ -366,13 +366,13 @@ function openExerciseEditor(ex) {
           h('option', { value: '__new', ...(d.category === '__new' ? { selected: true } : {}) }, 'Neue Kategorie …'))),
       d.category === '__new' ? h('label', { class: 'field' }, h('span', {}, 'Name der neuen Kategorie'),
         h('input', { type: 'text', value: d.newCat, maxlength: 24, oninput: (e) => { d.newCat = e.target.value; } })) : null,
+      h('div', { class: 'card', style: 'box-shadow:none' },
+        row('Zwei Seiten (links & rechts)', toggle(d.perSide, (v) => { d.perSide = v; }), 'Die Zeit wird auf beide Seiten verteilt, mit Signal zum Wechseln'),
+        row('Eigene Dauer', stepper({ value: d.duration, min: 0, max: 180, step: 5, format: (v) => (v ? v + ' s' : 'Standard'), label: 'Dauer', onChange: (v) => { d.duration = v; } }), 'Überschreibt die Programm-Zeit')),
       h('label', { class: 'field' }, h('span', {}, 'Beschreibung'),
         h('input', { type: 'text', value: d.description, maxlength: 140, placeholder: 'Wofür ist die Übung gut?', oninput: (e) => { d.description = e.target.value; } })),
       h('label', { class: 'field' }, h('span', {}, 'Anleitung (ein Schritt pro Zeile)'),
         h('textarea', { value: d.steps, oninput: (e) => { d.steps = e.target.value; } })),
-      h('div', { class: 'card', style: 'box-shadow:none' },
-        row('Beidseitig', toggle(d.perSide, (v) => { d.perSide = v; }), 'Links und rechts nacheinander'),
-        row('Eigene Dauer', stepper({ value: d.duration, min: 0, max: 180, step: 5, format: (v) => (v ? v + ' s' : 'Standard'), label: 'Dauer', onChange: (v) => { d.duration = v; } }), 'Überschreibt die Programm-Zeit')),
       ex && (ex.edited || ex.ownImage) && ex.builtin
         ? h('button', { type: 'button', class: 'btn ghost', onclick: async () => {
           if (await confirmDialog('Alle Änderungen an dieser Übung gehen verloren.', { ok: 'Zurücksetzen', danger: false, title: 'Original wiederherstellen?' })) { st.resetEdits(ex.id); sheet.close(); toast('Original wiederhergestellt'); }
@@ -421,8 +421,6 @@ function renderSettings() {
     h('p', { class: 'section-title' }, 'Training'),
     h('div', { class: 'card' },
       row('Vorbereitung', stepper({ value: S.prep, min: 3, max: 30, step: 1, unit: ' s', label: 'Vorbereitung', onChange: (v) => set({ prep: v }) }), 'Countdown vor der ersten Übung'),
-      row('Einseitige Übungen', seg([['split', 'Teilen'], ['each', 'Je Seite']], S.sideMode, (k) => set({ sideMode: k })),
-        S.sideMode === 'split' ? 'Die Zeit wird auf links und rechts verteilt' : 'Jede Seite bekommt die volle Zeit'),
       row('Wochenziel', stepper({ value: S.weeklyGoal, min: 1, max: 7, step: 1, unit: '×', label: 'Wochenziel', onChange: (v) => set({ weeklyGoal: v }) }), 'Trainings pro Woche'),
       row('Bildschirm anlassen', toggle(S.keepAwake, (v) => set({ keepAwake: v })), 'Verhindert die Bildschirmsperre im Training')),
 

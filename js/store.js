@@ -12,7 +12,6 @@ export const DEFAULT_SETTINGS = {
   vibrate: true,
   keepAwake: true,
   prep: 10,
-  sideMode: 'split', // 'split': Zeit auf beide Seiten verteilen, 'each': jede Seite volle Zeit
   weeklyGoal: 3,
   theme: 'auto',
   accent: 'blue',
@@ -210,7 +209,8 @@ export function buildSegments(w) {
   const segs = [{ type: 'prep', ex: items[0].ex, dur: S.prep }];
   items.forEach((it, i) => {
     const sides = it.ex.perSide ? 2 : 1;
-    const dur = sides === 2 ? (S.sideMode === 'each' ? it.duration : Math.max(5, Math.round(it.duration / 2))) : it.duration;
+    // Zwei Seiten: Die Übungszeit wird auf links und rechts verteilt.
+    const dur = sides === 2 ? Math.max(5, Math.round(it.duration / 2)) : it.duration;
     for (let s = 0; s < sides; s++) segs.push({ type: 'work', ex: it.ex, idx: i, count: items.length, side: s, sides, dur });
     if (i < items.length - 1 && w.rest > 0) segs.push({ type: 'rest', ex: items[i + 1].ex, idx: i + 1, count: items.length, dur: w.rest });
   });
