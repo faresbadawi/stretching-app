@@ -16,129 +16,80 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main id="app">
-    <!-- Start -->
-    <section id="view-home" class="view" aria-label="Start">
-      <header class="page-head">
-        <h1>Dehnen</h1>
-        <p class="sub">Für einen entspannten Rücken</p>
-      </header>
-      <div class="card hero">
-        <div class="hero-stats">
-          <div><strong id="home-count">–</strong><span>Übungen</span></div>
-          <div><strong id="home-minutes">–</strong><span>Minuten</span></div>
-        </div>
-        <button id="btn-start" class="btn primary big">Training starten</button>
-      </div>
-      <div class="card">
-        <h2>Diese Woche</h2>
-        <div id="week-dots" class="week-dots" aria-hidden="true"></div>
-        <p id="week-text" class="muted"></p>
-      </div>
-      <p class="muted small">Ziel: dreimal pro Woche ca. 10 Minuten. Übungen, Dauer und Pausen passt du unter „Übungen“ und „Einstellungen“ an.</p>
-    </section>
-
-    <!-- Übungen -->
-    <section id="view-exercises" class="view" hidden aria-label="Übungen">
-      <header class="page-head">
-        <h1>Übungen</h1>
-        <p class="sub">Reihenfolge ändern, Übungen ein- oder ausschalten</p>
-      </header>
-      <ul id="exercise-list" class="ex-list"></ul>
-      <button id="btn-reset-order" class="btn">Reihenfolge zurücksetzen</button>
-    </section>
-
-    <!-- Einstellungen -->
-    <section id="view-settings" class="view" hidden aria-label="Einstellungen">
-      <header class="page-head">
-        <h1>Einstellungen</h1>
-      </header>
-      <div class="card settings">
-        <div class="row">
-          <label>Übungsdauer</label>
-          <div class="stepper" data-key="duration" data-min="10" data-max="180" data-step="5" data-unit=" s">
-            <button type="button" data-d="-1" aria-label="weniger">−</button><output></output><button type="button" data-d="1" aria-label="mehr">+</button>
-          </div>
-        </div>
-        <p class="muted small">Bei einseitigen Übungen wird die Zeit auf beide Seiten verteilt.</p>
-        <div class="row">
-          <label>Pause</label>
-          <div class="stepper" data-key="rest" data-min="0" data-max="60" data-step="5" data-unit=" s">
-            <button type="button" data-d="-1" aria-label="weniger">−</button><output></output><button type="button" data-d="1" aria-label="mehr">+</button>
-          </div>
-        </div>
-        <div class="row">
-          <label for="set-sound">Ton-Signal</label>
-          <input id="set-sound" type="checkbox" class="switch">
-        </div>
-        <div class="row">
-          <label for="set-vibrate">Vibration</label>
-          <input id="set-vibrate" type="checkbox" class="switch">
-        </div>
-        <div class="row" id="row-variant" hidden>
-          <label for="set-variant">Figuren</label>
-          <select id="set-variant"></select>
-        </div>
-      </div>
-      <button id="btn-reset-settings" class="btn">Einstellungen zurücksetzen</button>
-      <p class="muted small" id="app-version"></p>
-    </section>
+  <main id="main">
+    <section id="view-home" class="view" aria-label="Start"></section>
+    <section id="view-plans" class="view" aria-label="Programme" hidden></section>
+    <section id="view-library" class="view" aria-label="Bibliothek" hidden></section>
+    <section id="view-settings" class="view" aria-label="Einstellungen" hidden></section>
   </main>
 
+  <nav id="tabbar" class="tabbar" aria-label="Navigation"></nav>
+
   <!-- Training -->
-  <section id="view-training" class="training" hidden aria-label="Training">
-    <div class="t-top">
-      <button id="t-stop" class="icon-btn" aria-label="Training beenden">✕</button>
-      <div class="t-progress"><span id="t-index"></span><span id="t-remaining"></span></div>
+  <section id="training" class="training work" hidden aria-label="Training">
+    <div class="t-bg">
+      <i class="bg-layer l-work"></i><i class="bg-layer l-rest"></i><i class="bg-layer l-prep"></i>
+      <i class="blob b1"></i><i class="blob b2"></i>
     </div>
-    <div class="t-bar"><i id="t-bar-fill"></i></div>
-    <div class="t-center">
-      <div id="t-phase" class="t-phase"></div>
-      <div class="circle" id="circle">
+    <header class="t-top">
+      <button id="t-stop" class="t-btn" type="button" aria-label="Training beenden"></button>
+      <div id="t-progress" class="t-progress" aria-hidden="true"></div>
+      <div id="t-remaining" class="t-remaining"></div>
+    </header>
+
+    <div class="t-hero">
+      <div id="t-card" class="t-card">
+        <img id="t-img" alt="" draggable="false">
+        <div id="t-ph" class="t-ph" hidden></div>
+        <span id="t-badge" class="t-badge"></span>
+        <button id="t-info" class="t-info" type="button" aria-label="Anleitung anzeigen"></button>
+        <div class="t-title"><small id="t-cat"></small><h2 id="t-name"></h2></div>
+      </div>
+    </div>
+
+    <div class="t-timer">
+      <div id="circle" class="circle">
         <svg viewBox="0 0 300 300" aria-hidden="true">
-          <circle class="track" cx="150" cy="150" r="140"/>
-          <circle class="ring" id="ring" cx="150" cy="150" r="140" transform="rotate(-90 150 150)"/>
+          <defs>
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffffff"/>
+              <stop offset="1" stop-color="#ffffff" stop-opacity=".72"/>
+            </linearGradient>
+          </defs>
+          <circle class="track" cx="150" cy="150" r="136"/>
+          <circle id="ring" class="ring" cx="150" cy="150" r="136" transform="rotate(-90 150 150)"/>
         </svg>
         <div class="circle-inner">
-          <div id="t-time" class="t-time" role="timer" aria-live="off">0</div>
-          <img id="t-img" alt="" draggable="false">
-          <div id="t-name" class="t-name"></div>
+          <div id="t-phase" class="t-phase"></div>
+          <div id="t-time" class="t-time" role="timer">0</div>
+          <div id="t-sub" class="t-sub"></div>
         </div>
       </div>
     </div>
-    <div class="t-next" id="t-next"></div>
+
+    <div id="t-next" class="t-next"></div>
+
     <div class="t-controls">
-      <button id="t-prev" class="icon-btn" aria-label="Zurück">⏮</button>
-      <button id="t-toggle" class="icon-btn main" aria-label="Pause">⏸</button>
-      <button id="t-skip" class="icon-btn" aria-label="Weiter">⏭</button>
+      <button id="t-prev" class="t-ctl" type="button" aria-label="Zurück"></button>
+      <button id="t-toggle" class="t-ctl main" type="button" aria-label="Pause"></button>
+      <button id="t-skip" class="t-ctl" type="button" aria-label="Weiter"></button>
     </div>
   </section>
 
-  <!-- Fertig -->
-  <section id="view-done" class="training done" hidden aria-label="Geschafft">
+  <!-- Geschafft -->
+  <section id="done" class="done" hidden aria-label="Geschafft">
+    <div class="t-bg"><i class="bg-layer l-work" style="opacity:1"></i><i class="blob b1"></i><i class="blob b2"></i></div>
     <div class="done-box">
-      <div class="done-emoji" aria-hidden="true">🎉</div>
+      <div id="done-icon" class="done-icon"></div>
       <h1>Geschafft!</h1>
       <p id="done-text"></p>
-      <button id="done-close" class="btn primary big">Fertig</button>
+      <div id="done-week" class="done-week"></div>
+      <button id="done-close" class="btn light big" type="button">Fertig</button>
     </div>
   </section>
 
-  <nav id="tabbar" class="tabbar" aria-label="Navigation">
-    <button data-view="home" class="active"><span class="ti">▶</span>Start</button>
-    <button data-view="exercises"><span class="ti">☰</span>Übungen</button>
-    <button data-view="settings"><span class="ti">⚙</span>Einstellungen</button>
-  </nav>
-
-  <dialog id="detail">
-    <form method="dialog">
-      <img id="detail-img" alt="">
-      <h2 id="detail-name"></h2>
-      <p id="detail-desc" class="muted"></p>
-      <ol id="detail-steps"></ol>
-      <button class="btn primary">Schließen</button>
-    </form>
-  </dialog>
+  <canvas id="confetti" class="confetti"></canvas>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script type="module" src="js/app.js"></script>
 </body>

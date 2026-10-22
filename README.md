@@ -11,11 +11,23 @@ python3 -m http.server 8000
 
 Dann `http://localhost:8000` öffnen. (Service Worker laufen nur über `localhost` oder HTTPS, nicht über `file://`.)
 
+## Funktionen
+
+- **Bibliothek:** alle Übungen mit Suche, Kategorien, Favoriten; eigene Übungen mit Foto anlegen, bearbeiten und löschen (auch die mitgelieferten, sie lassen sich wiederherstellen).
+- **Programme:** beliebig viele Trainings aus der Bibliothek zusammenstellen (Reihenfolge, Zeit pro Übung, Pause).
+- **Training:** Kreis-Timer, Bild der Übung oberhalb, Vorschau, Glockenklänge, Countdown, Sprachansagen, Vibration, Bildschirm bleibt an.
+- **Statistik:** Wochenziel, Wochen-Serie, Verlauf.
+- **Optionen:** Ton, Lautstärke, Design (hell/dunkel), Farbe, Sicherung und Wiederherstellung der eigenen Daten.
+
+Eigene Übungen, Fotos und Programme liegen im Browser des jeweiligen Geräts (localStorage). Über „Optionen → Sichern“ lässt sich eine Datei erzeugen und auf einem anderen Gerät einspielen.
+
 ## Aufbau
 
 | Datei | Inhalt |
 |---|---|
-| `index.html`, `css/style.css`, `js/app.js` | Oberfläche, Timer, Einstellungen |
+| `index.html`, `css/style.css` | Gerüst und Design |
+| `js/app.js`, `js/views.js`, `js/training.js` | Start, Programme, Bibliothek, Optionen, Training |
+| `js/store.js`, `js/sound.js`, `js/ui.js` | Daten, Signale/Sprache, Hilfsfunktionen |
 | `data/exercises.json` | Übungen (Name, Beschreibung, Schritte, Bilder je Variante) |
 | `images/man/` | Übungsbilder (Männer-Figuren, WebP) |
 | `manifest.webmanifest`, `icons/` | PWA-Manifest und App-Icons |
