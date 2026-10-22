@@ -1,6 +1,7 @@
 {
   "variants": {
-    "man": "Männer-Figuren"
+    "man": "Männlich",
+    "woman": "Weiblich"
   },
   "exercises": [
     {

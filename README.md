@@ -37,10 +37,16 @@ Eigene Übungen, Fotos und Programme liegen im Browser des jeweiligen Geräts (l
 
 ## Frauen-Figuren ergänzen
 
-1. Bilder nach `images/woman/` legen – gleiche Dateinamen wie in `images/man/` (z. B. `kobra-stretch.webp`).
-2. In `data/exercises.json` oben unter `variants` ergänzen: `"woman": "Frauen-Figuren"`.
-3. Bei jeder Übung unter `images` ergänzen: `"woman": "images/woman/<name>.webp"`.
-4. `node tools/update-sw.mjs` ausführen. Fertig – in den Einstellungen erscheint automatisch die Auswahl „Figuren“. Fehlt bei einer Übung das Bild, wird das der Männer-Variante verwendet.
+In den Optionen gibt es „Figuren: Männlich / Weiblich“. Bei „Weiblich“ färbt sich die App rosa. Solange für eine Übung kein weibliches Bild vorhanden ist, wird das männliche gezeigt.
+
+Bilder einspielen: Alle Bilder in einen Ordner legen, benannt wie die Originale (z. B. `kobra_stretch.png`), dann
+
+```bash
+python3 tools/import-images.py woman /pfad/zum/ordner
+node tools/update-sw.mjs
+```
+
+Das Skript verkleinert die Bilder, legt sie unter `images/woman/` ab und trägt sie in `data/exercises.json` ein.
 
 ## Übungen ändern / ergänzen
 

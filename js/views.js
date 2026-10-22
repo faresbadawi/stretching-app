@@ -397,7 +397,7 @@ function renderSettings() {
   const S = st.settings();
   const set = (patch) => st.updateSettings(patch);
   const root = $('view-settings');
-  const variants = Object.entries(st.variants());
+  const variants = Object.entries(st.variants());  // [[key, label], ...]
   const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   const importer = h('input', { type: 'file', accept: 'application/json,.json', hidden: true, onchange: async (e) => {
     const f = e.target.files[0];
@@ -429,11 +429,11 @@ function renderSettings() {
 
     h('p', { class: 'section-title' }, 'Darstellung'),
     h('div', { class: 'card' },
+      variants.length > 1 ? row('Figuren', seg(variants, S.variant, (k) => set({ variant: k, accent: k === 'woman' ? 'pink' : 'blue' })),
+        S.variant === 'woman' ? 'Weibliche Figuren, App in Rosa' : 'Männliche Figuren, App in Blau') : null,
       row('Design', seg([['auto', 'Auto'], ['light', 'Hell'], ['dark', 'Dunkel']], S.theme, (k) => set({ theme: k }))),
       row('Farbe', h('div', { class: 'swatches' }, [['blue', '#2f7df6'], ['green', '#14a86f'], ['violet', '#7a5cff'], ['orange', '#f2780c'], ['pink', '#e5489b']].map(([k, c]) =>
-        h('button', { type: 'button', class: 'swatch' + (S.accent === k ? ' on' : ''), style: `background:${c}`, 'aria-label': k, onclick: () => set({ accent: k }) })))),
-      variants.length > 1 ? row('Figuren', h('select', { onchange: (e) => set({ variant: e.target.value }) },
-        variants.map(([k, label]) => h('option', { value: k, ...(k === S.variant ? { selected: true } : {}) }, label)))) : null),
+        h('button', { type: 'button', class: 'swatch' + (S.accent === k ? ' on' : ''), style: `background:${c}`, 'aria-label': k, onclick: () => set({ accent: k }) }))))),
 
     h('p', { class: 'section-title' }, 'Daten'),
     h('div', { class: 'card' },
