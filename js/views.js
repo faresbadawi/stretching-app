@@ -45,60 +45,67 @@ function greeting() {
   return hr < 5 ? 'Gute Nacht' : hr < 11 ? 'Guten Morgen' : hr < 17 ? 'Hallo' : hr < 22 ? 'Guten Abend' : 'Gute Nacht';
 }
 
-function planCard(w, selected, onPick) {
-  const items = st.resolveItems(w);
-  const secs = st.workoutSeconds(w);
-  return h('button', { type: 'button', class: 'plan-card' + (selected ? ' on' : ''), onclick: onPick },
-    h('h3', {}, w.name),
-    h('div', { class: 'meta' },
-      h('span', {}, icon('figure'), `${items.length} Übungen`),
-      h('span', {}, icon('clock'), items.length ? minutesLabel(secs) : '–')),
-    h('div', { class: 'thumbs' },
-      items.slice(0, 5).map((it) => thumb(it.ex)),
-      items.length > 5 ? h('div', { class: 'more' }, '+' + (items.length - 5)) : null));
+function openProgramPicker() {
+  const sheet = openSheet({ title: 'Programm wählen', body: h('div') });
+  const active = st.activeWorkout();
+  sheet.body.replaceChildren(...st.workouts().map((w) => {
+    const items = st.resolveItems(w);
+    return h('button', { type: 'button', class: 'ex-row pick' + (active && w.id === active.id ? ' on' : ''), style: 'width:100%;text-align:left',
+      onclick: () => { st.setActiveWorkout(w.id); sheet.close(); } },
+      h('div', { class: 'name' }, h('b', {}, w.name), h('small', {}, `${items.length} Übungen · ${items.length ? minutesLabel(st.workoutSeconds(w)) : '–'}`)),
+      h('div', { class: 'tick' }, icon('check')));
+  }));
+}
+
+function openHistory() {
+  const recent = st.history().slice(-30).reverse();
+  openSheet({
+    title: 'Verlauf',
+    body: recent.length ? h('ul', { class: 'hist' }, recent.map((e) => {
+      const d = new Date(e.t);
+      return h('li', {}, h('div', { class: 'dot' }, icon('check')),
+        h('div', {}, h('b', {}, e.name || 'Training'),
+          h('small', {}, d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + minutesLabel(e.seconds || 600))));
+    })) : h('div', { class: 'empty' }, icon('clock'), h('p', {}, 'Noch kein Training abgeschlossen.'))
+  });
 }
 
 function renderHome() {
   const root = $('view-home');
-  const ws = st.workouts();
   const active = st.activeWorkout();
   const info = st.weekInfo();
   const tot = st.totals();
   const streak = st.streakWeeks();
-  const canStart = active && st.resolveItems(active).length > 0;
+  const items = active ? st.resolveItems(active) : [];
+  const canStart = items.length > 0;
 
-  const scroller = h('div', { class: 'plan-scroll' }, ws.map((w) => planCard(w, active && w.id === active.id, () => st.setActiveWorkout(w.id))));
-  const recent = st.history().slice(-5).reverse();
-
-  fill(root, 
+  fill(root,
     h('header', { class: 'page-head' },
       h('div', {}, h('h1', {}, greeting()), h('p', {}, 'Zeit für deinen Rücken.')),
       streak > 0 ? h('div', { class: 'streak', title: 'Wochen in Folge mit erreichtem Wochenziel' }, icon('flame'), streak + (streak === 1 ? ' Woche' : ' Wochen')) : null),
-    scroller,
-    h('button', { type: 'button', class: 'btn primary big start-btn', disabled: !canStart, onclick: () => startTraining(active) },
-      icon('play'), canStart ? `${active.name} starten` : 'Programm ohne Übungen'),
-    h('div', { class: 'card' },
-      h('h2', {}, 'Diese Woche'),
-      h('div', { class: 'week-days' }, info.days.map((d) =>
-        h('div', { class: 'day' + (d.done ? ' done' : '') + (d.today ? ' today' : '') }, d.label, h('i', {}, icon('check'))))),
-      h('div', { class: 'bar' }, h('i', { style: `width:${Math.min(100, (100 * info.count) / info.goal)}%` })),
-      h('p', { class: 'muted small', style: 'margin:8px 0 0' },
-        info.count >= info.goal ? `Wochenziel erreicht: ${info.count} Trainings.` : `${info.count} von ${info.goal} Trainings geschafft.`)),
-    h('div', { class: 'stats' },
-      h('div', { class: 'stat' }, icon('bolt'), h('strong', {}, tot.sessions), h('span', {}, 'Trainings')),
-      h('div', { class: 'stat' }, icon('clock'), h('strong', {}, tot.minutes), h('span', {}, 'Minuten')),
-      h('div', { class: 'stat' }, icon('flame'), h('strong', {}, streak), h('span', {}, 'Wochen-Serie'))),
-    recent.length ? h('div', { class: 'card' },
-      h('h2', {}, 'Zuletzt'),
-      h('ul', { class: 'hist' }, recent.map((e) => {
-        const d = new Date(e.t);
-        return h('li', {}, h('div', { class: 'dot' }, icon('check')),
-          h('div', {}, h('b', {}, e.name || 'Training'),
-            h('small', {}, d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + minutesLabel(e.seconds || 600))));
-      }))) : null);
 
-  const sel = scroller.querySelector('.on');
-  if (sel) scroller.scrollLeft = sel.offsetLeft - 16;
+    h('div', { class: 'hero' },
+      h('i', { class: 'hero-blob' }),
+      h('div', { class: 'hero-label' }, 'Dein Programm'),
+      h('h2', {}, active ? active.name : 'Kein Programm'),
+      h('div', { class: 'hero-meta' },
+        h('span', {}, icon('figure'), `${items.length} Übungen`),
+        h('span', {}, icon('clock'), canStart ? minutesLabel(st.workoutSeconds(active)) : '–')),
+      h('div', { class: 'hero-thumbs' }, items.slice(0, 6).map((it) => thumb(it.ex)), items.length > 6 ? h('div', { class: 'more' }, '+' + (items.length - 6)) : null),
+      h('button', { type: 'button', class: 'btn light big', disabled: !canStart, onclick: () => startTraining(active) }, icon('play'), canStart ? 'Starten' : 'Übungen hinzufügen'),
+      st.workouts().length > 1 ? h('button', { type: 'button', class: 'hero-switch', onclick: openProgramPicker }, 'Anderes Programm wählen', icon('down')) : null),
+
+    h('div', { class: 'week' },
+      h('div', { class: 'week-top' }, h('b', {}, 'Diese Woche'),
+        h('span', { class: info.count >= info.goal ? 'goal ok' : 'goal' }, `${Math.min(info.count, 99)} / ${info.goal}`)),
+      h('div', { class: 'week-days' }, info.days.map((d) =>
+        h('div', { class: 'day' + (d.done ? ' done' : '') + (d.today ? ' today' : '') }, d.label, h('i', {}, icon('check')))))),
+
+    h('div', { class: 'statline' },
+      h('div', {}, h('strong', {}, tot.sessions), h('span', {}, 'Trainings')),
+      h('div', {}, h('strong', {}, tot.minutes), h('span', {}, 'Minuten')),
+      h('div', {}, h('strong', {}, streak), h('span', {}, 'Wochen-Serie'))),
+    h('button', { type: 'button', class: 'link', onclick: openHistory }, 'Verlauf anzeigen'));
 }
 
 /* =============== Programme =============== */
