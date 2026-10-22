@@ -1,7 +1,7 @@
 // Service Worker: legt alle App-Dateien beim ersten Besuch im Cache ab -> komplett offline nutzbar.
 // Die Liste unten wird von `node tools/update-sw.mjs` erzeugt (vor jedem Veröffentlichen ausführen).
 /* BEGIN GENERATED */
-const CACHE = 'stretching-fe8e747fd6';
+const CACHE = 'stretching-5275cf5433';
 const FILES = [
   "./",
   "./css/style.css",
@@ -39,8 +39,14 @@ const FILES = [
 /* END GENERATED */
 
 self.addEventListener('install', (event) => {
+  // cache: 'reload' umgeht den HTTP-Cache des Browsers/Servers, damit nie alte und neue Dateien gemischt werden.
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(FILES)).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then((cache) => Promise.all(FILES.map((f) => fetch(new Request(f, { cache: 'reload' })).then((res) => {
+        if (!res.ok) throw new Error(f + ' ' + res.status);
+        return cache.put(f, res);
+      }))))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -52,13 +58,20 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Bilder und Icons: Cache zuerst (ändern sich nie). Alles andere: Netz zuerst, Cache als Offline-Rückfall.
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  const req = event.request;
+  if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  const isAsset = /\/(images|icons)\//.test(req.url);
   event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((hit) => {
-      if (hit) return hit;
-      return fetch(event.request).catch(() => (event.request.mode === 'navigate' ? caches.match('./index.html') : Response.error()));
-    })
+    isAsset
+      ? caches.match(req).then((hit) => hit || fetch(req))
+      : fetch(req, { cache: 'no-cache' })
+        .then((res) => {
+          if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
+          return res;
+        })
+        .catch(() => caches.match(req, { ignoreSearch: true }).then((hit) => hit || (req.mode === 'navigate' ? caches.match('./index.html') : Response.error())))
   );
 });
 

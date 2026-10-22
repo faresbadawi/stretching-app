@@ -27,7 +27,15 @@ async function init() {
 
   if ('serviceWorker' in navigator) {
     try {
-      await navigator.serviceWorker.register('sw.js');
+      const hadController = !!navigator.serviceWorker.controller;
+      let reloaded = false;
+      // Neue App-Version übernommen: Seite einmal neu laden (nicht mitten im Training).
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!hadController || reloaded || document.body.classList.contains('busy')) return;
+        reloaded = true;
+        location.reload();
+      });
+      await navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' });
       await navigator.serviceWorker.ready;
       setOfflineReady(true);
     } catch { /* ohne Service Worker (z. B. file://) läuft die App nur online */ }
