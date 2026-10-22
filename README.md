@@ -1,0 +1,72 @@
+# Dehnen – Stretching-PWA
+
+Kurzes Dehnprogramm (ca. 10 Minuten, dreimal pro Woche) für Rücken und Beweglichkeit.
+Reines HTML/CSS/JavaScript, kein Build-Schritt, komplett offline nutzbar.
+
+## Lokal ausprobieren
+
+```bash
+python3 -m http.server 8000
+```
+
+Dann `http://localhost:8000` öffnen. (Service Worker laufen nur über `localhost` oder HTTPS, nicht über `file://`.)
+
+## Aufbau
+
+| Datei | Inhalt |
+|---|---|
+| `index.html`, `css/style.css`, `js/app.js` | Oberfläche, Timer, Einstellungen |
+| `data/exercises.json` | Übungen (Name, Beschreibung, Schritte, Bilder je Variante) |
+| `images/man/` | Übungsbilder (Männer-Figuren, WebP) |
+| `manifest.webmanifest`, `icons/` | PWA-Manifest und App-Icons |
+| `sw.js` | Service Worker (Offline-Cache) |
+| `tools/update-sw.mjs` | Trägt Dateiliste und Cache-Version in `sw.js` ein |
+| `js/notifications.js` | Platzhalter für spätere Push-Benachrichtigungen |
+
+## Frauen-Figuren ergänzen
+
+1. Bilder nach `images/woman/` legen – gleiche Dateinamen wie in `images/man/` (z. B. `kobra-stretch.webp`).
+2. In `data/exercises.json` oben unter `variants` ergänzen: `"woman": "Frauen-Figuren"`.
+3. Bei jeder Übung unter `images` ergänzen: `"woman": "images/woman/<name>.webp"`.
+4. `node tools/update-sw.mjs` ausführen. Fertig – in den Einstellungen erscheint automatisch die Auswahl „Figuren“. Fehlt bei einer Übung das Bild, wird das der Männer-Variante verwendet.
+
+## Übungen ändern / ergänzen
+
+Neuen Eintrag in `data/exercises.json` anlegen (`id` = Dateiname ohne Endung, `perSide: true` für einseitige Übungen, `defaultEnabled` steuert, ob sie im Standardprogramm sind). Danach `node tools/update-sw.mjs`.
+
+## Veröffentlichen auf GitHub Pages
+
+Vor **jedem** Veröffentlichen:
+
+```bash
+node tools/update-sw.mjs
+```
+
+Das aktualisiert die Cache-Version, sonst bekommen installierte Apps Änderungen nicht mit.
+
+1. Auf github.com ein neues **öffentliches** Repository anlegen (z. B. `stretching-app`), ohne README/Lizenz.
+2. Im Projektordner:
+   ```bash
+   git add -A
+   git commit -m "Stretching-PWA"
+   git branch -M main
+   git remote add origin https://github.com/<DEIN-NAME>/stretching-app.git
+   git push -u origin main
+   ```
+3. Im Repository: **Settings → Pages → Build and deployment → Source: „Deploy from a branch“**, Branch `main`, Ordner `/ (root)`, speichern.
+4. Nach ca. 1 Minute ist die App erreichbar unter `https://<DEIN-NAME>.github.io/stretching-app/`.
+
+Alle Pfade sind relativ, die App funktioniert daher im Unterordner von GitHub Pages.
+
+## Auf dem Handy installieren
+
+- **iPhone/iPad:** Link in **Safari** öffnen → Teilen-Symbol → „Zum Home-Bildschirm“.
+- **Android:** Link in **Chrome** öffnen → Menü (⋮) → „App installieren“ bzw. „Zum Startbildschirm hinzufügen“.
+
+Einmal online öffnen, danach läuft die App auch ohne Internet.
+
+Hinweis iPhone: Der Ton wird vom Stummschalter (Seitenschalter) unterdrückt. Für die Signale also auf „laut“ stellen.
+
+## Push-Benachrichtigungen (später)
+
+Bewusst noch nicht eingebaut. Vorbereitet sind `js/notifications.js` (Ablauf als Kommentar), die auskommentierten `push`/`notificationclick`-Handler in `sw.js` und das Feld `reminders` in den Einstellungen. Für echte Pushes wird zusätzlich ein kleiner Server (oder Cloudflare Worker) benötigt; auf dem iPhone funktionieren Pushes nur für die installierte App (ab iOS 16.4).

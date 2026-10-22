@@ -1,0 +1,323 @@
+{
+  "variants": {
+    "man": "Männer-Figuren"
+  },
+  "exercises": [
+    {
+      "id": "nacken-dehnen",
+      "name": "Nacken dehnen",
+      "category": "Nacken",
+      "description": "Sanfte Dehnung der Nackenmuskulatur zur Entspannung",
+      "steps": [
+        "Setzen Sie sich aufrecht hin oder stehen Sie gerade",
+        "Neigen Sie den Kopf langsam zur rechten Seite",
+        "Legen Sie die rechte Hand sanft auf die linke Kopfseite",
+        "Halten Sie die Dehnung 15-30 Sekunden",
+        "Wiederholen Sie auf der anderen Seite",
+        "Führen Sie 2-3 Wiederholungen pro Seite durch"
+      ],
+      "perSide": true,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/nacken-dehnen.webp"
+      }
+    },
+    {
+      "id": "schulterkreisen",
+      "name": "Schulterkreisen",
+      "category": "Schultern",
+      "description": "Mobilisierung der Schultergelenke und Entspannung der Schultermuskulatur",
+      "steps": [
+        "Stehen Sie aufrecht mit entspannten Armen",
+        "Heben Sie beide Schultern langsam nach oben",
+        "Führen Sie die Schultern nach hinten",
+        "Senken Sie die Schultern nach unten",
+        "Führen Sie die Schultern nach vorne",
+        "Wiederholen Sie 8-10 Kreise nach hinten",
+        "Wechseln Sie die Richtung und kreisen Sie nach vorne"
+      ],
+      "perSide": false,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/schulterkreisen.webp"
+      }
+    },
+    {
+      "id": "schulter-stretch",
+      "name": "Schulter-Stretch",
+      "category": "Schultern",
+      "description": "Intensive Dehnung der hinteren Schultermuskulatur",
+      "steps": [
+        "Stehen oder sitzen Sie aufrecht",
+        "Führen Sie den rechten Arm horizontal vor die Brust",
+        "Greifen Sie mit der linken Hand den rechten Oberarm",
+        "Ziehen Sie den Arm sanft zur Brust",
+        "Halten Sie 20-30 Sekunden",
+        "Wiederholen Sie mit dem anderen Arm"
+      ],
+      "perSide": true,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/schulter-stretch.webp"
+      }
+    },
+    {
+      "id": "brustoeffnung",
+      "name": "Brustöffnung",
+      "category": "Arme",
+      "description": "Dehnung der Brustmuskulatur und Verbesserung der Körperhaltung",
+      "steps": [
+        "Stehen Sie aufrecht an einer Wand oder Türrahmen",
+        "Platzieren Sie den Unterarm gegen die Wand (90° Winkel)",
+        "Treten Sie einen Schritt nach vorne",
+        "Lehnen Sie sich sanft in die Dehnung",
+        "Spüren Sie die Dehnung in der Brust",
+        "Halten Sie 20-30 Sekunden pro Arm"
+      ],
+      "perSide": true,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/brustoeffnung.webp"
+      }
+    },
+    {
+      "id": "katzen-kuh-dehnung",
+      "name": "Katzen-Kuh-Dehnung",
+      "category": "Rücken",
+      "description": "Mobilisierung der gesamten Wirbelsäule",
+      "steps": [
+        "Gehen Sie in den Vierfüßlerstand",
+        "Positionieren Sie Hände unter den Schultern",
+        "Knie sind unter den Hüften",
+        "Runden Sie den Rücken wie eine Katze (Katzenbuckel)",
+        "Senken Sie den Bauch und heben Sie Kopf und Steißbein (Kuh)",
+        "Wechseln Sie langsam zwischen beiden Positionen",
+        "Führen Sie 8-10 fließende Bewegungen durch"
+      ],
+      "perSide": false,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/katzen-kuh-dehnung.webp"
+      }
+    },
+    {
+      "id": "herabschauender-hund",
+      "name": "Herabschauender Hund",
+      "category": "Ganzkörper",
+      "description": "Ganzkörperdehnung mit Fokus auf Rücken und Beine",
+      "steps": [
+        "Beginnen Sie im Vierfüßlerstand",
+        "Stellen Sie die Zehen auf",
+        "Heben Sie die Hüfte nach oben und hinten",
+        "Strecken Sie die Beine soweit möglich",
+        "Drücken Sie die Hände fest in den Boden",
+        "Bilden Sie ein umgekehrtes V mit Ihrem Körper",
+        "Halten Sie 30-60 Sekunden"
+      ],
+      "perSide": false,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/herabschauender-hund.webp"
+      }
+    },
+    {
+      "id": "kobra-stretch",
+      "name": "Kobra Stretch",
+      "category": "Rücken",
+      "description": "Rückbeuge zur Stärkung und Dehnung der Rückenmuskulatur",
+      "steps": [
+        "Legen Sie sich auf den Bauch",
+        "Platzieren Sie die Hände unter den Schultern",
+        "Drücken Sie sich langsam mit den Armen hoch",
+        "Heben Sie Brust und Kopf vom Boden",
+        "Halten Sie die Hüfte am Boden",
+        "Schauen Sie nach oben",
+        "Halten Sie 15-30 Sekunden"
+      ],
+      "perSide": false,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/kobra-stretch.webp"
+      }
+    },
+    {
+      "id": "rumpfdrehung",
+      "name": "Rumpfdrehung",
+      "category": "Rücken",
+      "description": "Rotation der Wirbelsäule zur Verbesserung der Beweglichkeit",
+      "steps": [
+        "Setzen Sie sich aufrecht hin",
+        "Kreuzen Sie das rechte Bein über das linke",
+        "Stützen Sie sich mit der rechten Hand hinter dem Körper ab",
+        "Legen Sie den linken Ellbogen gegen das rechte Knie",
+        "Drehen Sie den Oberkörper sanft nach rechts",
+        "Halten Sie 20-30 Sekunden",
+        "Wiederholen Sie auf der anderen Seite"
+      ],
+      "perSide": true,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/rumpfdrehung.webp"
+      }
+    },
+    {
+      "id": "hueftbeuger-dehnung",
+      "name": "Hüftbeuger Dehnung",
+      "category": "Hüfte",
+      "description": "Intensive Dehnung der Hüftbeugemuskulatur",
+      "steps": [
+        "Machen Sie einen großen Ausfallschritt nach vorne",
+        "Senken Sie das hintere Knie zum Boden",
+        "Halten Sie den Oberkörper aufrecht",
+        "Schieben Sie die Hüfte nach vorne",
+        "Spüren Sie die Dehnung in der Hüfte",
+        "Halten Sie 30 Sekunden pro Seite"
+      ],
+      "perSide": true,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/hueftbeuger-dehnung.webp"
+      }
+    },
+    {
+      "id": "oberschenkelvorderseite",
+      "name": "Oberschenkelvorderseite",
+      "category": "Beine",
+      "description": "Dehnung der vorderen Oberschenkelmuskulatur (Quadrizeps)",
+      "steps": [
+        "Stehen Sie aufrecht und halten Sie sich an einer Wand fest",
+        "Beugen Sie das rechte Knie nach hinten",
+        "Greifen Sie den rechten Fuß mit der Hand",
+        "Ziehen Sie die Ferse zum Gesäß",
+        "Halten Sie die Knie parallel",
+        "Halten Sie 20-30 Sekunden",
+        "Wiederholen Sie mit dem anderen Bein"
+      ],
+      "perSide": true,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/oberschenkelvorderseite.webp"
+      }
+    },
+    {
+      "id": "wadendehnung",
+      "name": "Wadendehnung",
+      "category": "Beine",
+      "description": "Dehnung der Wadenmuskulatur",
+      "steps": [
+        "Stellen Sie sich an eine Wand",
+        "Setzen Sie das rechte Bein einen großen Schritt nach hinten",
+        "Stützen Sie sich mit den Händen an der Wand ab",
+        "Halten Sie das hintere Bein gestreckt",
+        "Drücken Sie die Ferse fest auf den Boden",
+        "Lehnen Sie sich nach vorne in die Dehnung",
+        "Halten Sie 30 Sekunden pro Bein"
+      ],
+      "perSide": true,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/wadendehnung.webp"
+      }
+    },
+    {
+      "id": "beinheben",
+      "name": "Beinheben",
+      "category": "Beine",
+      "description": "Stärkung der Bauchmuskulatur und Hüftbeuger",
+      "steps": [
+        "Legen Sie sich auf den Rücken",
+        "Strecken Sie die Beine aus",
+        "Legen Sie die Hände seitlich neben den Körper",
+        "Heben Sie beide Beine langsam an (90° Winkel)",
+        "Senken Sie die Beine kontrolliert ab",
+        "Berühren Sie nicht den Boden",
+        "Wiederholen Sie 10-15 Mal"
+      ],
+      "perSide": false,
+      "defaultEnabled": false,
+      "images": {
+        "man": "images/man/beinheben.webp"
+      }
+    },
+    {
+      "id": "schmetterlingssitz",
+      "name": "Schmetterlingssitz",
+      "category": "Hüfte",
+      "description": "Dehnung der Innenseite der Oberschenkel und Hüftöffnung",
+      "steps": [
+        "Setzen Sie sich aufrecht hin",
+        "Bringen Sie die Fußsohlen zusammen",
+        "Ziehen Sie die Füße nah zum Körper",
+        "Umfassen Sie die Füße mit den Händen",
+        "Drücken Sie die Knie sanft Richtung Boden",
+        "Halten Sie den Rücken gerade",
+        "Halten Sie 30-45 Sekunden"
+      ],
+      "perSide": false,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/schmetterlingssitz.webp"
+      }
+    },
+    {
+      "id": "vorwaertsbeuge",
+      "name": "Vorwärtsbeuge",
+      "category": "Ganzkörper",
+      "description": "Dehnung der hinteren Beinmuskulatur und des Rückens",
+      "steps": [
+        "Setzen Sie sich mit gestreckten Beinen hin",
+        "Halten Sie den Rücken gerade",
+        "Beugen Sie sich langsam nach vorne",
+        "Greifen Sie zu den Füßen oder Unterschenkeln",
+        "Halten Sie die Beine gestreckt",
+        "Spüren Sie die Dehnung in den Beinen und im Rücken",
+        "Halten Sie 30-45 Sekunden"
+      ],
+      "perSide": false,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/vorwaertsbeuge.webp"
+      }
+    },
+    {
+      "id": "seitbeuge",
+      "name": "Seitbeuge",
+      "category": "Ganzkörper",
+      "description": "Dehnung der seitlichen Rumpfmuskulatur",
+      "steps": [
+        "Stehen Sie aufrecht mit den Füßen schulterbreit",
+        "Heben Sie den rechten Arm über den Kopf",
+        "Neigen Sie den Oberkörper zur linken Seite",
+        "Halten Sie die Hüfte stabil",
+        "Spüren Sie die Dehnung an der rechten Seite",
+        "Halten Sie 20-30 Sekunden",
+        "Wiederholen Sie auf der anderen Seite"
+      ],
+      "perSide": true,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/seitbeuge.webp"
+      }
+    },
+    {
+      "id": "kindspose",
+      "name": "Kindspose",
+      "category": "Entspannung",
+      "description": "Entspannungsposition für Rücken und Schultern",
+      "steps": [
+        "Knien Sie sich hin und setzen Sie sich auf die Fersen",
+        "Spreizen Sie die Knie etwas auseinander",
+        "Beugen Sie sich nach vorne",
+        "Strecken Sie die Arme nach vorne aus",
+        "Legen Sie die Stirn auf den Boden",
+        "Atmen Sie tief und entspannen Sie sich",
+        "Halten Sie so lange wie gewünscht"
+      ],
+      "perSide": false,
+      "defaultEnabled": true,
+      "images": {
+        "man": "images/man/kindspose.webp"
+      }
+    }
+  ]
+}
