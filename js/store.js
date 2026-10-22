@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS = {
   volume: 0.7,
   countdown: true,
   voice: true,
+  voiceName: '', // leer = automatisch (männlich bevorzugt)
   vibrate: true,
   keepAwake: true,
   prep: 10,
