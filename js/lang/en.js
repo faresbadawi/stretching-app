@@ -72,6 +72,7 @@ export default {
   'data.storageFull': 'Storage full – the image could not be saved.', 'img.readFail': 'The image could not be read.',
   'install.title': 'Install as app',
   'install.text': 'iPhone/iPad: In Safari tap "Share", then "Add to Home Screen". Android: In Chrome open the menu ⋮ → "Install app".',
+  'credits.voice': 'Arabic voice prompts: voice "Rawi" by ElevenLabs.',
   'status.offline': 'Available offline',
   'push.unsupported': 'This device does not support notifications.',
   'push.denied': 'Notifications are blocked. Allow them in your device settings.',

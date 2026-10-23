@@ -494,5 +494,6 @@ function renderSettings() {
 
     !standalone ? h('div', { class: 'card' }, h('h2', {}, t('install.title')),
       h('p', { class: 'muted small', style: 'margin:0' }, t('install.text'))) : null,
-    h('p', { id: 'offline-status', class: 'muted small', style: 'text-align:center' }, offlineReady ? t('status.offline') : ''));
+    h('p', { id: 'offline-status', class: 'muted small', style: 'text-align:center' }, offlineReady ? t('status.offline') : ''),
+    h('p', { class: 'muted small', style: 'text-align:center;margin-top:0' }, t('credits.voice')));
 }

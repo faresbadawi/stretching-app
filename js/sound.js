@@ -142,8 +142,7 @@ function buzz(pattern) {
 }
 
 /* ---------- Stimme ---------- */
-// Deutsch/Englisch: vorab erzeugte, männliche Sprachclips (audio/voice/<sprache>/<name>.mp3).
-// Arabisch: Sprachausgabe des Geräts in normaler Tonhöhe (männliche Stimme bevorzugt).
+// Vorab erzeugte, männliche Sprachclips je Sprache (audio/voice/<sprache>/<name>.mp3).
 
 const clips = new Map(); // "sprache/name" -> Promise<AudioBuffer|null>
 function loadClip(key) {
@@ -157,30 +156,7 @@ function loadClip(key) {
   return clips.get(id);
 }
 export function preloadVoice(keys) {
-  if (ctx && lang() !== 'ar') keys.forEach(loadClip);
-}
-
-const AR_TEXT = { 'get-ready': 'استعد', rest: 'استراحة', switch: 'بدّل الجانب', complete: 'أحسنت، لقد نجحت' };
-const AR_MALE = /majed|maged|tarik|tariq|naayf|hamed|mohamed|male|ذكر/i;
-const AR_FEMALE = /laila|leila|zeina|mariam|maryam|salma|hoda|female|أنثى/i;
-function arabicVoice() {
-  const ar = speechSynthesis.getVoices().filter((v) => v.lang && v.lang.toLowerCase().startsWith('ar'));
-  return ar.find((v) => AR_MALE.test(v.name)) || ar.find((v) => !AR_FEMALE.test(v.name)) || ar[0] || null;
-}
-function speakArabic(key, delay) {
-  if (!('speechSynthesis' in window) || !AR_TEXT[key]) return;
-  const run = () => {
-    try {
-      const voice = arabicVoice();
-      if (!voice) return; // keine arabische Stimme auf dem Gerät: nur Signaltöne
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(AR_TEXT[key]);
-      u.voice = voice; u.lang = voice.lang; u.pitch = 1; u.rate = 0.95;
-      u.volume = Math.min(1, settings().volume + 0.2);
-      speechSynthesis.speak(u);
-    } catch { /* ignorieren */ }
-  };
-  delay ? setTimeout(run, delay) : run();
+  if (ctx) keys.forEach(loadClip);
 }
 
 let voiceSrc = null;
@@ -188,7 +164,6 @@ let voiceSrc = null;
 export async function say(keys, delay = 0) {
   const s = settings();
   if (!s.sound || !s.voice || !ctx) return;
-  if (lang() === 'ar') return speakArabic([].concat(keys)[0], delay);
   let buf = null;
   for (const k of [].concat(keys)) { buf = await loadClip(k); if (buf) break; }
   if (!buf) return;

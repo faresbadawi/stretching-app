@@ -72,6 +72,7 @@ export default {
   'data.storageFull': 'Speicher voll – Bild konnte nicht gespeichert werden.', 'img.readFail': 'Bild konnte nicht gelesen werden.',
   'install.title': 'Als App installieren',
   'install.text': 'iPhone/iPad: In Safari auf „Teilen“ tippen, dann „Zum Home-Bildschirm“. Android: In Chrome Menü ⋮ → „App installieren“.',
+  'credits.voice': 'Arabische Sprachansagen: Stimme „Rawi“ von ElevenLabs.',
   'status.offline': 'Offline verfügbar',
   'push.unsupported': 'Dieses Gerät unterstützt keine Benachrichtigungen.',
   'push.denied': 'Benachrichtigungen sind blockiert. Erlaube sie in den Einstellungen deines Geräts.',

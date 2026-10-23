@@ -43,7 +43,7 @@ Deutsch, Englisch und Arabisch (Arabisch von rechts nach links). Die Sprache fol
 ## Sprachansagen
 
 - **Deutsch / Englisch:** Vier kurze, vorab erzeugte Clips je Sprache (`audio/voice/de|en/*.mp3`: bereit, Pause, Seitenwechsel, Abschluss). Erzeugt mit dem Programm Piper und den Stimmen „Thorsten“ (`de_DE-thorsten-medium`) und „Joe“ (`en_US-joe-medium`), beide Lizenz CC0.
-- **Arabisch:** Sprachausgabe des Geräts in normaler Tonhöhe (männliche Stimme bevorzugt). Hat das Gerät keine arabische Stimme, gibt es nur Signaltöne. Eine frei nutzbare, gut klingende arabische Stimme zum Vorab-Erzeugen gibt es derzeit nicht.
+- **Arabisch:** Vier Clips (`audio/voice/ar/*.mp3`: اِسْتَعِدَّ، اِسْتِرَاحَة، تَبْدِيلُ الجَانِب، أَحْسَنْتَ. لَقَدْ نَجَحْتَ.), erzeugt mit ElevenLabs (Modell `eleven_v4`, Stimme „Rawi – Calm & Clear Fusha Narrator“, Hocharabisch, männlich). Die kostenlose Stufe verlangt die Nennung der Quelle (steht in den Optionen) und gilt nicht für kommerzielle Nutzung.
 - Am Ende: Applaus, nach ein paar Sekunden die Abschlussansage.
 
 ## Weitere Bildvariante ergänzen (optional)
