@@ -1,7 +1,7 @@
 // Service Worker: legt alle App-Dateien beim ersten Besuch im Cache ab -> komplett offline nutzbar.
 // Die Liste unten wird von `node tools/update-sw.mjs` erzeugt (vor jedem Veröffentlichen ausführen).
 /* BEGIN GENERATED */
-const CACHE = 'stretching-3222d0be0b';
+const CACHE = 'stretching-6525da70a4';
 const FILES = [
   "./",
   "./audio/voice/complete.mp3",
@@ -32,6 +32,7 @@ const FILES = [
   "./images/man/wadendehnung.webp",
   "./index.html",
   "./js/app.js",
+  "./js/config.js",
   "./js/notifications.js",
   "./js/sound.js",
   "./js/store.js",
@@ -79,12 +80,20 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// --- Vorbereitung für spätere Push-Benachrichtigungen (noch nicht aktiv) ---
-// self.addEventListener('push', (event) => {
-//   const d = event.data ? event.data.json() : { title: 'Zeit zum Dehnen!', body: 'Dein 10-Minuten-Programm wartet.' };
-//   event.waitUntil(self.registration.showNotification(d.title, { body: d.body, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png' }));
-// });
-// self.addEventListener('notificationclick', (event) => {
-//   event.notification.close();
-//   event.waitUntil(self.clients.openWindow('./'));
-// });
+// --- Push-Erinnerungen ---
+self.addEventListener('push', (event) => {
+  let d = { title: 'Zeit zum Dehnen', body: 'Dein Dehnprogramm wartet auf dich.' };
+  try { if (event.data) d = { ...d, ...event.data.json() }; } catch { /* Standardtext */ }
+  event.waitUntil(self.registration.showNotification(d.title, {
+    body: d.body, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', tag: 'dehnen-reminder', data: { url: './' }
+  }));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil((async () => {
+    const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const c of all) if ('focus' in c) return c.focus();
+    return self.clients.openWindow('./');
+  })());
+});

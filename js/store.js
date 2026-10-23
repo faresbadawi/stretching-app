@@ -12,7 +12,10 @@ export const DEFAULT_SETTINGS = {
   vibrate: true,
   keepAwake: true,
   prep: 10,
-  weeklyGoal: 3,
+  weeklyGoal: 3,          // = Anzahl der Trainingstage (remindDays)
+  remindOn: false,        // Push-Erinnerung eingeschaltet
+  remindDays: [0, 2, 4],  // Trainingstage, Mo = 0 … So = 6
+  remindTime: '18:00',    // Uhrzeit der Erinnerung
   theme: 'auto',
   accent: 'blue',
   variant: 'man'
@@ -56,6 +59,8 @@ export async function init() {
   }
   if (!state.workouts) state.workouts = defaultWorkouts(v1?.duration ?? 30, v1?.rest ?? 10);
   if (!state.workouts.some((w) => w.id === state.activeWorkout)) state.activeWorkout = state.workouts[0]?.id ?? null;
+  if (!(s.settings && s.settings.remindDays)) state.settings.remindDays = spreadDays(state.settings.weeklyGoal);
+  state.settings.weeklyGoal = state.settings.remindDays.length;
   if (!base.variants[state.settings.variant]) {
     // Frühere Version hatte eine weibliche Variante (rosa); sie wurde entfernt.
     if (state.settings.variant === 'woman' && state.settings.accent === 'pink') state.settings.accent = 'blue';
@@ -81,6 +86,16 @@ export function save() {
 function commit() { save(); listeners.forEach((fn) => fn()); }
 
 export const settings = () => state.settings;
+
+// Gleichmäßig über die Woche verteilte Trainingstage (Mo = 0).
+const SPREAD = { 1: [2], 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 2, 3, 4], 6: [0, 1, 2, 3, 4, 5], 7: [0, 1, 2, 3, 4, 5, 6] };
+export const spreadDays = (n) => SPREAD[Math.min(7, Math.max(1, n))];
+export function setTrainingDays(days) {
+  const d = [...new Set(days)].sort();
+  if (!d.length) return;
+  Object.assign(state.settings, { remindDays: d, weeklyGoal: d.length });
+  commit();
+}
 export function updateSettings(patch) { Object.assign(state.settings, patch); commit(); }
 export const variants = () => base.variants;
 

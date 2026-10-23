@@ -412,3 +412,9 @@ dialog.sheet.closing::backdrop { animation: fade .19s reverse forwards; }
 .statline strong { display: block; font-size: 1.35rem; line-height: 1.15; }
 .statline span { font-size: .74rem; color: var(--muted); font-weight: 600; }
 .link { display: block; margin: 14px auto 0; background: none; border: 0; color: var(--accent); font-weight: 700; padding: 8px 14px; }
+
+/* ===== Trainingstage & Uhrzeit ===== */
+.daypick { display: flex; gap: 6px; padding: 12px 0 4px; }
+.dp { flex: 1; padding: 11px 0; border-radius: 12px; border: 1px solid var(--line); background: var(--card-2); font-weight: 700; font-size: .85rem; color: var(--muted); transition: all .18s; }
+.dp.on { background: var(--accent); color: var(--on-accent); border-color: transparent; box-shadow: 0 6px 14px -6px var(--accent); }
+.timebox { width: auto; font-weight: 800; font-size: 1.05rem; padding: 8px 12px; }

@@ -2,6 +2,7 @@
 import * as st from './store.js';
 import { initViews, setOfflineReady } from './views.js';
 import { initTraining } from './training.js';
+import { refresh as refreshReminders } from './notifications.js';
 
 const ACCENT_THEME_COLOR = { blue: '#2f7df6', green: '#14a86f', violet: '#7a5cff', orange: '#f2780c', pink: '#e5489b' };
 
@@ -38,6 +39,7 @@ async function init() {
       await navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' });
       await navigator.serviceWorker.ready;
       setOfflineReady(true);
+      refreshReminders();
     } catch { /* ohne Service Worker (z. B. file://) läuft die App nur online */ }
   }
 }

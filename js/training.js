@@ -3,6 +3,7 @@ import { buildSegments, totalSeconds, settings, addHistory, weekInfo } from './s
 import * as snd from './sound.js';
 import { $, h, icon, thumb, fmtTime, openSheet, confirmDialog, confetti } from './ui.js';
 import { exerciseDetail } from './views.js';
+import { markTrained } from './notifications.js';
 
 const RING = 2 * Math.PI * 136;
 let s = null; // laufende Sitzung
@@ -238,6 +239,7 @@ function finish() {
   snd.say('complete', 1200);
   stop();
   addHistory({ workoutId: w.id, name: w.name, seconds, count });
+  markTrained();
   $('done-text').textContent = `${w.name}: ${count} Übungen in ca. ${Math.max(1, Math.round(seconds / 60))} Minuten.`;
   const info = weekInfo();
   $('done-week').replaceChildren(

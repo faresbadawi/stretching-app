@@ -1,0 +1,16 @@
+name = "dehnen-erinnerung"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Alle 5 Minuten prüfen, ob jemand erinnert werden muss
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[kv_namespaces]]
+binding = "SUBS"
+id = "REPLACE_WITH_KV_ID"
+
+[vars]
+VAPID_PUBLIC_KEY = "BOYWsJ8bSHCU9NcLVhfayUKO3kYOmOXfPylsAyOHAle3P5vjhuvz6r1UzMf2PIebjj70rSDcLpI24AdFo5kLNpY"
+VAPID_SUBJECT = "https://faresbadawi.github.io/stretching-app/"
+ALLOWED_ORIGINS = "https://faresbadawi.github.io,http://localhost:8911,http://localhost:8000"

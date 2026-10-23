@@ -2,6 +2,7 @@
 import * as st from './store.js';
 import * as snd from './sound.js';
 import { startTraining } from './training.js';
+import * as push from './notifications.js';
 import {
   $, h, fill, icon, iconBtn, thumb, placeholder, stepper, toggle, row, chips,
   openSheet, confirmDialog, toast, minutesLabel, resizeImage
@@ -397,6 +398,10 @@ function renderSettings() {
   const S = st.settings();
   const set = (patch) => st.updateSettings(patch);
   const root = $('view-settings');
+  const pushHint = !push.supported() ? 'Auf dem iPhone/iPad: App zuerst zum Home-Bildschirm hinzufügen (iOS 16.4 oder neuer).'
+    : !push.configured() ? 'Der Erinnerungs-Server ist noch nicht eingerichtet.'
+      : `Du wirst an den gewählten Tagen um ${S.remindTime} Uhr erinnert, außer du hast schon trainiert.`;
+  const resync = () => { clearTimeout(resync.t); resync.t = setTimeout(() => { if (st.settings().remindOn) push.sync().catch(() => toast('Erinnerung konnte nicht aktualisiert werden.')); }, 700); };
   const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   const importer = h('input', { type: 'file', accept: 'application/json,.json', hidden: true, onchange: async (e) => {
     const f = e.target.files[0];
@@ -408,9 +413,26 @@ function renderSettings() {
   fill(root, 
     h('header', { class: 'page-head' }, h('div', {}, h('h1', {}, 'Optionen'))),
 
+    h('p', { class: 'section-title' }, 'Trainingsplan'),
+    h('div', { class: 'card' },
+      row('Trainingstage pro Woche', stepper({ value: S.remindDays.length, min: 1, max: 7, step: 1, unit: '×', label: 'Trainingstage', onChange: (v) => { st.setTrainingDays(st.spreadDays(v)); resync(); } }), 'Wird gleichmäßig auf die Woche verteilt'),
+      h('div', { class: 'daypick' }, ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((label, i) =>
+        h('button', { type: 'button', class: 'dp' + (S.remindDays.includes(i) ? ' on' : ''), 'aria-pressed': S.remindDays.includes(i), onclick: () => {
+          const days = S.remindDays.includes(i) ? S.remindDays.filter((d) => d !== i) : [...S.remindDays, i];
+          if (days.length) { st.setTrainingDays(days); resync(); } else toast('Mindestens ein Tag muss bleiben.');
+        } }, label))),
+      row('Erinnerung', toggle(S.remindOn, async (on) => {
+        try { if (on) await push.enable(); else await push.disable(); toast(on ? 'Erinnerung eingeschaltet' : 'Erinnerung ausgeschaltet'); } catch (err) { toast(err.message); }
+        renderSettings();
+      }, 'Erinnerung'), pushHint),
+      S.remindOn ? row('Uhrzeit', h('input', { type: 'time', class: 'timebox', value: S.remindTime, 'aria-label': 'Uhrzeit', onchange: (e) => { if (e.target.value) { set({ remindTime: e.target.value }); resync(); } } })) : null,
+      S.remindOn ? h('button', { type: 'button', class: 'btn', style: 'margin-top:10px', onclick: async () => {
+        try { await push.sendTest(); toast('Test gesendet – gleich sollte eine Nachricht erscheinen.'); } catch (err) { toast(err.message); }
+      } }, 'Test-Erinnerung senden') : null),
+
     h('p', { class: 'section-title' }, 'Ton & Signale'),
     h('div', { class: 'card' },
-      row('Ton', toggle(S.sound, (v) => { set({ sound: v }); }), 'Glockenklänge bei jedem Wechsel'),
+      row('Ton', toggle(S.sound, (v) => { set({ sound: v }); }), 'Signaltöne bei jedem Wechsel'),
       row('Lautstärke', h('input', { type: 'range', class: 'vol', min: 0.1, max: 1, step: 0.05, value: S.volume, 'aria-label': 'Lautstärke',
         oninput: (e) => { st.settings().volume = +e.target.value; }, onchange: (e) => { set({ volume: +e.target.value }); snd.unlock(); snd.cue.side(); } })),
       row('Countdown 3 · 2 · 1', toggle(S.countdown, (v) => set({ countdown: v })), 'Kurze Klicks vor dem Wechsel'),
@@ -421,7 +443,6 @@ function renderSettings() {
     h('p', { class: 'section-title' }, 'Training'),
     h('div', { class: 'card' },
       row('Vorbereitung', stepper({ value: S.prep, min: 3, max: 30, step: 1, unit: ' s', label: 'Vorbereitung', onChange: (v) => set({ prep: v }) }), 'Countdown vor der ersten Übung'),
-      row('Wochenziel', stepper({ value: S.weeklyGoal, min: 1, max: 7, step: 1, unit: '×', label: 'Wochenziel', onChange: (v) => set({ weeklyGoal: v }) }), 'Trainings pro Woche'),
       row('Bildschirm anlassen', toggle(S.keepAwake, (v) => set({ keepAwake: v })), 'Verhindert die Bildschirmsperre im Training')),
 
     h('p', { class: 'section-title' }, 'Darstellung'),

@@ -1,0 +1,16 @@
+{
+  "name": "stretching-reminder-worker",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Schickt Push-Erinnerungen f\u00fcr die Dehnen-App (Cloudflare Worker mit Cron)",
+  "dependencies": {
+    "@block65/webcrypto-web-push": "^2.0.0",
+    "wrangler": "^4.152.0"
+  },
+  "scripts": {
+    "test": "node --test test/schedule.test.mjs test/push.test.mjs",
+    "dev": "wrangler dev --test-scheduled",
+    "deploy": "wrangler deploy"
+  }
+}
