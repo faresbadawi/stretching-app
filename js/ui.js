@@ -1,5 +1,7 @@
 // Kleine UI-Helfer: Elemente bauen, Symbole, Bottom-Sheets, Dialoge, Toasts, Konfetti.
 
+import { t } from './i18n.js';
+
 export const $ = (id) => document.getElementById(id);
 
 export function h(tag, props = {}, ...kids) {
@@ -102,9 +104,9 @@ export function stepper({ value, min, max, step = 1, unit = '', format, onChange
   };
   show();
   return h('div', { class: 'stepper', role: 'group', 'aria-label': label },
-    h('button', { type: 'button', 'aria-label': 'weniger', onclick: () => set(-1) }, icon('minus')),
+    h('button', { type: 'button', 'aria-label': '−', onclick: () => set(-1) }, icon('minus')),
     out,
-    h('button', { type: 'button', 'aria-label': 'mehr', onclick: () => set(1) }, icon('plus')));
+    h('button', { type: 'button', 'aria-label': '+', onclick: () => set(1) }, icon('plus')));
 }
 
 export function toggle(checked, onChange, label = '') {
@@ -136,7 +138,7 @@ export function openSheet({ title, body, foot, onClose, tall = false }) {
   };
   dlg.append(
     h('div', { class: 'sheet-grab' }),
-    h('div', { class: 'sheet-head' }, h('h2', {}, title || ''), iconBtn('close', 'Schließen', close, 'flat')),
+    h('div', { class: 'sheet-head' }, h('h2', {}, title || ''), iconBtn('close', t('common.close'), close, 'flat')),
     h('div', { class: 'sheet-body' }, body),
     foot ? h('div', { class: 'sheet-foot' }, foot) : null);
   dlg.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
@@ -146,14 +148,14 @@ export function openSheet({ title, body, foot, onClose, tall = false }) {
   return { close, dlg, body: dlg.querySelector('.sheet-body') };
 }
 
-export function confirmDialog(text, { ok = 'Löschen', danger = true, title = 'Bist du sicher?' } = {}) {
+export function confirmDialog(text, { ok = t('common.delete'), danger = true, title = t('common.sure') } = {}) {
   return new Promise((resolve) => {
     let answer = false;
     const sheet = openSheet({
       title,
       body: h('p', { class: 'muted' }, text),
       foot: [
-        h('button', { class: 'btn', type: 'button', onclick: () => sheet.close() }, 'Abbrechen'),
+        h('button', { class: 'btn', type: 'button', onclick: () => sheet.close() }, t('common.cancel')),
         h('button', { class: 'btn ' + (danger ? 'danger' : 'primary'), type: 'button', onclick: () => { answer = true; sheet.close(); } }, ok)
       ],
       onClose: () => resolve(answer)
@@ -174,7 +176,7 @@ export function fmtTime(sec) {
   sec = Math.max(0, Math.round(sec));
   return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
 }
-export const minutesLabel = (sec) => `ca. ${Math.max(1, Math.round(sec / 60))} Min`;
+export const minutesLabel = (sec) => t('approx.min', { n: Math.max(1, Math.round(sec / 60)) });
 
 /* ---------- Konfetti ---------- */
 
@@ -226,7 +228,7 @@ export function resizeImage(file, max = 640) {
       if (!out.startsWith('data:image/webp')) out = cv.toDataURL('image/jpeg', 0.82);
       resolve(out);
     };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Bild konnte nicht gelesen werden.')); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('img.readFail')); };
     img.src = url;
   });
 }

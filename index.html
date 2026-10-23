@@ -27,25 +27,21 @@
 
   <!-- Training -->
   <section id="training" class="training work" hidden aria-label="Training">
-    <div class="t-bg">
-      <i class="bg-layer l-work"></i><i class="bg-layer l-rest"></i><i class="bg-layer l-prep"></i>
-      <i class="blob b1"></i><i class="blob b2"></i>
-    </div>
+    <div class="t-bg"><i class="bg-layer l-work"></i><i class="bg-layer l-rest"></i><i class="bg-layer l-prep"></i></div>
     <header class="t-top">
-      <button id="t-stop" class="t-btn" type="button" aria-label="Training beenden"></button>
-      <div id="t-progress" class="t-progress" aria-hidden="true"></div>
-      <div id="t-remaining" class="t-remaining"></div>
+      <button id="t-stop" class="t-btn" type="button"></button>
+      <div class="t-meta"><b id="t-counter"></b><span id="t-remaining"></span></div>
+      <button id="t-info" class="t-btn" type="button"></button>
     </header>
+    <div class="t-bar" aria-hidden="true"><i id="t-bar-fill"></i></div>
 
     <div class="t-hero">
       <div id="t-card" class="t-card">
         <img id="t-img" alt="" draggable="false">
         <div id="t-ph" class="t-ph" hidden></div>
-        <span id="t-badge" class="t-badge"></span>
-        <button id="t-info" class="t-info" type="button" aria-label="Anleitung anzeigen"></button>
-        <div class="t-title"><small id="t-cat"></small><h2 id="t-name"></h2></div>
       </div>
     </div>
+    <div class="t-title"><small id="t-kicker"></small><h2 id="t-name"></h2></div>
 
     <div class="t-timer">
       <div id="circle" class="circle">
@@ -62,7 +58,6 @@
         <div class="circle-inner">
           <div id="t-phase" class="t-phase"></div>
           <div id="t-time" class="t-time" role="timer">0</div>
-          <div id="t-sub" class="t-sub"></div>
         </div>
       </div>
     </div>
@@ -70,21 +65,21 @@
     <div id="t-next" class="t-next"></div>
 
     <div class="t-controls">
-      <button id="t-prev" class="t-ctl" type="button" aria-label="Zurück"></button>
-      <button id="t-toggle" class="t-ctl main" type="button" aria-label="Pause"></button>
-      <button id="t-skip" class="t-ctl" type="button" aria-label="Weiter"></button>
+      <button id="t-prev" class="t-ctl" type="button"></button>
+      <button id="t-toggle" class="t-ctl main" type="button"></button>
+      <button id="t-skip" class="t-ctl" type="button"></button>
     </div>
   </section>
 
   <!-- Geschafft -->
-  <section id="done" class="finish" hidden aria-label="Geschafft">
+  <section id="done" class="finish" hidden aria-label="Done">
     <div class="t-bg"><i class="bg-layer l-work" style="opacity:1"></i><i class="blob b1"></i><i class="blob b2"></i></div>
     <div class="done-box">
       <div id="done-icon" class="done-icon"></div>
-      <h1>Geschafft!</h1>
+      <h1 data-i18n="done.title"></h1>
       <p id="done-text"></p>
       <div id="done-week" class="done-week"></div>
-      <button id="done-close" class="btn light big" type="button">Fertig</button>
+      <button id="done-close" class="btn light big" type="button" data-i18n="done.close"></button>
     </div>
   </section>
 

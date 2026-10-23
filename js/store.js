@@ -1,6 +1,8 @@
 // Zentrale Datenhaltung: Übungs-Bibliothek, Programme, Verlauf, Einstellungen.
 // Alles liegt im localStorage; Fotos eigener Übungen separat unter stretch.img.<id>.
 
+import { lang, t } from './i18n.js';
+
 const KEY = 'stretch.v2';
 const IMG_PREFIX = 'stretch.img.';
 
@@ -16,6 +18,7 @@ export const DEFAULT_SETTINGS = {
   remindOn: false,        // Push-Erinnerung eingeschaltet
   remindDays: [0, 2, 4],  // Trainingstage, Mo = 0 … So = 6
   remindTime: '18:00',    // Uhrzeit der Erinnerung
+  lang: 'auto',           // 'auto' | 'de' | 'en' | 'ar'
   theme: 'auto',
   accent: 'blue',
   variant: 'man'
@@ -58,6 +61,9 @@ export async function init() {
     if (k.startsWith(IMG_PREFIX)) imgs.set(k.slice(IMG_PREFIX.length), localStorage.getItem(k));
   }
   if (!state.workouts) state.workouts = defaultWorkouts(v1?.duration ?? 30, v1?.rest ?? 10);
+  // Mitgelieferte Programme behalten ihren Namen nur, solange er nicht geändert wurde (dann wird er übersetzt).
+  const GERMAN_DEFAULT = { 'w-rueken': 'Rücken-Programm', 'w-buero': 'Büro-Kurzpause', 'w-beine': 'Beine & Hüfte' };
+  for (const w of state.workouts) if (w.nameKey === undefined) w.nameKey = GERMAN_DEFAULT[w.id] === w.name ? w.id : null;
   if (!state.workouts.some((w) => w.id === state.activeWorkout)) state.activeWorkout = state.workouts[0]?.id ?? null;
   if (!(s.settings && s.settings.remindDays)) state.settings.remindDays = spreadDays(state.settings.weeklyGoal);
   state.settings.weeklyGoal = state.settings.remindDays.length;
@@ -70,7 +76,7 @@ export async function init() {
 }
 
 function defaultWorkouts(duration, rest) {
-  const mk = (id, name, ids) => ({ id, name, duration, rest, items: ids.map((x) => ({ id: x, duration: null })) });
+  const mk = (id, name, ids) => ({ id, name, nameKey: id, duration, rest, items: ids.map((x) => ({ id: x, duration: null })) });
   const main = base.exercises.filter((e) => e.defaultEnabled !== false).map((e) => e.id);
   return [
     mk('w-rueken', 'Rücken-Programm', main),
@@ -86,6 +92,9 @@ export function save() {
 function commit() { save(); listeners.forEach((fn) => fn()); }
 
 export const settings = () => state.settings;
+
+// Anzeigename eines Programms: mitgelieferte, unveränderte Programme werden übersetzt.
+export const wname = (w) => (w.nameKey ? t('wk.' + w.nameKey) : w.name);
 
 // Gleichmäßig über die Woche verteilte Trainingstage (Mo = 0).
 const SPREAD = { 1: [2], 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 2, 3, 4], 6: [0, 1, 2, 3, 4, 5], 7: [0, 1, 2, 3, 4, 5, 6] };
@@ -117,7 +126,7 @@ export function allExercises({ includeHidden = false } = {}) {
   const out = [];
   for (const b of base.exercises) {
     if (!includeHidden && state.hidden.includes(b.id)) continue;
-    out.push(decorate({ ...b, ...(state.edits[b.id] || {}), builtin: true }));
+    out.push(decorate({ ...b, ...(b.i18n?.[lang()] || {}), ...(state.edits[b.id] || {}), builtin: true }));
   }
   for (const c of state.custom) out.push(decorate({ ...c, builtin: false }));
   return out;
@@ -153,7 +162,7 @@ export function saveExercise(ex, imageDataUrl) {
 }
 function setImage(id, dataUrl) {
   imgs.set(id, dataUrl);
-  try { localStorage.setItem(IMG_PREFIX + id, dataUrl); } catch { throw new Error('Speicher voll – Bild konnte nicht gespeichert werden.'); }
+  try { localStorage.setItem(IMG_PREFIX + id, dataUrl); } catch { throw new Error('data.storageFull'); }
 }
 function removeImage(id, doCommit = true) {
   imgs.delete(id);
@@ -198,13 +207,13 @@ export function deleteWorkout(id) {
 }
 export function duplicateWorkout(id) {
   const w = structuredClone(getWorkout(id));
-  w.id = newId(); w.name += ' (Kopie)';
+  w.id = newId(); w.name = wname(w) + ' (2)'; w.nameKey = null;
   state.workouts.push(w);
   commit();
   return w;
 }
 export function newWorkout() {
-  return { id: newId(), name: 'Neues Programm', duration: 30, rest: 10, items: [] };
+  return { id: newId(), name: t('editor.new'), nameKey: null, duration: 30, rest: 10, items: [] };
 }
 
 export function resolveItems(w) {
@@ -252,9 +261,9 @@ export function weekInfo() {
   const mon = startOfWeek();
   const done = new Set(state.history.map((h) => new Date(h.t)).filter((d) => d >= mon).map(dayKey));
   const todayKey = dayKey(new Date());
-  const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((label, i) => {
+  const days = [0, 1, 2, 3, 4, 5, 6].map((i) => {
     const d = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i);
-    return { label, done: done.has(dayKey(d)), today: dayKey(d) === todayKey };
+    return { label: t('day.' + i), done: done.has(dayKey(d)), today: dayKey(d) === todayKey };
   });
   const count = state.history.filter((h) => new Date(h.t) >= mon).length;
   return { days, count, goal: state.settings.weeklyGoal };
@@ -287,7 +296,7 @@ export function exportData() {
 }
 export function importData(text) {
   const d = JSON.parse(text);
-  if (d.app !== 'stretching' || !d.state) throw new Error('Das ist keine Sicherung dieser App.');
+  if (d.app !== 'stretching' || !d.state) throw new Error('data.notBackup');
   imgs.forEach((_, k) => localStorage.removeItem(IMG_PREFIX + k));
   imgs.clear();
   state = { ...state, ...d.state, settings: { ...DEFAULT_SETTINGS, ...(d.state.settings || {}) } };

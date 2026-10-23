@@ -7,11 +7,13 @@ const PUSH_HOSTS = [/(^|\.)googleapis\.com$/, /(^|\.)push\.services\.mozilla\.co
 const MAX_SUBS = 100;
 const MAX_AGE = 60 * 60 * 24 * 120; // Abos, die 120 Tage nicht erneuert wurden, verfallen
 
-const TEXTS = [
-  'Zeit zum Dehnen – 10 Minuten für deinen Rücken.',
-  'Dein Dehnprogramm wartet auf dich.',
-  'Kurze Pause vom Sitzen: Zeit für deine Übungen.'
-];
+const LANGS = ['de', 'en', 'ar'];
+const TEXTS = {
+  de: { title: 'Zeit zum Dehnen', bodies: ['Zeit zum Dehnen – 10 Minuten für deinen Rücken.', 'Dein Dehnprogramm wartet auf dich.', 'Kurze Pause vom Sitzen: Zeit für deine Übungen.'], test: ['Test-Erinnerung', 'So sieht deine Erinnerung aus.'] },
+  en: { title: 'Time to stretch', bodies: ['Time to stretch – 10 minutes for your back.', 'Your stretching routine is waiting for you.', 'Take a break from sitting: time for your exercises.'], test: ['Test reminder', 'This is what your reminder looks like.'] },
+  ar: { title: 'حان وقت التمدد', bodies: ['حان وقت التمدد – 10 دقائق لظهرك.', 'برنامج التمدد بانتظارك.', 'استرح من الجلوس: حان وقت تمارينك.'], test: ['تذكير تجريبي', 'هكذا سيبدو تذكيرك.'] }
+};
+const textsFor = (rec) => TEXTS[LANGS.includes(rec.lang) ? rec.lang : 'de'];
 
 const cors = (env, req) => {
   const origin = req.headers.get('origin') || '';
@@ -67,7 +69,7 @@ async function handle(req, env) {
       if (keys.length >= MAX_SUBS) return json(env, req, { ok: false, error: 'Server voll' }, 429);
     }
     const rec = { subscription: { endpoint: subscription.endpoint, expirationTime: null, keys: subscription.keys },
-      days: [...new Set(body.days)].sort(), time: body.time, tz: body.tz, lastSent: old?.lastSent || null, lastTrained: old?.lastTrained || null, lastTest: old?.lastTest || 0 };
+      days: [...new Set(body.days)].sort(), time: body.time, tz: body.tz, lang: LANGS.includes(body.lang) ? body.lang : 'de', lastSent: old?.lastSent || null, lastTrained: old?.lastTrained || null, lastTest: old?.lastTest || 0 };
     await env.SUBS.put(key, JSON.stringify(rec), { expirationTtl: MAX_AGE });
     return json(env, req, { ok: true });
   }
@@ -91,7 +93,8 @@ async function handle(req, env) {
     if (Date.now() - (rec.lastTest || 0) < 20000) return json(env, req, { ok: false, error: 'bitte kurz warten' }, 429);
     rec.lastTest = Date.now();
     await env.SUBS.put(key, JSON.stringify(rec), { expirationTtl: MAX_AGE });
-    const res = await push(env, rec.subscription, { title: 'Test-Erinnerung', body: 'So sieht deine Erinnerung aus.' });
+    const [title, text] = textsFor(rec).test;
+    const res = await push(env, rec.subscription, { title, body: text });
     return json(env, req, { ok: res.ok, status: res.status });
   }
   return json(env, req, { ok: false, error: 'unbekannt' }, 404);
@@ -106,7 +109,8 @@ async function runSchedule(env) {
       const rec = await env.SUBS.get(name, 'json');
       if (!rec || !isDue(rec, now)) continue;
       try {
-        const res = await push(env, rec.subscription, { title: 'Zeit zum Dehnen', body: TEXTS[Math.floor(Math.random() * TEXTS.length)] });
+        const tx = textsFor(rec);
+        const res = await push(env, rec.subscription, { title: tx.title, body: tx.bodies[Math.floor(Math.random() * tx.bodies.length)] });
         if (res.status === 404 || res.status === 410) { await env.SUBS.delete(name); continue; }
         if (res.ok) {
           rec.lastSent = localParts(now, rec.tz).date;

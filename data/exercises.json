@@ -9,17 +9,43 @@
       "category": "Nacken",
       "description": "Sanfte Dehnung der Nackenmuskulatur zur Entspannung",
       "steps": [
-        "Setzen Sie sich aufrecht hin oder stehen Sie gerade",
-        "Neigen Sie den Kopf langsam zur rechten Seite",
-        "Legen Sie die rechte Hand sanft auf die linke Kopfseite",
-        "Halten Sie die Dehnung 15-30 Sekunden",
-        "Wiederholen Sie auf der anderen Seite",
-        "Führen Sie 2-3 Wiederholungen pro Seite durch"
+        "Setz dich aufrecht hin oder stell dich gerade hin",
+        "Neige den Kopf langsam zur rechten Seite",
+        "Lege die rechte Hand sanft auf die rechte Kopfseite",
+        "Halte die Dehnung 15–30 Sekunden",
+        "Wiederhole auf der anderen Seite",
+        "Mache 2–3 Wiederholungen pro Seite"
       ],
       "perSide": true,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/nacken-dehnen.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Neck stretch",
+          "description": "Gentle stretch for the neck muscles to relax them",
+          "steps": [
+            "Sit up straight or stand tall",
+            "Slowly tilt your head to the right",
+            "Gently place your right hand on the right side of your head",
+            "Hold the stretch for 15–30 seconds",
+            "Repeat on the other side",
+            "Do 2–3 repetitions per side"
+          ]
+        },
+        "ar": {
+          "name": "تمدد الرقبة",
+          "description": "تمدّد لطيف لعضلات الرقبة للاسترخاء",
+          "steps": [
+            "اجلس بشكل مستقيم أو قف بانتصاب",
+            "أمِل رأسك ببطء نحو اليمين",
+            "ضع يدك اليمنى برفق على الجانب الأيمن من رأسك",
+            "اثبت على التمدد 15–30 ثانية",
+            "كرّر على الجانب الآخر",
+            "قم بـ 2–3 تكرارات لكل جانب"
+          ]
+        }
       }
     },
     {
@@ -28,18 +54,46 @@
       "category": "Schultern",
       "description": "Mobilisierung der Schultergelenke und Entspannung der Schultermuskulatur",
       "steps": [
-        "Stehen Sie aufrecht mit entspannten Armen",
-        "Heben Sie beide Schultern langsam nach oben",
-        "Führen Sie die Schultern nach hinten",
-        "Senken Sie die Schultern nach unten",
-        "Führen Sie die Schultern nach vorne",
-        "Wiederholen Sie 8-10 Kreise nach hinten",
-        "Wechseln Sie die Richtung und kreisen Sie nach vorne"
+        "Stell dich aufrecht hin, die Arme locker",
+        "Hebe beide Schultern langsam nach oben",
+        "Ziehe die Schultern nach hinten",
+        "Senke die Schultern nach unten",
+        "Führe die Schultern nach vorne",
+        "Mache 8–10 Kreise nach hinten",
+        "Wechsle die Richtung und kreise nach vorne"
       ],
       "perSide": false,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/schulterkreisen.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Shoulder circles",
+          "description": "Mobilises the shoulder joints and relaxes the shoulder muscles",
+          "steps": [
+            "Stand tall with your arms relaxed",
+            "Slowly raise both shoulders",
+            "Roll the shoulders back",
+            "Lower the shoulders down",
+            "Bring the shoulders forward",
+            "Do 8–10 circles backwards",
+            "Switch direction and circle forwards"
+          ]
+        },
+        "ar": {
+          "name": "دوران الكتفين",
+          "description": "تحريك مفاصل الكتفين وإرخاء عضلاتهما",
+          "steps": [
+            "قف منتصبًا والذراعان مرتخيتان",
+            "ارفع الكتفين معًا ببطء إلى الأعلى",
+            "أدِر الكتفين إلى الخلف",
+            "اخفض الكتفين إلى الأسفل",
+            "حرّك الكتفين إلى الأمام",
+            "أدِرهما 8–10 دورات إلى الخلف",
+            "غيّر الاتجاه وأدِرهما إلى الأمام"
+          ]
+        }
       }
     },
     {
@@ -48,17 +102,43 @@
       "category": "Schultern",
       "description": "Intensive Dehnung der hinteren Schultermuskulatur",
       "steps": [
-        "Stehen oder sitzen Sie aufrecht",
-        "Führen Sie den rechten Arm horizontal vor die Brust",
-        "Greifen Sie mit der linken Hand den rechten Oberarm",
-        "Ziehen Sie den Arm sanft zur Brust",
-        "Halten Sie 20-30 Sekunden",
-        "Wiederholen Sie mit dem anderen Arm"
+        "Stell oder setz dich aufrecht hin",
+        "Führe den rechten Arm waagerecht vor die Brust",
+        "Greife mit der linken Hand den rechten Oberarm",
+        "Ziehe den Arm sanft zur Brust",
+        "Halte 20–30 Sekunden",
+        "Wiederhole mit dem anderen Arm"
       ],
       "perSide": true,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/schulter-stretch.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Shoulder stretch",
+          "description": "Deep stretch for the back of the shoulder",
+          "steps": [
+            "Stand or sit up straight",
+            "Bring your right arm across your chest",
+            "Grab your right upper arm with your left hand",
+            "Gently pull the arm towards your chest",
+            "Hold for 20–30 seconds",
+            "Repeat with the other arm"
+          ]
+        },
+        "ar": {
+          "name": "تمدد الكتف",
+          "description": "تمدد عميق لعضلات الكتف الخلفية",
+          "steps": [
+            "قف أو اجلس بشكل مستقيم",
+            "مدّ ذراعك اليمنى أفقيًا أمام صدرك",
+            "أمسك العضد الأيمن بيدك اليسرى",
+            "اسحب الذراع برفق نحو صدرك",
+            "اثبت 20–30 ثانية",
+            "كرّر مع الذراع الأخرى"
+          ]
+        }
       }
     },
     {
@@ -67,17 +147,43 @@
       "category": "Arme",
       "description": "Dehnung der Brustmuskulatur und Verbesserung der Körperhaltung",
       "steps": [
-        "Stehen Sie aufrecht an einer Wand oder Türrahmen",
-        "Platzieren Sie den Unterarm gegen die Wand (90° Winkel)",
-        "Treten Sie einen Schritt nach vorne",
-        "Lehnen Sie sich sanft in die Dehnung",
-        "Spüren Sie die Dehnung in der Brust",
-        "Halten Sie 20-30 Sekunden pro Arm"
+        "Stell dich aufrecht neben eine Wand oder einen Türrahmen",
+        "Lege den Unterarm im 90°-Winkel an die Wand",
+        "Mache einen Schritt nach vorne",
+        "Lehne dich sanft in die Dehnung",
+        "Spüre die Dehnung in der Brust",
+        "Halte 20–30 Sekunden pro Arm"
       ],
       "perSide": true,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/brustoeffnung.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Chest opener",
+          "description": "Stretches the chest and improves posture",
+          "steps": [
+            "Stand tall next to a wall or doorframe",
+            "Place your forearm against the wall at 90°",
+            "Take a step forward",
+            "Gently lean into the stretch",
+            "Feel the stretch across your chest",
+            "Hold 20–30 seconds per arm"
+          ]
+        },
+        "ar": {
+          "name": "فتح الصدر",
+          "description": "تمدد عضلات الصدر وتحسين وضعية الجسم",
+          "steps": [
+            "قف منتصبًا بجانب جدار أو إطار باب",
+            "ضع ساعدك على الجدار بزاوية 90 درجة",
+            "اخطُ خطوة إلى الأمام",
+            "مِل برفق داخل التمدد",
+            "اشعر بالتمدد في الصدر",
+            "اثبت 20–30 ثانية لكل ذراع"
+          ]
+        }
       }
     },
     {
@@ -86,18 +192,46 @@
       "category": "Rücken",
       "description": "Mobilisierung der gesamten Wirbelsäule",
       "steps": [
-        "Gehen Sie in den Vierfüßlerstand",
-        "Positionieren Sie Hände unter den Schultern",
-        "Knie sind unter den Hüften",
-        "Runden Sie den Rücken wie eine Katze (Katzenbuckel)",
-        "Senken Sie den Bauch und heben Sie Kopf und Steißbein (Kuh)",
-        "Wechseln Sie langsam zwischen beiden Positionen",
-        "Führen Sie 8-10 fließende Bewegungen durch"
+        "Geh in den Vierfüßlerstand",
+        "Setze die Hände unter die Schultern",
+        "Die Knie sind unter den Hüften",
+        "Runde den Rücken wie eine Katze (Katzenbuckel)",
+        "Senke den Bauch und hebe Kopf und Steißbein (Kuh)",
+        "Wechsle langsam zwischen beiden Positionen",
+        "Mache 8–10 fließende Bewegungen"
       ],
       "perSide": false,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/katzen-kuh-dehnung.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Cat-cow",
+          "description": "Mobilises the whole spine",
+          "steps": [
+            "Get on all fours",
+            "Place your hands under your shoulders",
+            "Keep your knees under your hips",
+            "Round your back like a cat",
+            "Lower your belly and lift your head and tailbone (cow)",
+            "Move slowly between both positions",
+            "Do 8–10 smooth repetitions"
+          ]
+        },
+        "ar": {
+          "name": "وضعية القطة والبقرة",
+          "description": "تحريك العمود الفقري بالكامل",
+          "steps": [
+            "اجلس على أربع (اليدين والركبتين)",
+            "ضع يديك تحت كتفيك",
+            "اجعل ركبتيك تحت وركيك",
+            "قوّس ظهرك إلى الأعلى مثل القطة",
+            "اخفض بطنك وارفع رأسك وعظمة الذيل (البقرة)",
+            "تنقّل ببطء بين الوضعين",
+            "كرّر 8–10 حركات انسيابية"
+          ]
+        }
       }
     },
     {
@@ -106,18 +240,46 @@
       "category": "Ganzkörper",
       "description": "Ganzkörperdehnung mit Fokus auf Rücken und Beine",
       "steps": [
-        "Beginnen Sie im Vierfüßlerstand",
-        "Stellen Sie die Zehen auf",
-        "Heben Sie die Hüfte nach oben und hinten",
-        "Strecken Sie die Beine soweit möglich",
-        "Drücken Sie die Hände fest in den Boden",
-        "Bilden Sie ein umgekehrtes V mit Ihrem Körper",
-        "Halten Sie 30-60 Sekunden"
+        "Beginne im Vierfüßlerstand",
+        "Stelle die Zehen auf",
+        "Hebe die Hüfte nach oben und hinten",
+        "Strecke die Beine so weit wie möglich",
+        "Drücke die Hände fest in den Boden",
+        "Forme mit dem Körper ein umgekehrtes V",
+        "Halte 30–60 Sekunden"
       ],
       "perSide": false,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/herabschauender-hund.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Downward dog",
+          "description": "Full-body stretch focused on back and legs",
+          "steps": [
+            "Start on all fours",
+            "Tuck your toes under",
+            "Lift your hips up and back",
+            "Straighten your legs as far as comfortable",
+            "Press your hands firmly into the floor",
+            "Form an upside-down V with your body",
+            "Hold for 30–60 seconds"
+          ]
+        },
+        "ar": {
+          "name": "وضعية الكلب المنحني",
+          "description": "تمدد للجسم كله مع التركيز على الظهر والساقين",
+          "steps": [
+            "ابدأ على أربع",
+            "اثنِ أصابع قدميك على الأرض",
+            "ارفع وركيك إلى الأعلى والخلف",
+            "مدّ ساقيك قدر المستطاع",
+            "اضغط بيديك بقوة على الأرض",
+            "كوّن بجسمك حرف V مقلوبًا",
+            "اثبت 30–60 ثانية"
+          ]
+        }
       }
     },
     {
@@ -126,18 +288,46 @@
       "category": "Rücken",
       "description": "Rückbeuge zur Stärkung und Dehnung der Rückenmuskulatur",
       "steps": [
-        "Legen Sie sich auf den Bauch",
-        "Platzieren Sie die Hände unter den Schultern",
-        "Drücken Sie sich langsam mit den Armen hoch",
-        "Heben Sie Brust und Kopf vom Boden",
-        "Halten Sie die Hüfte am Boden",
-        "Schauen Sie nach oben",
-        "Halten Sie 15-30 Sekunden"
+        "Leg dich auf den Bauch",
+        "Setze die Hände unter die Schultern",
+        "Drücke dich langsam mit den Armen hoch",
+        "Hebe Brust und Kopf vom Boden",
+        "Lass die Hüfte am Boden",
+        "Schau nach oben",
+        "Halte 15–30 Sekunden"
       ],
       "perSide": false,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/kobra-stretch.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Cobra stretch",
+          "description": "Back extension to strengthen and stretch the back muscles",
+          "steps": [
+            "Lie on your stomach",
+            "Place your hands under your shoulders",
+            "Slowly push yourself up with your arms",
+            "Lift your chest and head off the floor",
+            "Keep your hips on the floor",
+            "Look upwards",
+            "Hold for 15–30 seconds"
+          ]
+        },
+        "ar": {
+          "name": "تمدد الكوبرا",
+          "description": "تقوّس للخلف لتقوية عضلات الظهر وتمديدها",
+          "steps": [
+            "استلقِ على بطنك",
+            "ضع يديك تحت كتفيك",
+            "ارتفع ببطء بدفع ذراعيك",
+            "ارفع صدرك ورأسك عن الأرض",
+            "أبقِ وركيك على الأرض",
+            "انظر إلى الأعلى",
+            "اثبت 15–30 ثانية"
+          ]
+        }
       }
     },
     {
@@ -146,18 +336,46 @@
       "category": "Rücken",
       "description": "Rotation der Wirbelsäule zur Verbesserung der Beweglichkeit",
       "steps": [
-        "Setzen Sie sich aufrecht hin",
-        "Kreuzen Sie das rechte Bein über das linke",
-        "Stützen Sie sich mit der rechten Hand hinter dem Körper ab",
-        "Legen Sie den linken Ellbogen gegen das rechte Knie",
-        "Drehen Sie den Oberkörper sanft nach rechts",
-        "Halten Sie 20-30 Sekunden",
-        "Wiederholen Sie auf der anderen Seite"
+        "Setz dich aufrecht hin",
+        "Kreuze das rechte Bein über das linke",
+        "Stütze dich mit der rechten Hand hinter dem Körper ab",
+        "Lege den linken Ellbogen gegen das rechte Knie",
+        "Drehe den Oberkörper sanft nach rechts",
+        "Halte 20–30 Sekunden",
+        "Wiederhole auf der anderen Seite"
       ],
       "perSide": true,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/rumpfdrehung.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Spinal twist",
+          "description": "Rotates the spine to improve mobility",
+          "steps": [
+            "Sit up straight",
+            "Cross your right leg over your left",
+            "Support yourself with your right hand behind you",
+            "Place your left elbow against your right knee",
+            "Gently rotate your upper body to the right",
+            "Hold for 20–30 seconds",
+            "Repeat on the other side"
+          ]
+        },
+        "ar": {
+          "name": "التفاف العمود الفقري",
+          "description": "تدوير العمود الفقري لتحسين المرونة",
+          "steps": [
+            "اجلس بشكل مستقيم",
+            "اعبر ساقك اليمنى فوق اليسرى",
+            "استند بيدك اليمنى خلف ظهرك",
+            "ضع مرفقك الأيسر على ركبتك اليمنى",
+            "أدِر جذعك برفق نحو اليمين",
+            "اثبت 20–30 ثانية",
+            "كرّر على الجانب الآخر"
+          ]
+        }
       }
     },
     {
@@ -166,17 +384,43 @@
       "category": "Hüfte",
       "description": "Intensive Dehnung der Hüftbeugemuskulatur",
       "steps": [
-        "Machen Sie einen großen Ausfallschritt nach vorne",
-        "Senken Sie das hintere Knie zum Boden",
-        "Halten Sie den Oberkörper aufrecht",
-        "Schieben Sie die Hüfte nach vorne",
-        "Spüren Sie die Dehnung in der Hüfte",
-        "Halten Sie 30 Sekunden pro Seite"
+        "Mache einen großen Ausfallschritt nach vorne",
+        "Senke das hintere Knie zum Boden",
+        "Halte den Oberkörper aufrecht",
+        "Schiebe die Hüfte nach vorne",
+        "Spüre die Dehnung in der Hüfte",
+        "Halte 30 Sekunden pro Seite"
       ],
       "perSide": true,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/hueftbeuger-dehnung.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Hip flexor stretch",
+          "description": "Deep stretch for the hip flexors",
+          "steps": [
+            "Take a big lunge step forward",
+            "Lower your back knee to the floor",
+            "Keep your upper body upright",
+            "Push your hips forward",
+            "Feel the stretch in your hip",
+            "Hold 30 seconds per side"
+          ]
+        },
+        "ar": {
+          "name": "تمدد ثنيات الورك",
+          "description": "تمدد عميق لعضلات ثني الورك",
+          "steps": [
+            "اخطُ خطوة اندفاع كبيرة إلى الأمام",
+            "اخفض الركبة الخلفية نحو الأرض",
+            "أبقِ جذعك منتصبًا",
+            "ادفع وركيك إلى الأمام",
+            "اشعر بالتمدد في الورك",
+            "اثبت 30 ثانية لكل جانب"
+          ]
+        }
       }
     },
     {
@@ -185,18 +429,46 @@
       "category": "Beine",
       "description": "Dehnung der vorderen Oberschenkelmuskulatur (Quadrizeps)",
       "steps": [
-        "Stehen Sie aufrecht und halten Sie sich an einer Wand fest",
-        "Beugen Sie das rechte Knie nach hinten",
-        "Greifen Sie den rechten Fuß mit der Hand",
-        "Ziehen Sie die Ferse zum Gesäß",
-        "Halten Sie die Knie parallel",
-        "Halten Sie 20-30 Sekunden",
-        "Wiederholen Sie mit dem anderen Bein"
+        "Stell dich aufrecht hin und halte dich an einer Wand fest",
+        "Beuge das rechte Knie nach hinten",
+        "Greife den rechten Fuß mit der Hand",
+        "Ziehe die Ferse zum Gesäß",
+        "Halte die Knie parallel",
+        "Halte 20–30 Sekunden",
+        "Wiederhole mit dem anderen Bein"
       ],
       "perSide": true,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/oberschenkelvorderseite.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Quad stretch",
+          "description": "Stretches the front of the thigh (quadriceps)",
+          "steps": [
+            "Stand tall and hold on to a wall",
+            "Bend your right knee backwards",
+            "Grab your right foot with your hand",
+            "Pull your heel towards your glutes",
+            "Keep your knees parallel",
+            "Hold for 20–30 seconds",
+            "Repeat with the other leg"
+          ]
+        },
+        "ar": {
+          "name": "تمدد عضلة الفخذ الأمامية",
+          "description": "تمدد عضلات مقدمة الفخذ (الرباعية)",
+          "steps": [
+            "قف منتصبًا وتمسّك بجدار",
+            "اثنِ ركبتك اليمنى إلى الخلف",
+            "أمسك قدمك اليمنى بيدك",
+            "اسحب كعبك نحو المؤخرة",
+            "أبقِ الركبتين متوازيتين",
+            "اثبت 20–30 ثانية",
+            "كرّر مع الساق الأخرى"
+          ]
+        }
       }
     },
     {
@@ -205,18 +477,46 @@
       "category": "Beine",
       "description": "Dehnung der Wadenmuskulatur",
       "steps": [
-        "Stellen Sie sich an eine Wand",
-        "Setzen Sie das rechte Bein einen großen Schritt nach hinten",
-        "Stützen Sie sich mit den Händen an der Wand ab",
-        "Halten Sie das hintere Bein gestreckt",
-        "Drücken Sie die Ferse fest auf den Boden",
-        "Lehnen Sie sich nach vorne in die Dehnung",
-        "Halten Sie 30 Sekunden pro Bein"
+        "Stell dich vor eine Wand",
+        "Setze das rechte Bein einen großen Schritt nach hinten",
+        "Stütze dich mit den Händen an der Wand ab",
+        "Halte das hintere Bein gestreckt",
+        "Drücke die Ferse fest auf den Boden",
+        "Lehne dich nach vorne in die Dehnung",
+        "Halte 30 Sekunden pro Bein"
       ],
       "perSide": true,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/wadendehnung.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Calf stretch",
+          "description": "Stretches the calf muscles",
+          "steps": [
+            "Stand facing a wall",
+            "Step your right leg far back",
+            "Support yourself with your hands on the wall",
+            "Keep the back leg straight",
+            "Press your heel firmly into the floor",
+            "Lean forward into the stretch",
+            "Hold 30 seconds per leg"
+          ]
+        },
+        "ar": {
+          "name": "تمدد عضلة السمانة",
+          "description": "تمدد عضلات الساق الخلفية",
+          "steps": [
+            "قف أمام جدار",
+            "ضع ساقك اليمنى خطوة كبيرة إلى الخلف",
+            "استند بيديك على الجدار",
+            "أبقِ الساق الخلفية مستقيمة",
+            "اضغط بكعبك بقوة على الأرض",
+            "مِل إلى الأمام داخل التمدد",
+            "اثبت 30 ثانية لكل ساق"
+          ]
+        }
       }
     },
     {
@@ -225,18 +525,46 @@
       "category": "Beine",
       "description": "Stärkung der Bauchmuskulatur und Hüftbeuger",
       "steps": [
-        "Legen Sie sich auf den Rücken",
-        "Strecken Sie die Beine aus",
-        "Legen Sie die Hände seitlich neben den Körper",
-        "Heben Sie beide Beine langsam an (90° Winkel)",
-        "Senken Sie die Beine kontrolliert ab",
-        "Berühren Sie nicht den Boden",
-        "Wiederholen Sie 10-15 Mal"
+        "Leg dich auf den Rücken",
+        "Strecke die Beine aus",
+        "Lege die Hände seitlich neben den Körper",
+        "Hebe beide Beine langsam an (90°-Winkel)",
+        "Senke die Beine kontrolliert ab",
+        "Berühre den Boden nicht",
+        "Wiederhole 10–15 Mal"
       ],
       "perSide": false,
       "defaultEnabled": false,
       "images": {
         "man": "images/man/beinheben.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Leg raises",
+          "description": "Strengthens the abs and hip flexors",
+          "steps": [
+            "Lie on your back",
+            "Stretch your legs out",
+            "Place your hands beside your body",
+            "Slowly raise both legs (90° angle)",
+            "Lower your legs with control",
+            "Don't touch the floor",
+            "Repeat 10–15 times"
+          ]
+        },
+        "ar": {
+          "name": "رفع الساقين",
+          "description": "تقوية عضلات البطن وثنيات الورك",
+          "steps": [
+            "استلقِ على ظهرك",
+            "مدّ ساقيك",
+            "ضع يديك بجانب جسمك",
+            "ارفع الساقين معًا ببطء (بزاوية 90 درجة)",
+            "اخفض الساقين بتحكّم",
+            "لا تلمس الأرض",
+            "كرّر 10–15 مرة"
+          ]
+        }
       }
     },
     {
@@ -245,18 +573,46 @@
       "category": "Hüfte",
       "description": "Dehnung der Innenseite der Oberschenkel und Hüftöffnung",
       "steps": [
-        "Setzen Sie sich aufrecht hin",
-        "Bringen Sie die Fußsohlen zusammen",
-        "Ziehen Sie die Füße nah zum Körper",
-        "Umfassen Sie die Füße mit den Händen",
-        "Drücken Sie die Knie sanft Richtung Boden",
-        "Halten Sie den Rücken gerade",
-        "Halten Sie 30-45 Sekunden"
+        "Setz dich aufrecht hin",
+        "Bringe die Fußsohlen zusammen",
+        "Ziehe die Füße nah zum Körper",
+        "Umfasse die Füße mit den Händen",
+        "Drücke die Knie sanft Richtung Boden",
+        "Halte den Rücken gerade",
+        "Halte 30–45 Sekunden"
       ],
       "perSide": false,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/schmetterlingssitz.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Butterfly stretch",
+          "description": "Stretches the inner thighs and opens the hips",
+          "steps": [
+            "Sit up straight",
+            "Bring the soles of your feet together",
+            "Pull your feet close to your body",
+            "Hold your feet with your hands",
+            "Gently press your knees towards the floor",
+            "Keep your back straight",
+            "Hold for 30–45 seconds"
+          ]
+        },
+        "ar": {
+          "name": "وضعية الفراشة",
+          "description": "تمدد باطن الفخذين وفتح الوركين",
+          "steps": [
+            "اجلس بشكل مستقيم",
+            "ضع باطن القدمين معًا",
+            "اسحب قدميك قريبًا من جسمك",
+            "أمسك قدميك بيديك",
+            "اضغط ركبتيك برفق نحو الأرض",
+            "أبقِ ظهرك مستقيمًا",
+            "اثبت 30–45 ثانية"
+          ]
+        }
       }
     },
     {
@@ -265,18 +621,46 @@
       "category": "Ganzkörper",
       "description": "Dehnung der hinteren Beinmuskulatur und des Rückens",
       "steps": [
-        "Setzen Sie sich mit gestreckten Beinen hin",
-        "Halten Sie den Rücken gerade",
-        "Beugen Sie sich langsam nach vorne",
-        "Greifen Sie zu den Füßen oder Unterschenkeln",
-        "Halten Sie die Beine gestreckt",
-        "Spüren Sie die Dehnung in den Beinen und im Rücken",
-        "Halten Sie 30-45 Sekunden"
+        "Stell dich aufrecht hin, die Füße hüftbreit",
+        "Halte den Rücken gerade",
+        "Beuge dich langsam aus der Hüfte nach vorne",
+        "Lass Oberkörper und Arme locker nach unten hängen",
+        "Die Hände dürfen Unterschenkel oder Boden berühren",
+        "Spüre die Dehnung in den Beinen und im Rücken",
+        "Halte 30–45 Sekunden"
       ],
       "perSide": false,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/vorwaertsbeuge.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Forward fold",
+          "description": "Stretches the back of the legs and the back",
+          "steps": [
+            "Stand tall with your feet hip-width apart",
+            "Keep your back straight",
+            "Slowly fold forward from the hips",
+            "Let your upper body and arms hang loose",
+            "Your hands may touch your shins or the floor",
+            "Feel the stretch in your legs and back",
+            "Hold for 30–45 seconds"
+          ]
+        },
+        "ar": {
+          "name": "الانحناء للأمام",
+          "description": "تمدد عضلات الساقين الخلفية والظهر",
+          "steps": [
+            "قف منتصبًا وقدماك بعرض الوركين",
+            "أبقِ ظهرك مستقيمًا",
+            "انحنِ ببطء إلى الأمام من الوركين",
+            "دع جذعك وذراعيك يتدلّيان بارتخاء",
+            "يمكن ليديك أن تلمسا الساقين أو الأرض",
+            "اشعر بالتمدد في الساقين والظهر",
+            "اثبت 30–45 ثانية"
+          ]
+        }
       }
     },
     {
@@ -285,18 +669,46 @@
       "category": "Ganzkörper",
       "description": "Dehnung der seitlichen Rumpfmuskulatur",
       "steps": [
-        "Stehen Sie aufrecht mit den Füßen schulterbreit",
-        "Heben Sie den rechten Arm über den Kopf",
-        "Neigen Sie den Oberkörper zur linken Seite",
-        "Halten Sie die Hüfte stabil",
-        "Spüren Sie die Dehnung an der rechten Seite",
-        "Halten Sie 20-30 Sekunden",
-        "Wiederholen Sie auf der anderen Seite"
+        "Stell dich aufrecht hin, die Füße schulterbreit",
+        "Hebe den rechten Arm über den Kopf",
+        "Neige den Oberkörper zur linken Seite",
+        "Halte die Hüfte stabil",
+        "Spüre die Dehnung an der rechten Seite",
+        "Halte 20–30 Sekunden",
+        "Wiederhole auf der anderen Seite"
       ],
       "perSide": true,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/seitbeuge.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Side bend",
+          "description": "Stretches the side of the torso",
+          "steps": [
+            "Stand tall with feet shoulder-width apart",
+            "Raise your right arm over your head",
+            "Lean your upper body to the left",
+            "Keep your hips steady",
+            "Feel the stretch along your right side",
+            "Hold for 20–30 seconds",
+            "Repeat on the other side"
+          ]
+        },
+        "ar": {
+          "name": "الانحناء الجانبي",
+          "description": "تمدد عضلات الجذع الجانبية",
+          "steps": [
+            "قف منتصبًا وقدماك بعرض الكتفين",
+            "ارفع ذراعك اليمنى فوق رأسك",
+            "أمِل جذعك نحو اليسار",
+            "أبقِ وركيك ثابتين",
+            "اشعر بالتمدد على الجانب الأيمن",
+            "اثبت 20–30 ثانية",
+            "كرّر على الجانب الآخر"
+          ]
+        }
       }
     },
     {
@@ -305,18 +717,46 @@
       "category": "Entspannung",
       "description": "Entspannungsposition für Rücken und Schultern",
       "steps": [
-        "Knien Sie sich hin und setzen Sie sich auf die Fersen",
-        "Spreizen Sie die Knie etwas auseinander",
-        "Beugen Sie sich nach vorne",
-        "Strecken Sie die Arme nach vorne aus",
-        "Legen Sie die Stirn auf den Boden",
-        "Atmen Sie tief und entspannen Sie sich",
-        "Halten Sie so lange wie gewünscht"
+        "Knie dich hin und setz dich auf die Fersen",
+        "Spreize die Knie etwas auseinander",
+        "Beuge dich nach vorne",
+        "Strecke die Arme nach vorne aus",
+        "Lege die Stirn auf den Boden",
+        "Atme tief und entspanne dich",
+        "Halte so lange du möchtest"
       ],
       "perSide": false,
       "defaultEnabled": true,
       "images": {
         "man": "images/man/kindspose.webp"
+      },
+      "i18n": {
+        "en": {
+          "name": "Child's pose",
+          "description": "Relaxing pose for the back and shoulders",
+          "steps": [
+            "Kneel down and sit back on your heels",
+            "Spread your knees slightly apart",
+            "Fold forward",
+            "Stretch your arms out in front of you",
+            "Rest your forehead on the floor",
+            "Breathe deeply and relax",
+            "Hold for as long as you like"
+          ]
+        },
+        "ar": {
+          "name": "وضعية الطفل",
+          "description": "وضعية استرخاء للظهر والكتفين",
+          "steps": [
+            "اجثُ على ركبتيك واجلس على كعبيك",
+            "باعد ركبتيك قليلًا",
+            "انحنِ إلى الأمام",
+            "مدّ ذراعيك أمامك",
+            "ضع جبهتك على الأرض",
+            "تنفّس بعمق واسترخِ",
+            "ابقَ بقدر ما تشاء"
+          ]
+        }
       }
     }
   ]

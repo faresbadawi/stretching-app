@@ -1,7 +1,8 @@
 // Einstieg: Daten laden, Darstellung anwenden, Oberflächen und Service Worker starten.
 import * as st from './store.js';
 import { initViews, setOfflineReady } from './views.js';
-import { initTraining } from './training.js';
+import { initTraining, labelTraining } from './training.js';
+import { setLang, resolveLang, applyStatic } from './i18n.js';
 import { refresh as refreshReminders } from './notifications.js';
 
 const ACCENT_THEME_COLOR = { blue: '#2f7df6', green: '#14a86f', violet: '#7a5cff', orange: '#f2780c', pink: '#e5489b' };
@@ -12,6 +13,9 @@ function applyAppearance() {
   if (S.theme === 'auto') root.removeAttribute('data-theme'); else root.dataset.theme = S.theme;
   root.dataset.accent = S.accent;
   document.querySelector('meta[name=theme-color]').content = ACCENT_THEME_COLOR[S.accent] || '#2f7df6';
+  setLang(resolveLang(S.lang));
+  applyStatic();
+  labelTraining();
 }
 
 async function init() {

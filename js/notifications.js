@@ -1,6 +1,7 @@
 // Push-Erinnerungen: Abo im Browser anlegen und Tage/Uhrzeit an den Erinnerungs-Server (Cloudflare Worker) melden.
 import { settings, updateSettings } from './store.js';
 import { REMINDER_API, VAPID_PUBLIC_KEY } from './config.js';
+import { lang } from './i18n.js';
 
 export const supported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 export const configured = () => Boolean(REMINDER_API && VAPID_PUBLIC_KEY);
@@ -16,7 +17,7 @@ function keyBytes(b64url) {
 async function post(path, body) {
   const res = await fetch(REMINDER_API + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok || json.ok === false) throw new Error(json.error || `Server-Fehler ${res.status}`);
+  if (!res.ok || json.ok === false) throw new Error(json.error || `push.server:${res.status}`);
   return json;
 }
 
@@ -32,14 +33,14 @@ export async function sync(existing) {
   const S = settings();
   const sub = existing || (await getSubscription(false));
   if (!sub) return;
-  await post('/subscribe', { subscription: sub.toJSON(), days: S.remindDays, time: S.remindTime, tz: timeZone() });
+  await post('/subscribe', { subscription: sub.toJSON(), days: S.remindDays, time: S.remindTime, tz: timeZone(), lang: lang() });
 }
 
 export async function enable() {
-  if (!supported()) throw new Error('Dieses Gerät unterstützt keine Benachrichtigungen.');
-  if (!configured()) throw new Error('Der Erinnerungs-Server ist noch nicht eingerichtet.');
+  if (!supported()) throw new Error('push.unsupported');
+  if (!configured()) throw new Error('plan.hint.noserver');
   const permission = await Notification.requestPermission();
-  if (permission !== 'granted') throw new Error('Benachrichtigungen sind blockiert. Erlaube sie in den Einstellungen deines Geräts.');
+  if (permission !== 'granted') throw new Error('push.denied');
   const sub = await getSubscription(true);
   await sync(sub);
   updateSettings({ remindOn: true });
@@ -73,6 +74,6 @@ export async function markTrained() {
 
 export async function sendTest() {
   const sub = await getSubscription(false);
-  if (!sub) throw new Error('Erinnerung ist nicht eingeschaltet.');
+  if (!sub) throw new Error('push.off');
   await post('/test', { endpoint: sub.endpoint });
 }

@@ -36,18 +36,15 @@ Eigene Übungen, Fotos und Programme liegen im Browser des jeweiligen Geräts (l
 | `js/notifications.js`, `js/config.js` | Push-Erinnerungen (Client) und Server-Adresse |
 | `reminder-worker/` | Cloudflare-Worker für die Erinnerungen |
 
+## Sprachen
+
+Deutsch, Englisch und Arabisch (Arabisch von rechts nach links). Die Sprache folgt dem Gerät und lässt sich unter „Optionen → Darstellung“ ändern. Texte stehen in `js/lang/*.js`, die Übungstexte je Sprache in `data/exercises.json` (`i18n`). Eigene Übungen bleiben in der Sprache, in der sie getippt wurden.
+
 ## Sprachansagen
 
-Vier kurze Clips (`audio/voice/*.mp3`: „Mach dich bereit“, „Pause“, „Seitenwechsel“, „Training geschafft“), erzeugt mit dem Programm Piper und der deutschen Stimme „Thorsten“ (`de_DE-thorsten-medium`, Lizenz CC0). Übungsnamen werden nicht angesagt.
-
-## Push-Erinnerungen
-
-In „Optionen → Trainingsplan“ stellst du Trainingstage und Uhrzeit ein. Die Nachrichten schickt ein kleiner Cloudflare-Worker (`reminder-worker/`), der alle 5 Minuten prüft, wer erinnert werden muss (nicht, wenn heute schon trainiert wurde). Er speichert nur das Push-Abo, Tage, Uhrzeit und Zeitzone.
-
-- Kosten: Der kostenlose Cloudflare-Tarif reicht aus, es ist keine Zahlungskarte hinterlegt.
-- iPhone/iPad: Die App muss zum Home-Bildschirm hinzugefügt sein (iOS 16.4 oder neuer).
-- Einrichten/Aktualisieren: `cd reminder-worker && npm install && npx wrangler login`, dann `npx wrangler deploy`. Den privaten Schlüssel (`node generate-vapid.mjs`) nur als Secret speichern: `npx wrangler secret put VAPID_PRIVATE_KEY`. Die Worker-Adresse steht in `js/config.js`.
-- Tests: `cd reminder-worker && npm test`
+- **Deutsch / Englisch:** Vier kurze, vorab erzeugte Clips je Sprache (`audio/voice/de|en/*.mp3`: bereit, Pause, Seitenwechsel, Abschluss). Erzeugt mit dem Programm Piper und den Stimmen „Thorsten“ (`de_DE-thorsten-medium`) und „Joe“ (`en_US-joe-medium`), beide Lizenz CC0.
+- **Arabisch:** Sprachausgabe des Geräts in normaler Tonhöhe (männliche Stimme bevorzugt). Hat das Gerät keine arabische Stimme, gibt es nur Signaltöne. Eine frei nutzbare, gut klingende arabische Stimme zum Vorab-Erzeugen gibt es derzeit nicht.
+- Am Ende: Applaus, nach ein paar Sekunden die Abschlussansage.
 
 ## Weitere Bildvariante ergänzen (optional)
 

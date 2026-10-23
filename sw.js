@@ -1,13 +1,17 @@
 // Service Worker: legt alle App-Dateien beim ersten Besuch im Cache ab -> komplett offline nutzbar.
 // Die Liste unten wird von `node tools/update-sw.mjs` erzeugt (vor jedem Veröffentlichen ausführen).
 /* BEGIN GENERATED */
-const CACHE = 'stretching-657a1fe658';
+const CACHE = 'stretching-212789af95';
 const FILES = [
   "./",
-  "./audio/voice/complete.mp3",
-  "./audio/voice/get-ready.mp3",
-  "./audio/voice/rest.mp3",
-  "./audio/voice/switch.mp3",
+  "./audio/voice/de/complete.mp3",
+  "./audio/voice/de/get-ready.mp3",
+  "./audio/voice/de/rest.mp3",
+  "./audio/voice/de/switch.mp3",
+  "./audio/voice/en/complete.mp3",
+  "./audio/voice/en/get-ready.mp3",
+  "./audio/voice/en/rest.mp3",
+  "./audio/voice/en/switch.mp3",
   "./css/style.css",
   "./data/exercises.json",
   "./icons/apple-touch-icon.png",
@@ -33,6 +37,10 @@ const FILES = [
   "./index.html",
   "./js/app.js",
   "./js/config.js",
+  "./js/i18n.js",
+  "./js/lang/ar.js",
+  "./js/lang/de.js",
+  "./js/lang/en.js",
   "./js/notifications.js",
   "./js/sound.js",
   "./js/store.js",

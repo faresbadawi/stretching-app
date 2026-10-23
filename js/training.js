@@ -1,7 +1,8 @@
 // Trainingsablauf: Timer, Phasen (Bereit / Dehnen / Pause), Anzeige, Signale.
-import { buildSegments, totalSeconds, settings, addHistory, weekInfo } from './store.js';
+import { buildSegments, totalSeconds, settings, addHistory, weekInfo, wname } from './store.js';
+import { t, catLabel } from './i18n.js';
 import * as snd from './sound.js';
-import { $, h, icon, thumb, fmtTime, openSheet, confirmDialog, confetti } from './ui.js';
+import { $, h, icon, fmtTime, confirmDialog, confetti } from './ui.js';
 import { exerciseDetail } from './views.js';
 import { markTrained } from './notifications.js';
 
@@ -10,6 +11,15 @@ let s = null; // laufende Sitzung
 
 const setIcon = (el, name) => el.replaceChildren(icon(name));
 
+// Beschriftungen der Knöpfe (bei Sprachwechsel erneut aufrufen)
+export function labelTraining() {
+  $('t-stop').setAttribute('aria-label', t('aria.stop'));
+  $('t-info').setAttribute('aria-label', t('aria.info'));
+  $('t-prev').setAttribute('aria-label', t('aria.prev'));
+  $('t-skip').setAttribute('aria-label', t('aria.next'));
+  $('t-toggle').setAttribute('aria-label', t(s && s.paused ? 'aria.resume' : 'aria.pause'));
+}
+
 export function initTraining() {
   setIcon($('t-stop'), 'close');
   setIcon($('t-info'), 'info');
@@ -17,6 +27,7 @@ export function initTraining() {
   setIcon($('t-skip'), 'next');
   setIcon($('t-toggle'), 'pause');
   $('done-icon').replaceChildren(icon('trophy'));
+  labelTraining();
 
   $('t-toggle').addEventListener('click', () => setPaused(!s.paused));
   $('t-skip').addEventListener('click', () => {
@@ -34,7 +45,7 @@ export function initTraining() {
   $('t-stop').addEventListener('click', async () => {
     const wasPaused = s.paused;
     setPaused(true);
-    const ok = await confirmDialog('Das Training wird nicht gezählt.', { ok: 'Beenden', title: 'Training beenden?' });
+    const ok = await confirmDialog(t('stop.text'), { ok: t('stop.ok'), title: t('stop.title') });
     if (ok) stop(); else if (!wasPaused && s) setPaused(false);
   });
   $('t-info').addEventListener('click', () => {
@@ -56,8 +67,8 @@ export function initTraining() {
   document.addEventListener('keydown', (e) => {
     if (!s || document.querySelector('dialog[open]')) return;
     if (e.code === 'Space') { e.preventDefault(); setPaused(!s.paused); }
-    else if (e.code === 'ArrowRight') $('t-skip').click();
-    else if (e.code === 'ArrowLeft') $('t-prev').click();
+    else if (e.code === 'ArrowRight') $(document.documentElement.dir === 'rtl' ? 't-prev' : 't-skip').click();
+    else if (e.code === 'ArrowLeft') $(document.documentElement.dir === 'rtl' ? 't-skip' : 't-prev').click();
   });
 }
 
@@ -88,7 +99,7 @@ export function startTraining(workout) {
   snd.preloadVoice(['get-ready', 'rest', 'switch', 'complete']);
   const count = segs.filter((x) => x.type === 'work' && x.side === 0).length;
   s = { w: workout, segs, count, i: 0, startTs: performance.now(), elapsedAtPause: 0, paused: false, lastLeft: null, timer: null, total: totalSeconds(segs) };
-  $('t-progress').replaceChildren(...Array.from({ length: count }, () => h('i')));
+  labelTraining();
   document.body.classList.add('busy');
   const tr = $('training');
   tr.hidden = false;
@@ -129,18 +140,13 @@ function enter(playCue = true) {
   $('t-ph').hidden = !!ex.image;
   $('t-ph').replaceChildren(icon('figure'));
   $('t-name').textContent = ex.name;
-  $('t-cat').textContent = ex.category || '';
-  $('t-badge').textContent = seg.type === 'work' ? '' : seg.type === 'prep' ? 'Erste Übung' : 'Als Nächstes';
+  $('t-kicker').textContent = seg.type === 'work' ? (ex.category ? catLabel(ex.category) : '') : t(seg.type === 'prep' ? 'kicker.first' : 'kicker.next');
   card.classList.toggle('dim', seg.type !== 'work');
 
-  $('t-phase').textContent = seg.type === 'prep' ? 'Bereit?' : seg.type === 'rest' ? 'Pause' : seg.sides > 1 ? `Seite ${seg.side + 1} von 2` : 'Dehnen';
+  $('t-phase').textContent = seg.type === 'prep' ? t('phase.ready') : seg.type === 'rest' ? t('phase.rest') : seg.sides > 1 ? t('phase.side', { a: seg.side + 1 }) : t('phase.stretch');
   const n = seg.type === 'prep' ? 1 : seg.idx + 1;
-  $('t-sub').textContent = `Übung ${n} von ${s.count}`;
+  $('t-counter').textContent = t('tr.counter', { a: n, b: s.count });
   $('circle').classList.toggle('breathe', seg.type === 'rest');
-
-  const bars = $('t-progress').children;
-  const cur = seg.type === 'prep' ? 0 : seg.idx;
-  [...bars].forEach((b, k) => { b.className = k < cur ? 'done' : k === cur ? 'cur' : ''; });
 
   renderNext(seg);
 
@@ -160,17 +166,15 @@ function enter(playCue = true) {
 function renderNext(seg) {
   const el = $('t-next');
   if (seg.type !== 'work') {
-    el.replaceChildren(h('div', { class: 'tip' }, seg.ex.description || 'Atme ruhig und lockere dich.'));
+    el.replaceChildren(h('span', {}, seg.ex.description || t('rest.tipFallback')));
     return;
   }
   if (seg.sides > 1 && seg.side === 0) {
-    el.replaceChildren(h('div', { class: 'nx' }, h('div', {}, h('small', {}, 'Danach'), h('b', {}, 'Seite wechseln'))));
+    el.replaceChildren(h('span', {}, t('next.label') + ': ', h('b', {}, t('next.switch'))));
     return;
   }
   const next = s.segs.slice(s.i + 1).find((x) => x.type === 'work');
-  el.replaceChildren(next
-    ? h('div', { class: 'nx' }, thumb(next.ex), h('div', {}, h('small', {}, 'Als Nächstes'), h('b', {}, next.ex.name)))
-    : h('div', { class: 'nx' }, h('div', {}, h('small', {}, 'Fast geschafft'), h('b', {}, 'Letzte Übung'))));
+  el.replaceChildren(h('span', {}, next ? [t('next.label') + ': ', h('b', {}, next.ex.name)] : h('b', {}, t('next.last'))));
 }
 
 function tick() {
@@ -202,7 +206,9 @@ function tick() {
 
 function renderTotals(el) {
   const before = s.segs.slice(0, s.i).reduce((n, x) => n + x.dur, 0);
-  $('t-remaining').textContent = 'Noch ' + fmtTime(s.total - before - el / 1000);
+  const done = before + el / 1000;
+  $('t-remaining').textContent = t('tr.remaining', { t: fmtTime(s.total - done) });
+  $('t-bar-fill').style.width = (100 * done / s.total) + '%';
 }
 
 function setPaused(p) {
@@ -220,7 +226,7 @@ function setPaused(p) {
   }
   $('training').classList.toggle('paused', p);
   setIcon($('t-toggle'), p ? 'play' : 'pause');
-  $('t-toggle').setAttribute('aria-label', p ? 'Fortsetzen' : 'Pause');
+  labelTraining();
 }
 
 function jumpTo(i) {
@@ -236,16 +242,17 @@ function finish() {
   const seconds = s.total;
   const count = s.count;
   snd.cue.finish();
-  snd.say('complete', 1200);
+  // Erst Applaus, dann nach ein paar Sekunden die Abschlussansage
+  snd.say('complete', Math.round(snd.cue.finishSeconds * 1000) + 300);
   stop();
-  addHistory({ workoutId: w.id, name: w.name, seconds, count });
+  addHistory({ workoutId: w.id, name: wname(w), nameKey: w.nameKey || null, seconds, count });
   markTrained();
-  $('done-text').textContent = `${w.name}: ${count} Übungen in ca. ${Math.max(1, Math.round(seconds / 60))} Minuten.`;
+  $('done-text').textContent = t('done.text', { name: wname(w), ex: t('exercises.n', { n: count }), m: Math.max(1, Math.round(seconds / 60)) });
   const info = weekInfo();
   $('done-week').replaceChildren(
     h('div', { class: 'week-days' }, info.days.map((d) => h('div', { class: 'day' + (d.done ? ' done' : '') + (d.today ? ' today' : '') }, d.label, h('i', {}, icon('check'))))),
     h('div', { class: 'bar' }, h('i', { style: `width:${Math.min(100, (100 * info.count) / info.goal)}%` })),
-    h('p', { class: 'small', style: 'margin:8px 0 0' }, `${info.count} von ${info.goal} Trainings diese Woche`));
+    h('p', { class: 'small', style: 'margin:8px 0 0' }, t('done.week', { a: info.count, b: info.goal })));
   $('done').hidden = false;
   confetti();
 }

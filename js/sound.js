@@ -1,5 +1,6 @@
 // Signaltöne (synthetisiert, offline) und kurze englische Sprachansagen.
 import { settings } from './store.js';
+import { lang } from './i18n.js';
 
 let ctx = null;
 let master = null;
@@ -82,30 +83,57 @@ function thump(t = 0, vol = 0.35) {
   osc.stop(t0 + 0.25);
 }
 
-// Applaus: viele kurze, gefilterte Rauschstöße, die anschwellen und ausklingen.
-function applause(dur = 3.4, vol = 0.45) {
+// Applaus: viele einzelne Klatscher mit eigener Klangfarbe und Position im Raum,
+// dazu ein leises Publikums-Rauschen. Dichte steigt schnell an, hält und klingt aus (ca. 4,6 s).
+const APPLAUSE_SECONDS = 4.6;
+function applause(delay = 0, vol = 0.5) {
   if (!ready()) return;
   const sr = ctx.sampleRate;
-  const buf = ctx.createBuffer(1, sr, sr);
+  const buf = ctx.createBuffer(1, sr * 2, sr);
   const data = buf.getChannelData(0);
-  for (let i = 0; i < sr; i++) data[i] = Math.random() * 2 - 1;
-  const t0 = ctx.currentTime + 0.5;
-  for (let i = 0; i < 170; i++) {
-    const t = t0 + Math.random() * dur;
-    const env = Math.pow(Math.sin(Math.PI * Math.min(1, (t - t0) / dur)), 0.7);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.playbackRate.value = 0.8 + Math.random() * 0.5;
-    const bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.frequency.value = 1200 + Math.random() * 2600;
-    bp.Q.value = 0.8;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol * env * (0.25 + Math.random() * 0.75)), t + 0.004);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05 + Math.random() * 0.05);
-    src.connect(bp).connect(g).connect(master);
-    src.start(t, Math.random() * 0.8, 0.12);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  const t0 = ctx.currentTime + delay;
+  const rate = (t) => (t < 0.6 ? 4 + 36 * (t / 0.6) : t < 2.8 ? 40 : 40 * Math.pow(Math.max(0, 1 - (t - 2.8) / (APPLAUSE_SECONDS - 2.8)), 1.6));
+
+  // Publikums-Rauschen als Unterlage
+  const bed = ctx.createBufferSource();
+  bed.buffer = buf; bed.loop = true;
+  const bedFilter = ctx.createBiquadFilter();
+  bedFilter.type = 'bandpass'; bedFilter.frequency.value = 900; bedFilter.Q.value = 0.5;
+  const bedGain = ctx.createGain();
+  bedGain.gain.setValueAtTime(0.0001, t0);
+  bedGain.gain.linearRampToValueAtTime(vol * 0.16, t0 + 0.7);
+  bedGain.gain.setValueAtTime(vol * 0.16, t0 + 2.8);
+  bedGain.gain.linearRampToValueAtTime(0.0001, t0 + APPLAUSE_SECONDS);
+  bed.connect(bedFilter).connect(bedGain).connect(master);
+  bed.start(t0); bed.stop(t0 + APPLAUSE_SECONDS + 0.1);
+
+  // Einzelne Klatscher
+  for (let t = 0; t < APPLAUSE_SECONDS; t += 0.02) {
+    const n = rate(t) * 0.02;
+    let claps = Math.floor(n) + (Math.random() < n % 1 ? 1 : 0);
+    while (claps-- > 0) {
+      const at = t0 + t + Math.random() * 0.02;
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.playbackRate.value = 0.7 + Math.random() * 0.7;
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 900 + Math.random() * 2900;
+      bp.Q.value = 0.7 + Math.random() * 0.9;
+      const g = ctx.createGain();
+      const peak = vol * (0.25 + Math.random() * 0.75) * 0.5;
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), at + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + 0.03 + Math.random() * 0.05);
+      const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+      let out = bp.connect(g);
+      if (pan) { pan.pan.value = Math.random() * 1.6 - 0.8; out = g.connect(pan); }
+      src.connect(bp);
+      out.connect(master);
+      if (reverbIn && Math.random() < 0.5) { const send = ctx.createGain(); send.gain.value = 0.35; out.connect(send).connect(reverbIn); }
+      src.start(at, Math.random() * 1.2, 0.12);
+    }
   }
 }
 
@@ -113,27 +141,54 @@ function buzz(pattern) {
   if (settings().vibrate && navigator.vibrate) navigator.vibrate(pattern);
 }
 
-/* ---------- Stimme (aufgenommene Clips, Englisch, männlich) ---------- */
+/* ---------- Stimme ---------- */
+// Deutsch/Englisch: vorab erzeugte, männliche Sprachclips (audio/voice/<sprache>/<name>.mp3).
+// Arabisch: Sprachausgabe des Geräts in normaler Tonhöhe (männliche Stimme bevorzugt).
 
-const clips = new Map(); // key -> Promise<AudioBuffer|null>
+const clips = new Map(); // "sprache/name" -> Promise<AudioBuffer|null>
 function loadClip(key) {
-  if (!clips.has(key)) {
-    clips.set(key, fetch(`audio/voice/${key}.mp3`)
+  const id = `${lang()}/${key}`;
+  if (!clips.has(id)) {
+    clips.set(id, fetch(`audio/voice/${id}.mp3`)
       .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('404'))))
       .then((buf) => ctx.decodeAudioData(buf))
       .catch(() => null));
   }
-  return clips.get(key);
+  return clips.get(id);
 }
 export function preloadVoice(keys) {
-  if (ctx) keys.forEach(loadClip);
+  if (ctx && lang() !== 'ar') keys.forEach(loadClip);
+}
+
+const AR_TEXT = { 'get-ready': 'استعد', rest: 'استراحة', switch: 'بدّل الجانب', complete: 'أحسنت، لقد نجحت' };
+const AR_MALE = /majed|maged|tarik|tariq|naayf|hamed|mohamed|male|ذكر/i;
+const AR_FEMALE = /laila|leila|zeina|mariam|maryam|salma|hoda|female|أنثى/i;
+function arabicVoice() {
+  const ar = speechSynthesis.getVoices().filter((v) => v.lang && v.lang.toLowerCase().startsWith('ar'));
+  return ar.find((v) => AR_MALE.test(v.name)) || ar.find((v) => !AR_FEMALE.test(v.name)) || ar[0] || null;
+}
+function speakArabic(key, delay) {
+  if (!('speechSynthesis' in window) || !AR_TEXT[key]) return;
+  const run = () => {
+    try {
+      const voice = arabicVoice();
+      if (!voice) return; // keine arabische Stimme auf dem Gerät: nur Signaltöne
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(AR_TEXT[key]);
+      u.voice = voice; u.lang = voice.lang; u.pitch = 1; u.rate = 0.95;
+      u.volume = Math.min(1, settings().volume + 0.2);
+      speechSynthesis.speak(u);
+    } catch { /* ignorieren */ }
+  };
+  delay ? setTimeout(run, delay) : run();
 }
 
 let voiceSrc = null;
-// keys: ein Clip-Name oder eine Liste (der erste vorhandene wird gespielt).
+// keys: ein Name oder eine Liste (der erste vorhandene Clip wird gespielt).
 export async function say(keys, delay = 0) {
   const s = settings();
   if (!s.sound || !s.voice || !ctx) return;
+  if (lang() === 'ar') return speakArabic([].concat(keys)[0], delay);
   let buf = null;
   for (const k of [].concat(keys)) { buf = await loadClip(k); if (buf) break; }
   if (!buf) return;
@@ -149,6 +204,7 @@ export async function say(keys, delay = 0) {
 export function stopSpeech() {
   try { voiceSrc?.stop(); } catch { /* ignorieren */ }
   voiceSrc = null;
+  try { speechSynthesis.cancel(); } catch { /* ignorieren */ }
 }
 
 /* ---------- Signale ---------- */
@@ -186,8 +242,9 @@ export const cue = {
   finish() {
     [523, 659, 784, 1046].forEach((f, i) => tone({ f, t: i * 0.13, dur: 0.4, type: 'triangle', vol: 0.26, wet: 0.3 }));
     [523, 659, 784, 1046].forEach((f) => tone({ f, t: 0.55, dur: 1.9, type: 'sine', vol: 0.16, attack: 0.04, wet: 0.5 }));
-    applause();
+    applause(0.7);
     buzz([150, 70, 150, 70, 350]);
   },
+  finishSeconds: 0.7 + APPLAUSE_SECONDS,
   preview() { this.start(); setTimeout(() => this.rest(), 1400); setTimeout(() => this.tick(1), 2800); }
 };
