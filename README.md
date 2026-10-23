@@ -33,11 +33,21 @@ Eigene Übungen, Fotos und Programme liegen im Browser des jeweiligen Geräts (l
 | `manifest.webmanifest`, `icons/` | PWA-Manifest und App-Icons |
 | `sw.js` | Service Worker (Offline-Cache) |
 | `tools/update-sw.mjs` | Trägt Dateiliste und Cache-Version in `sw.js` ein |
-| `js/notifications.js` | Platzhalter für spätere Push-Benachrichtigungen |
+| `js/notifications.js`, `js/config.js` | Push-Erinnerungen (Client) und Server-Adresse |
+| `reminder-worker/` | Cloudflare-Worker für die Erinnerungen |
 
 ## Sprachansagen
 
 Vier kurze Clips (`audio/voice/*.mp3`: „Mach dich bereit“, „Pause“, „Seitenwechsel“, „Training geschafft“), erzeugt mit dem Programm Piper und der deutschen Stimme „Thorsten“ (`de_DE-thorsten-medium`, Lizenz CC0). Übungsnamen werden nicht angesagt.
+
+## Push-Erinnerungen
+
+In „Optionen → Trainingsplan“ stellst du Trainingstage und Uhrzeit ein. Die Nachrichten schickt ein kleiner Cloudflare-Worker (`reminder-worker/`), der alle 5 Minuten prüft, wer erinnert werden muss (nicht, wenn heute schon trainiert wurde). Er speichert nur das Push-Abo, Tage, Uhrzeit und Zeitzone.
+
+- Kosten: Der kostenlose Cloudflare-Tarif reicht aus, es ist keine Zahlungskarte hinterlegt.
+- iPhone/iPad: Die App muss zum Home-Bildschirm hinzugefügt sein (iOS 16.4 oder neuer).
+- Einrichten/Aktualisieren: `cd reminder-worker && npm install && npx wrangler login`, dann `npx wrangler deploy`. Den privaten Schlüssel (`node generate-vapid.mjs`) nur als Secret speichern: `npx wrangler secret put VAPID_PRIVATE_KEY`. Die Worker-Adresse steht in `js/config.js`.
+- Tests: `cd reminder-worker && npm test`
 
 ## Weitere Bildvariante ergänzen (optional)
 
