@@ -20,8 +20,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/nacken-dehnen.webp"
-      },
-      "nameEn": "Neck stretch"
+      }
     },
     {
       "id": "schulterkreisen",
@@ -41,8 +40,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/schulterkreisen.webp"
-      },
-      "nameEn": "Shoulder circles"
+      }
     },
     {
       "id": "schulter-stretch",
@@ -61,8 +59,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/schulter-stretch.webp"
-      },
-      "nameEn": "Shoulder stretch"
+      }
     },
     {
       "id": "brustoeffnung",
@@ -81,8 +78,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/brustoeffnung.webp"
-      },
-      "nameEn": "Chest opener"
+      }
     },
     {
       "id": "katzen-kuh-dehnung",
@@ -102,8 +98,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/katzen-kuh-dehnung.webp"
-      },
-      "nameEn": "Cat cow"
+      }
     },
     {
       "id": "herabschauender-hund",
@@ -123,8 +118,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/herabschauender-hund.webp"
-      },
-      "nameEn": "Downward dog"
+      }
     },
     {
       "id": "kobra-stretch",
@@ -144,8 +138,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/kobra-stretch.webp"
-      },
-      "nameEn": "Cobra stretch"
+      }
     },
     {
       "id": "rumpfdrehung",
@@ -165,8 +158,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/rumpfdrehung.webp"
-      },
-      "nameEn": "Spinal twist"
+      }
     },
     {
       "id": "hueftbeuger-dehnung",
@@ -185,8 +177,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/hueftbeuger-dehnung.webp"
-      },
-      "nameEn": "Hip flexor stretch"
+      }
     },
     {
       "id": "oberschenkelvorderseite",
@@ -206,8 +197,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/oberschenkelvorderseite.webp"
-      },
-      "nameEn": "Quad stretch"
+      }
     },
     {
       "id": "wadendehnung",
@@ -227,8 +217,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/wadendehnung.webp"
-      },
-      "nameEn": "Calf stretch"
+      }
     },
     {
       "id": "beinheben",
@@ -248,8 +237,7 @@
       "defaultEnabled": false,
       "images": {
         "man": "images/man/beinheben.webp"
-      },
-      "nameEn": "Leg raises"
+      }
     },
     {
       "id": "schmetterlingssitz",
@@ -269,8 +257,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/schmetterlingssitz.webp"
-      },
-      "nameEn": "Butterfly stretch"
+      }
     },
     {
       "id": "vorwaertsbeuge",
@@ -290,8 +277,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/vorwaertsbeuge.webp"
-      },
-      "nameEn": "Forward fold"
+      }
     },
     {
       "id": "seitbeuge",
@@ -311,8 +297,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/seitbeuge.webp"
-      },
-      "nameEn": "Side bend"
+      }
     },
     {
       "id": "kindspose",
@@ -332,8 +317,7 @@
       "defaultEnabled": true,
       "images": {
         "man": "images/man/kindspose.webp"
-      },
-      "nameEn": "Child's pose"
+      }
     }
   ]
 }

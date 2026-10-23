@@ -37,7 +37,7 @@ Eigene Übungen, Fotos und Programme liegen im Browser des jeweiligen Geräts (l
 
 ## Sprachansagen
 
-Die Ansagen sind vorab erzeugte Clips (`audio/voice/*.mp3`, englisch, männlich) mit dem Programm Piper und der Stimme „Joe“ (`en_US-joe-medium`, Lizenz CC0). Neue Übungen brauchen keinen Clip; für sie spielt die App „Get ready“ bzw. „Rest“.
+Vier kurze Clips (`audio/voice/*.mp3`: „Mach dich bereit“, „Pause“, „Seitenwechsel“, „Training geschafft“), erzeugt mit dem Programm Piper und der deutschen Stimme „Thorsten“ (`de_DE-thorsten-medium`, Lizenz CC0). Übungsnamen werden nicht angesagt.
 
 ## Weitere Bildvariante ergänzen (optional)
 

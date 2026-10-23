@@ -414,9 +414,9 @@ function renderSettings() {
       row('Lautstärke', h('input', { type: 'range', class: 'vol', min: 0.1, max: 1, step: 0.05, value: S.volume, 'aria-label': 'Lautstärke',
         oninput: (e) => { st.settings().volume = +e.target.value; }, onchange: (e) => { set({ volume: +e.target.value }); snd.unlock(); snd.cue.side(); } })),
       row('Countdown 3 · 2 · 1', toggle(S.countdown, (v) => set({ countdown: v })), 'Kurze Klicks vor dem Wechsel'),
-      row('Sprachansagen', toggle(S.voice, (v) => set({ voice: v })), 'Kurze Ansagen auf Englisch'),
+      row('Sprachansagen', toggle(S.voice, (v) => set({ voice: v })), 'Kurze Ansagen: Bereit, Pause, Seitenwechsel'),
       row('Vibration', toggle(S.vibrate, (v) => set({ vibrate: v })), 'Nur auf Geräten, die das unterstützen'),
-      h('button', { type: 'button', class: 'btn', style: 'margin-top:10px', onclick: () => { snd.unlock(); snd.cue.preview(); snd.preloadVoice(['next-kobra-stretch']); snd.say('next-kobra-stretch', 3300); } }, icon('volume'), 'Ton testen')),
+      h('button', { type: 'button', class: 'btn', style: 'margin-top:10px', onclick: () => { snd.unlock(); snd.cue.preview(); snd.preloadVoice(['rest']); snd.say('rest', 3300); } }, icon('volume'), 'Ton testen')),
 
     h('p', { class: 'section-title' }, 'Training'),
     h('div', { class: 'card' },

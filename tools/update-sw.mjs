@@ -5,7 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 
 const root = path.resolve(import.meta.dirname, '..');
-const skip = new Set(['.git', 'tools', 'sw.js', 'README.md', '.gitignore', '.nojekyll', '.claude', 'node_modules']);
+const skip = new Set(['.git', 'tools', 'sw.js', 'README.md', '.gitignore', '.nojekyll', '.claude', 'node_modules', 'reminder-worker']);
 
 function walk(dir, rel = '') {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
