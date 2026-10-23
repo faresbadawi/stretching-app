@@ -113,46 +113,42 @@ function buzz(pattern) {
   if (settings().vibrate && navigator.vibrate) navigator.vibrate(pattern);
 }
 
-/* ---------- Stimme (Browser-Sprachausgabe, Englisch) ---------- */
+/* ---------- Stimme (aufgenommene Clips, Englisch, männlich) ---------- */
 
-const FEMALE = /samantha|karen|moira|tessa|fiona|victoria|kate|serena|susan|zira|hazel|jenny|aria|libby|sonia|catherine|allison|ava|female|woman|google us english$/i;
-const MALE = /daniel|aaron|arthur|fred|alex|reed|rishi|gordon|oliver|james|guy|ryan|mark|david|george|eddy|thomas|male|man\b|brian|matthew/i;
-
-export function englishVoices() {
-  if (!('speechSynthesis' in window)) return [];
-  const list = speechSynthesis.getVoices().filter((v) => v.lang && v.lang.toLowerCase().startsWith('en'));
-  // männliche zuerst
-  return list.sort((a, b) => Number(MALE.test(b.name)) - Number(MALE.test(a.name)) || a.name.localeCompare(b.name));
+const clips = new Map(); // key -> Promise<AudioBuffer|null>
+function loadClip(key) {
+  if (!clips.has(key)) {
+    clips.set(key, fetch(`audio/voice/${key}.mp3`)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('404'))))
+      .then((buf) => ctx.decodeAudioData(buf))
+      .catch(() => null));
+  }
+  return clips.get(key);
 }
-export function onVoices(cb) {
-  if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', cb);
-}
-function pickVoice() {
-  const en = englishVoices();
-  const chosen = settings().voiceName && en.find((v) => v.name === settings().voiceName);
-  return chosen || en.find((v) => MALE.test(v.name) && !FEMALE.test(v.name)) || en.find((v) => !FEMALE.test(v.name)) || en[0] || null;
+export function preloadVoice(keys) {
+  if (ctx) keys.forEach(loadClip);
 }
 
-export function speak(text, delay = 0) {
+let voiceSrc = null;
+// keys: ein Clip-Name oder eine Liste (der erste vorhandene wird gespielt).
+export async function say(keys, delay = 0) {
   const s = settings();
-  if (!s.sound || !s.voice || !text || !('speechSynthesis' in window)) return;
-  const run = () => {
-    try {
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'en-US';
-      u.pitch = 1;
-      u.rate = 0.95;
-      u.volume = Math.min(1, s.volume + 0.2);
-      const voice = pickVoice();
-      if (voice) { u.voice = voice; u.lang = voice.lang; }
-      speechSynthesis.speak(u);
-    } catch { /* ignorieren */ }
-  };
-  delay ? setTimeout(run, delay) : run();
+  if (!s.sound || !s.voice || !ctx) return;
+  let buf = null;
+  for (const k of [].concat(keys)) { buf = await loadClip(k); if (buf) break; }
+  if (!buf) return;
+  stopSpeech();
+  const g = ctx.createGain();
+  g.gain.value = 0.95;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  src.connect(g).connect(master);
+  src.start(ctx.currentTime + delay / 1000);
+  voiceSrc = src;
 }
 export function stopSpeech() {
-  try { speechSynthesis.cancel(); } catch { /* ignorieren */ }
+  try { voiceSrc?.stop(); } catch { /* ignorieren */ }
+  voiceSrc = null;
 }
 
 /* ---------- Signale ---------- */

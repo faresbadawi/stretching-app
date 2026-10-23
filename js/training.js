@@ -84,6 +84,7 @@ export function startTraining(workout) {
   if (!segs.length) return;
   snd.unlock();
   requestWakeLock();
+  snd.preloadVoice(['get-ready', 'rest', 'switch', 'complete', ...segs.flatMap((x) => (x.type === 'work' ? [`first-${x.ex.id}`, `next-${x.ex.id}`] : []))]);
   const count = segs.filter((x) => x.type === 'work' && x.side === 0).length;
   s = { w: workout, segs, count, i: 0, startTs: performance.now(), elapsedAtPause: 0, paused: false, lastLeft: null, timer: null, total: totalSeconds(segs) };
   $('t-progress').replaceChildren(...Array.from({ length: count }, () => h('i')));
@@ -144,13 +145,13 @@ function enter(playCue = true) {
 
   if (seg.type === 'prep') {
     snd.cue.prep();
-    snd.speak(ex.nameEn ? `Get ready. First: ${ex.nameEn}.` : 'Get ready.', 350);
+    snd.say([`first-${ex.id}`, 'get-ready'], 350);
   } else if (playCue) {
     if (seg.type === 'work') {
-      if (seg.side > 0) { snd.cue.side(); snd.speak('Switch sides.', 500); } else snd.cue.start();
+      if (seg.side > 0) { snd.cue.side(); snd.say('switch', 500); } else snd.cue.start();
     } else {
       snd.cue.rest();
-      snd.speak(ex.nameEn ? `Rest. Next: ${ex.nameEn}.` : 'Rest.', 600);
+      snd.say([`next-${ex.id}`, 'rest'], 600);
     }
   }
 }
@@ -234,7 +235,7 @@ function finish() {
   const seconds = s.total;
   const count = s.count;
   snd.cue.finish();
-  snd.speak('Workout complete.', 1200);
+  snd.say('complete', 1200);
   stop();
   addHistory({ workoutId: w.id, name: w.name, seconds, count });
   $('done-text').textContent = `${w.name}: ${count} Übungen in ca. ${Math.max(1, Math.round(seconds / 60))} Minuten.`;

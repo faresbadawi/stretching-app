@@ -19,7 +19,6 @@ export function setOfflineReady(v) { offlineReady = v; const el = $('offline-sta
 const lib = { q: '', filter: 'all' };
 
 export function initViews() {
-  snd.onVoices(() => { if (currentTab !== 'settings' || !document.activeElement || document.activeElement.tagName !== 'SELECT') renderSettings(); });
   $('tabbar').replaceChildren(...TABS.map((t) =>
     h('button', { type: 'button', 'data-tab': t.key, onclick: () => showTab(t.key) }, icon(t.icon), t.label)));
   renderAll();
@@ -398,7 +397,6 @@ function renderSettings() {
   const S = st.settings();
   const set = (patch) => st.updateSettings(patch);
   const root = $('view-settings');
-  const voices = snd.englishVoices();
   const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   const importer = h('input', { type: 'file', accept: 'application/json,.json', hidden: true, onchange: async (e) => {
     const f = e.target.files[0];
@@ -416,13 +414,9 @@ function renderSettings() {
       row('Lautstärke', h('input', { type: 'range', class: 'vol', min: 0.1, max: 1, step: 0.05, value: S.volume, 'aria-label': 'Lautstärke',
         oninput: (e) => { st.settings().volume = +e.target.value; }, onchange: (e) => { set({ volume: +e.target.value }); snd.unlock(); snd.cue.side(); } })),
       row('Countdown 3 · 2 · 1', toggle(S.countdown, (v) => set({ countdown: v })), 'Kurze Klicks vor dem Wechsel'),
-      row('Sprachansagen', toggle(S.voice, (v) => set({ voice: v })), 'Kurze Ansagen auf Englisch (Next, Rest, Switch sides)'),
-      voices.length ? row('Stimme', h('select', { onchange: (e) => { set({ voiceName: e.target.value }); snd.unlock(); snd.speak('Get ready. Next: cobra stretch.'); } },
-        h('option', { value: '', ...(S.voiceName ? {} : { selected: true }) }, 'Automatisch (männlich)'),
-        voices.map((v) => h('option', { value: v.name, ...(v.name === S.voiceName ? { selected: true } : {}) }, `${v.name} (${v.lang})`))),
-        'Wähle die Stimme, die auf deinem Gerät am besten klingt') : null,
+      row('Sprachansagen', toggle(S.voice, (v) => set({ voice: v })), 'Kurze Ansagen auf Englisch'),
       row('Vibration', toggle(S.vibrate, (v) => set({ vibrate: v })), 'Nur auf Geräten, die das unterstützen'),
-      h('button', { type: 'button', class: 'btn', style: 'margin-top:10px', onclick: () => { snd.unlock(); snd.cue.preview(); snd.speak('Get ready. Next: cobra stretch.', 3400); } }, icon('volume'), 'Ton testen')),
+      h('button', { type: 'button', class: 'btn', style: 'margin-top:10px', onclick: () => { snd.unlock(); snd.cue.preview(); snd.preloadVoice(['next-kobra-stretch']); snd.say('next-kobra-stretch', 3300); } }, icon('volume'), 'Ton testen')),
 
     h('p', { class: 'section-title' }, 'Training'),
     h('div', { class: 'card' },

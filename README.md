@@ -35,6 +35,10 @@ Eigene Übungen, Fotos und Programme liegen im Browser des jeweiligen Geräts (l
 | `tools/update-sw.mjs` | Trägt Dateiliste und Cache-Version in `sw.js` ein |
 | `js/notifications.js` | Platzhalter für spätere Push-Benachrichtigungen |
 
+## Sprachansagen
+
+Die Ansagen sind vorab erzeugte Clips (`audio/voice/*.mp3`, englisch, männlich) mit dem Programm Piper und der Stimme „Joe“ (`en_US-joe-medium`, Lizenz CC0). Neue Übungen brauchen keinen Clip; für sie spielt die App „Get ready“ bzw. „Rest“.
+
 ## Weitere Bildvariante ergänzen (optional)
 
 Die Daten sind dafür vorbereitet, in der Oberfläche gibt es aktuell aber nur eine Variante.
