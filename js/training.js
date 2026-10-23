@@ -30,6 +30,7 @@ export function initTraining() {
   labelTraining();
 
   $('t-toggle').addEventListener('click', () => setPaused(!s.paused));
+  $('circle').addEventListener('click', () => { if (s) setPaused(!s.paused); });
   $('t-skip').addEventListener('click', () => {
     if (s.paused) setPaused(false);
     if (s.i >= s.segs.length - 1) return finish();
@@ -125,6 +126,12 @@ const elapsed = () => (s.paused ? s.elapsedAtPause : performance.now() - s.start
 function enter(playCue = true) {
   const seg = s.segs[s.i];
   s.lastLeft = null;
+  // Ring ohne Übergang zurücksetzen, sonst läuft er sichtbar rückwärts
+  const ring = $('ring');
+  ring.style.transition = 'none';
+  ring.style.strokeDashoffset = '0';
+  void ring.getBoundingClientRect();
+  ring.style.transition = '';
   const tr = $('training');
   tr.classList.remove('work', 'rest', 'prep');
   tr.classList.add(seg.type);

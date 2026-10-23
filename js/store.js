@@ -252,8 +252,12 @@ export function addHistory(entry) {
 }
 export const history = () => state.history;
 
+// Wochenbeginn: Montag; auf Arabisch Samstag (so üblich in der arabischen Welt).
+const weekStartDay = () => (lang() === 'ar' ? 6 : 1);
+// Anzeige-Reihenfolge der Wochentage (Index Mo = 0 … So = 6)
+export const weekOrder = () => (lang() === 'ar' ? [5, 6, 0, 1, 2, 3, 4] : [0, 1, 2, 3, 4, 5, 6]);
 export function startOfWeek(d = new Date()) {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7));
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() - weekStartDay() + 7) % 7));
 }
 const dayKey = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
@@ -261,8 +265,8 @@ export function weekInfo() {
   const mon = startOfWeek();
   const done = new Set(state.history.map((h) => new Date(h.t)).filter((d) => d >= mon).map(dayKey));
   const todayKey = dayKey(new Date());
-  const days = [0, 1, 2, 3, 4, 5, 6].map((i) => {
-    const d = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i);
+  const days = weekOrder().map((i, pos) => {
+    const d = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + pos);
     return { label: t('day.' + i), done: done.has(dayKey(d)), today: dayKey(d) === todayKey };
   });
   const count = state.history.filter((h) => new Date(h.t) >= mon).length;

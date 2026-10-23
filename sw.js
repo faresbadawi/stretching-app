@@ -1,7 +1,7 @@
 // Service Worker: legt alle App-Dateien beim ersten Besuch im Cache ab -> komplett offline nutzbar.
 // Die Liste unten wird von `node tools/update-sw.mjs` erzeugt (vor jedem Veröffentlichen ausführen).
 /* BEGIN GENERATED */
-const CACHE = 'stretching-212789af95';
+const CACHE = 'stretching-232e5eec1e';
 const FILES = [
   "./",
   "./audio/voice/de/complete.mp3",

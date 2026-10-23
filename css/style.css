@@ -416,3 +416,19 @@ dialog.sheet.closing::backdrop { animation: fade .19s reverse forwards; }
 [dir=rtl] * { letter-spacing: 0 !important; }
 [dir=rtl] .hero-label, [dir=rtl] .section-title, [dir=rtl] .t-phase, [dir=rtl] .t-title small, [dir=rtl] .t-next small { text-transform: none; }
 [dir=rtl] .dp, [dir=rtl] .day { font-size: .78rem; }
+
+/* ===== Feinschliff: Bedienung ===== */
+.daysum { margin: 6px 2px 2px; }
+.dp { min-height: 46px; }
+.circle { cursor: pointer; -webkit-user-select: none; user-select: none; }
+.ring { transition: stroke-dashoffset .12s linear; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 10px; }
+.tabbar button, .btn, .icon-btn, .chip, .dp, .t-ctl { touch-action: manipulation; }
+dialog.sheet { will-change: transform; transition: transform .2s ease; }
+/* Arabisch: gut lesbare Schrift und mehr Zeilenabstand */
+[lang=ar] body { font-family: "Noto Sans Arabic", "Geeza Pro", "SF Arabic", "Segoe UI", Tahoma, system-ui, sans-serif; line-height: 1.7; }
+[lang=ar] .day, [lang=ar] .dp { font-size: 1.05rem; font-weight: 800; }
+[lang=ar] .t-time, [lang=ar] .stat strong, [lang=ar] .statline strong { line-height: 1.15; }
+/* Zähler (− 3 +) behalten in allen Sprachen dieselbe Anordnung */
+.stepper { direction: ltr; }
+[dir=rtl] .stepper output { unicode-bidi: plaintext; }

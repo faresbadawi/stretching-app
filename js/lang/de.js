@@ -86,5 +86,10 @@ export default {
   'done.title': 'Geschafft!', 'done.text': '{name}: {ex} in ca. {m} Minuten.', 'done.week': '{a} von {b} Trainings diese Woche', 'done.close': 'Fertig',
   'cat.Sonstiges': 'Sonstiges',
   'wk.w-rueken': 'Rücken-Programm', 'wk.w-buero': 'Büro-Kurzpause', 'wk.w-beine': 'Beine & Hüfte',
+  'home.todayDone': 'Heute bereits trainiert.', 'home.todayDue': 'Heute ist Trainingstag.', 'home.next': 'Nächstes Training: {day}',
+  'list.sep': ', ',
+  'plan.selected': 'Trainingstage: {days}',
+  'day.full.0': 'Montag', 'day.full.1': 'Dienstag', 'day.full.2': 'Mittwoch', 'day.full.3': 'Donnerstag', 'day.full.4': 'Freitag', 'day.full.5': 'Samstag', 'day.full.6': 'Sonntag',
+  'tr.tapHint': 'Tippe auf den Kreis, um zu pausieren.',
   'day.0': 'Mo', 'day.1': 'Di', 'day.2': 'Mi', 'day.3': 'Do', 'day.4': 'Fr', 'day.5': 'Sa', 'day.6': 'So'
 };

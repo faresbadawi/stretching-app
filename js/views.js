@@ -34,11 +34,13 @@ export function initViews() {
   document.addEventListener('training-closed', () => showTab('home'));
 }
 
+const scrollMemory = {};
 export function showTab(name) {
+  scrollMemory[currentTab] = window.scrollY;
   currentTab = name;
   for (const tab of TABS) $('view-' + tab.key).hidden = tab.key !== name;
   document.querySelectorAll('#tabbar button').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
-  window.scrollTo(0, 0);
+  window.scrollTo(0, scrollMemory[name] || 0);
 }
 
 export function renderAll() {
@@ -47,6 +49,19 @@ export function renderAll() {
 }
 
 /* =============== Start =============== */
+
+// Kurzer Statussatz unter der Begrüßung: heute fällig, schon trainiert oder nächster Trainingstag.
+function todayLine() {
+  const days = st.settings().remindDays;
+  const todayIdx = (new Date().getDay() + 6) % 7;
+  if (st.weekInfo().days.find((d) => d.today)?.done) return t('home.todayDone');
+  if (days.includes(todayIdx)) return t('home.todayDue');
+  for (let k = 1; k <= 7; k++) {
+    const idx = (todayIdx + k) % 7;
+    if (days.includes(idx)) return t('home.next', { day: t('day.full.' + idx) });
+  }
+  return t('home.sub');
+}
 
 function greeting() {
   const hr = new Date().getHours();
@@ -89,7 +104,7 @@ function renderHome() {
 
   fill(root,
     h('header', { class: 'page-head' },
-      h('div', {}, h('h1', {}, greeting()), h('p', {}, t('home.sub'))),
+      h('div', {}, h('h1', {}, greeting()), h('p', {}, todayLine())),
       streak > 0 ? h('div', { class: 'streak', title: t('streak.title') }, icon('flame'), t('streak.n', { n: streak })) : null),
 
     h('div', { class: 'hero' },
@@ -427,11 +442,12 @@ function renderSettings() {
     h('p', { class: 'section-title' }, t('sec.plan')),
     h('div', { class: 'card' },
       row(t('plan.days'), stepper({ value: S.remindDays.length, min: 1, max: 7, step: 1, unit: '×', label: t('plan.days'), onChange: (v) => { st.setTrainingDays(st.spreadDays(v)); resync(); } }), t('plan.daysHint')),
-      h('div', { class: 'daypick' }, [0, 1, 2, 3, 4, 5, 6].map((i) =>
-        h('button', { type: 'button', class: 'dp' + (S.remindDays.includes(i) ? ' on' : ''), 'aria-pressed': S.remindDays.includes(i), onclick: () => {
+      h('div', { class: 'daypick' }, st.weekOrder().map((i) =>
+        h('button', { type: 'button', class: 'dp' + (S.remindDays.includes(i) ? ' on' : ''), 'aria-pressed': S.remindDays.includes(i), 'aria-label': t('day.full.' + i), title: t('day.full.' + i), onclick: () => {
           const days = S.remindDays.includes(i) ? S.remindDays.filter((d) => d !== i) : [...S.remindDays, i];
           if (days.length) { st.setTrainingDays(days); resync(); } else toast(t('plan.minDay'));
         } }, t('day.' + i)))),
+      h('p', { class: 'muted small daysum' }, t('plan.selected', { days: st.weekOrder().filter((i) => S.remindDays.includes(i)).map((i) => t('day.full.' + i)).join(t('list.sep')) })),
       row(t('plan.remind'), toggle(S.remindOn, async (on) => {
         try { if (on) await push.enable(); else await push.disable(); toast(t(on ? 'plan.on' : 'plan.off')); } catch (err) { toast(tm(err.message)); }
         renderSettings();

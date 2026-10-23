@@ -87,5 +87,10 @@ export default {
   'cat.Nacken': 'Neck', 'cat.Schultern': 'Shoulders', 'cat.Arme': 'Arms', 'cat.Rücken': 'Back', 'cat.Hüfte': 'Hips',
   'cat.Beine': 'Legs', 'cat.Ganzkörper': 'Full body', 'cat.Entspannung': 'Relaxation', 'cat.Sonstiges': 'Other',
   'wk.w-rueken': 'Back program', 'wk.w-buero': 'Quick office break', 'wk.w-beine': 'Legs & hips',
+  'home.todayDone': 'Already trained today.', 'home.todayDue': 'Today is a workout day.', 'home.next': 'Next workout: {day}',
+  'list.sep': ', ',
+  'plan.selected': 'Workout days: {days}',
+  'day.full.0': 'Monday', 'day.full.1': 'Tuesday', 'day.full.2': 'Wednesday', 'day.full.3': 'Thursday', 'day.full.4': 'Friday', 'day.full.5': 'Saturday', 'day.full.6': 'Sunday',
+  'tr.tapHint': 'Tap the circle to pause.',
   'day.0': 'Mon', 'day.1': 'Tue', 'day.2': 'Wed', 'day.3': 'Thu', 'day.4': 'Fri', 'day.5': 'Sat', 'day.6': 'Sun'
 };

@@ -141,6 +141,25 @@ export function openSheet({ title, body, foot, onClose, tall = false }) {
     h('div', { class: 'sheet-head' }, h('h2', {}, title || ''), iconBtn('close', t('common.close'), close, 'flat')),
     h('div', { class: 'sheet-body' }, body),
     foot ? h('div', { class: 'sheet-foot' }, foot) : null);
+  // Zum Schließen nach unten wischen (am oberen Rand des Fensters)
+  let startY = null;
+  const head = dlg.querySelector('.sheet-grab');
+  const dragZone = [head, dlg.querySelector('.sheet-head')];
+  dragZone.forEach((z) => {
+    z.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; dlg.style.transition = 'none'; }, { passive: true });
+    z.addEventListener('touchmove', (e) => {
+      if (startY === null) return;
+      const dy = Math.max(0, e.touches[0].clientY - startY);
+      dlg.style.transform = `translateY(${dy}px)`;
+    }, { passive: true });
+    z.addEventListener('touchend', (e) => {
+      if (startY === null) return;
+      const dy = e.changedTouches[0].clientY - startY;
+      startY = null;
+      dlg.style.transition = '';
+      if (dy > 90) { dlg.style.transform = ''; close(); } else dlg.style.transform = '';
+    });
+  });
   dlg.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
   dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });
   document.body.append(dlg);

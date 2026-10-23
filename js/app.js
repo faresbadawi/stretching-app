@@ -18,6 +18,13 @@ function applyAppearance() {
   labelTraining();
 }
 
+// Kurzes Vibrations-Feedback bei Knöpfen (nur wenn Vibration eingeschaltet ist)
+document.addEventListener('click', (e) => {
+  if (st.settings && navigator.vibrate && e.target.closest?.('.btn, .icon-btn, .chip, .dp, .tabbar button, .t-ctl, .stepper button')) {
+    try { if (st.settings().vibrate) navigator.vibrate(8); } catch { /* noch nicht geladen */ }
+  }
+}, true);
+
 async function init() {
   try {
     await st.init();
