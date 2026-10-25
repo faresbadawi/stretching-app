@@ -192,7 +192,26 @@ export function toggleFavorite(id) {
 
 /* ---------- Programme ---------- */
 
-export const workouts = () => state.workouts;
+// Angeheftete Programme stehen oben, sonst gilt die eigene Reihenfolge.
+export const workouts = () => [...state.workouts].sort((a, b) => Boolean(b.pinned) - Boolean(a.pinned));
+// Das erste Programm der Liste wird auf der Startseite gezeigt.
+export function moveWorkout(id, toIndex) {
+  const order = workouts();
+  const from = order.findIndex((w) => w.id === id);
+  if (from < 0) return;
+  const [w] = order.splice(from, 1);
+  order.splice(Math.max(0, Math.min(order.length, toIndex)), 0, w);
+  state.workouts = order;
+  state.activeWorkout = workouts()[0].id;
+  commit();
+}
+export function togglePin(id) {
+  const w = getWorkout(id);
+  if (!w) return;
+  w.pinned = !w.pinned;
+  state.activeWorkout = workouts()[0].id;
+  commit();
+}
 export const getWorkout = (id) => state.workouts.find((w) => w.id === id) || null;
 export const activeWorkout = () => getWorkout(state.activeWorkout) || state.workouts[0] || null;
 export function setActiveWorkout(id) { state.activeWorkout = id; commit(); }

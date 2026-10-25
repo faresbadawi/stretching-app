@@ -6,7 +6,7 @@ import * as push from './notifications.js';
 import { t, tm, LANGS, catLabel, locale } from './i18n.js';
 import {
   $, h, fill, icon, iconBtn, thumb, placeholder, stepper, toggle, row, chips,
-  openSheet, confirmDialog, toast, minutesLabel, cropImage
+  openSheet, confirmDialog, toast, minutesLabel, cropImage, dragSort
 } from './ui.js';
 
 const TABS = [
@@ -99,26 +99,15 @@ function heroCard(w) {
 function heroCarousel() {
   const list = st.workouts();
   if (!list.length) return h('div', { class: 'hero' }, h('h2', {}, t('hero.none')));
-  const activeId = st.activeWorkout()?.id;
-  const track = h('div', { class: 'hero-track', role: 'region', 'aria-label': t('hero.label') }, list.map((w) => h('div', { class: 'hero-slide', 'data-id': w.id }, heroCard(w))));
-  const dots = h('div', { class: 'hero-dots' }, list.map((w) => h('i', { class: w.id === activeId ? 'on' : '' })));
-  const slides = () => [...track.children];
-  const current = () => {
-    const mid = track.getBoundingClientRect().left + track.clientWidth / 2;
-    let best = 0; let bestD = Infinity;
-    slides().forEach((el, i) => { const r = el.getBoundingClientRect(); const d = Math.abs(r.left + r.width / 2 - mid); if (d < bestD) { bestD = d; best = i; } });
-    return best;
-  };
-  let timer = null;
-  track.addEventListener('scroll', () => {
-    const i = current();
-    [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
-    clearTimeout(timer);
-    timer = setTimeout(() => { const id = list[current()]?.id; if (id && id !== st.activeWorkout()?.id) st.setActiveWorkout(id); }, 220);
-  }, { passive: true });
-  // Nach dem Einfügen an die aktive Karte springen
-  requestAnimationFrame(() => { const el = slides()[Math.max(0, list.findIndex((w) => w.id === activeId))]; if (el) el.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'instant' }); });
-  return h('div', { class: 'hero-wrap' }, track, list.length > 1 ? dots : null);
+  const active = st.activeWorkout();
+  const idx = Math.max(0, list.findIndex((w) => w.id === active.id));
+  const go = (d) => st.setActiveWorkout(list[(idx + d + list.length) % list.length].id);
+  const arrow = (d, label) => h('button', { type: 'button', class: 'hero-arrow ' + (d < 0 ? 'prev' : 'next'), 'aria-label': label, title: label, onclick: () => go(d) }, icon('chevron'));
+  return h('div', { class: 'hero-wrap' },
+    heroCard(active),
+    list.length > 1 ? h('div', { class: 'hero-nav' }, arrow(-1, t('hero.prev')),
+      h('div', { class: 'hero-dots' }, list.map((w, i) => h('i', { class: i === idx ? 'on' : '' }))),
+      arrow(1, t('hero.next'))) : null);
 }
 
 function renderHome() {
@@ -150,6 +139,12 @@ function renderHome() {
 
 /* =============== Programme =============== */
 
+function wrapSortable(cards) {
+  const list = h('div', { class: 'sort-list' }, cards);
+  dragSort(list, (from, to) => st.moveWorkout(st.workouts()[from].id, to));
+  return list;
+}
+
 function renderPlans() {
   const root = $('view-plans');
   const ws = st.workouts();
@@ -157,12 +152,15 @@ function renderPlans() {
     h('header', { class: 'page-head' },
       h('div', {}, h('h1', {}, t('plans.title')), h('p', {}, t('plans.sub'))),
       iconBtn('plus', t('plans.new'), () => openWorkoutEditor(null))),
-    ws.length ? ws.map((w) => {
+    ws.length > 1 ? h('p', { class: 'muted small plan-hint' }, t('plans.sortHint')) : null,
+    ws.length ? wrapSortable(ws.map((w) => {
       const items = st.resolveItems(w);
-      return h('div', { class: 'card plan-item' },
+      return h('div', { class: 'card plan-item sortable' + (w.pinned ? ' pinned' : '') },
         h('div', { class: 'top' },
+          h('button', { type: 'button', class: 'grip', 'aria-label': t('plans.drag'), title: t('plans.drag') }, icon('grip')),
           h('div', {}, h('h3', {}, st.wname(w)),
             h('div', { class: 'meta' }, `${exCount(items.length)} · ${items.length ? minutesLabel(st.workoutSeconds(w)) : '–'} · ${t('plans.rest', { n: w.rest })}`)),
+          iconBtn('pin', t(w.pinned ? 'plans.unpin' : 'plans.pin'), () => st.togglePin(w.id), 'sm' + (w.pinned ? ' on' : '')),
           iconBtn('copy', t('common.copy'), () => { st.duplicateWorkout(w.id); toast(t('plans.dup')); }, 'sm'),
           iconBtn('trash', t('common.delete'), async () => {
             if (await confirmDialog(t('plans.del', { name: st.wname(w) }))) st.deleteWorkout(w.id);
@@ -171,7 +169,7 @@ function renderPlans() {
         h('div', { class: 'btn-row' },
           h('button', { type: 'button', class: 'btn', onclick: () => openWorkoutEditor(w) }, icon('edit'), t('common.edit')),
           h('button', { type: 'button', class: 'btn primary', disabled: !items.length, onclick: () => { st.setActiveWorkout(w.id); startTraining(w); } }, icon('play'), t('hero.start'))));
-    }) : h('div', { class: 'empty' }, icon('tabPlans'), h('p', {}, t('plans.empty'))),
+    })) : h('div', { class: 'empty' }, icon('tabPlans'), h('p', {}, t('plans.empty'))),
     h('button', { type: 'button', class: 'btn primary', style: 'margin-top:6px', onclick: () => openWorkoutEditor(null) }, icon('plus'), t('plans.new')));
 }
 

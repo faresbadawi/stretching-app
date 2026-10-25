@@ -40,6 +40,9 @@ const P = {
   trash: '<path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l.8 12.5h9.4L17.5 7M10 11v5M14 11v5"/>',
   edit: '<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3ZM14 8l3 3"/>',
   copy: '<rect x="8.5" y="8.5" width="11" height="11" rx="2.2"/><path d="M15.5 8.5V6.7A2.2 2.2 0 0 0 13.3 4.5H6.7A2.2 2.2 0 0 0 4.5 6.7v6.6a2.2 2.2 0 0 0 2.2 2.2h1.8"/>',
+  grip: '<circle cx="9" cy="6" r="1.3" fill="currentColor"/><circle cx="15" cy="6" r="1.3" fill="currentColor"/><circle cx="9" cy="12" r="1.3" fill="currentColor"/><circle cx="15" cy="12" r="1.3" fill="currentColor"/><circle cx="9" cy="18" r="1.3" fill="currentColor"/><circle cx="15" cy="18" r="1.3" fill="currentColor"/>',
+  pin: '<path d="M9 4h6l-1 5.5 3 3.5H7l3-3.5L9 4ZM12 13v7"/>',
+  chevron: '<path d="M9 5l7 7-7 7"/>',
   up: '<path d="M6 14l6-6 6 6"/>',
   down: '<path d="M6 10l6 6 6-6"/>',
   star: '<path d="M12 3.8l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8L12 3.8Z"/>',
@@ -314,5 +317,45 @@ export function cropImage(file, out = 640) {
       apply();
     };
     img.src = url;
+  });
+}
+
+/* ---------- Sortieren per Ziehen: der Griff (.grip) jedes Kindes verschiebt es ---------- */
+
+export function dragSort(list, onMove) {
+  list.addEventListener('pointerdown', (e) => {
+    const handle = e.target.closest('.grip');
+    const card = handle && handle.closest('.sortable');
+    if (!card || card.parentElement !== list) return;
+    e.preventDefault();
+    try { handle.setPointerCapture(e.pointerId); } catch { /* synthetischer Zeiger */ }
+    const cards = [...list.children];
+    const from = cards.indexOf(card);
+    const rects = cards.map((c) => c.getBoundingClientRect());
+    const gap = cards.length > 1 ? Math.max(0, rects[1].top - rects[0].bottom) : 0;
+    const size = rects[from].height + gap;
+    const startY = e.clientY; const startScroll = window.scrollY;
+    let to = from; let y = startY;
+    card.classList.add('dragging');
+    const place = () => {
+      const dy = y - startY + (window.scrollY - startScroll);
+      card.style.transform = `translateY(${dy}px)`;
+      const center = rects[from].top + rects[from].height / 2 + dy;
+      to = from;
+      cards.forEach((_, i) => { if (i < from && center < rects[i].top + rects[i].height / 2) to = Math.min(to, i); if (i > from && center > rects[i].top + rects[i].height / 2) to = Math.max(to, i); });
+      cards.forEach((c, i) => { if (i !== from) c.style.transform = (from < to && i > from && i <= to) ? `translateY(${-size}px)` : (to < from && i >= to && i < from) ? `translateY(${size}px)` : ''; });
+    };
+    const edge = setInterval(() => {
+      const step = y < 90 ? -12 : y > window.innerHeight - 150 ? 12 : 0;
+      if (step) { window.scrollBy(0, step); place(); }
+    }, 16);
+    const move = (ev) => { y = ev.clientY; place(); };
+    const end = (ev) => {
+      clearInterval(edge);
+      handle.removeEventListener('pointermove', move); handle.removeEventListener('pointerup', end); handle.removeEventListener('pointercancel', end);
+      cards.forEach((c) => { c.style.transform = ''; c.classList.remove('dragging'); });
+      if (ev.type !== 'pointercancel' && to !== from) onMove(from, to);
+    };
+    handle.addEventListener('pointermove', move); handle.addEventListener('pointerup', end); handle.addEventListener('pointercancel', end);
   });
 }

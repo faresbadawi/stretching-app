@@ -36,6 +36,8 @@ export default {
   'detail.deleteConfirm': '"{name}" will be deleted permanently, including from all programs.',
   'detail.deleted': 'Exercise deleted', 'detail.noCat': 'No category', 'detail.fav': 'Favorite',
   'pill.sides': 'left & right',
+  'hero.prev': 'Previous program', 'hero.next': 'Next program', 'plans.drag': 'Reorder (drag)', 'plans.pin': 'Pin', 'plans.unpin': 'Unpin',
+  'plans.sortHint': 'Drag a program up by its handle – the first program shows on the home screen. Pinned ones always stay on top.',
   'crop.title': 'Crop photo', 'crop.hint': 'Drag with one finger, pinch with two fingers or use the slider to zoom.', 'crop.zoom': 'Zoom', 'crop.use': 'Use photo',
   'ex.new': 'New exercise', 'ex.edit': 'Edit exercise', 'ex.photo': 'Take photo', 'ex.gallery': 'From gallery',
   'ex.removeImg': 'Remove image', 'ex.name': 'Name', 'ex.namePh': 'e.g. neck rolls', 'ex.category': 'Category',

@@ -38,6 +38,8 @@ export default {
   'detail.deleteConfirm': 'سيتم حذف «{name}» نهائيًا، حتى من جميع البرامج.',
   'detail.deleted': 'تم حذف التمرين', 'detail.noCat': 'بدون فئة', 'detail.fav': 'مفضلة',
   'pill.sides': 'يمين ويسار',
+  'hero.prev': 'البرنامج السابق', 'hero.next': 'البرنامج التالي', 'plans.drag': 'إعادة الترتيب (اسحب)', 'plans.pin': 'تثبيت', 'plans.unpin': 'إلغاء التثبيت',
+  'plans.sortHint': 'اسحب البرنامج للأعلى من المقبض – أول برنامج يظهر في الصفحة الرئيسية. المثبّتة تبقى في الأعلى.',
   'crop.title': 'قصّ الصورة', 'crop.hint': 'اسحب بإصبع واحد، وكبّر بإصبعين أو بالمنزلق.', 'crop.zoom': 'تكبير', 'crop.use': 'استخدام الصورة',
   'ex.new': 'تمرين جديد', 'ex.edit': 'تعديل التمرين', 'ex.photo': 'التقاط صورة', 'ex.gallery': 'من المعرض',
   'ex.removeImg': 'إزالة الصورة', 'ex.name': 'الاسم', 'ex.namePh': 'مثال: دوران الرقبة', 'ex.category': 'الفئة',

@@ -36,6 +36,8 @@ export default {
   'detail.deleteConfirm': '„{name}“ wird endgültig gelöscht – auch aus allen Programmen.',
   'detail.deleted': 'Übung gelöscht', 'detail.noCat': 'Ohne Kategorie', 'detail.fav': 'Favorit',
   'pill.sides': 'links & rechts',
+  'hero.prev': 'Vorheriges Programm', 'hero.next': 'Nächstes Programm', 'plans.drag': 'Verschieben (ziehen)', 'plans.pin': 'Anheften', 'plans.unpin': 'Lösen',
+  'plans.sortHint': 'Ziehe ein Programm am Griff nach oben – das erste Programm erscheint auf der Startseite. Angeheftete stehen immer oben.',
   'crop.title': 'Foto zuschneiden', 'crop.hint': 'Mit dem Finger verschieben, mit zwei Fingern oder dem Regler vergrößern.', 'crop.zoom': 'Vergrößern', 'crop.use': 'Übernehmen',
   'ex.new': 'Neue Übung', 'ex.edit': 'Übung bearbeiten', 'ex.photo': 'Foto aufnehmen', 'ex.gallery': 'Aus Galerie',
   'ex.removeImg': 'Bild entfernen', 'ex.name': 'Name', 'ex.namePh': 'z. B. Nackenrollen', 'ex.category': 'Kategorie',

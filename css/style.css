@@ -442,12 +442,25 @@ dialog.sheet { will-change: transform; transition: transform .2s ease; }
 
 .daytimes { margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--line); }
 
-/* ===== Programme zum Durchwischen ===== */
+/* ===== Programm-Wahl auf der Startseite ===== */
 .hero-wrap { margin-bottom: 16px; }
-.hero-track { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: -16px; padding: 0 16px 14px; scroll-padding-inline: 16px; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
-.hero-track::-webkit-scrollbar { display: none; }
-.hero-slide { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; min-width: 0; }
-.hero-slide .hero { margin-bottom: 0; height: 100%; }
-.hero-dots { display: flex; justify-content: center; gap: 7px; margin-top: -2px; }
+.hero-wrap .hero { margin-bottom: 10px; }
+.hero-nav { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.hero-arrow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--card, var(--bg)); color: var(--text); display: grid; place-items: center; cursor: pointer; }
+.hero-arrow:hover { border-color: var(--accent); color: var(--accent); }
+.hero-arrow.prev .ico { transform: scaleX(-1); }
+[dir=rtl] .hero-arrow.prev .ico { transform: none; }
+[dir=rtl] .hero-arrow.next .ico { transform: scaleX(-1); }
+.hero-dots { display: flex; gap: 7px; }
 .hero-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: all .2s; }
 .hero-dots i.on { width: 20px; border-radius: 4px; background: var(--accent); }
+
+/* ===== Programme sortieren ===== */
+.sort-list { display: flex; flex-direction: column; gap: 12px; }
+.sort-list > .card { margin: 0; transition: transform .16s ease, box-shadow .16s ease; }
+.sort-list > .dragging { transition: none; z-index: 4; position: relative; box-shadow: 0 14px 34px rgba(0, 0, 0, .3); border-color: var(--accent); }
+.grip { width: 30px; height: 40px; flex: none; display: grid; place-items: center; background: none; border: 0; color: var(--muted); cursor: grab; touch-action: none; margin-inline-start: -8px; }
+.grip .ico { width: 22px; height: 22px; }
+.plan-hint { margin: -4px 0 10px; }
+.plan-item.pinned { border-color: var(--accent); }
+.icon-btn.on { color: var(--accent); }
