@@ -69,7 +69,7 @@ async function handle(req, env) {
       if (keys.length >= MAX_SUBS) return json(env, req, { ok: false, error: 'Server voll' }, 429);
     }
     const rec = { subscription: { endpoint: subscription.endpoint, expirationTime: null, keys: subscription.keys },
-      days: [...new Set(body.days)].sort(), time: body.time, tz: body.tz, lang: LANGS.includes(body.lang) ? body.lang : 'de', lastSent: old?.lastSent || null, lastTrained: old?.lastTrained || null, lastTest: old?.lastTest || 0 };
+      days: [...new Set(body.days)].sort(), time: body.time, times: body.times || {}, tz: body.tz, lang: LANGS.includes(body.lang) ? body.lang : 'de', lastSent: old?.lastSent || null, lastTrained: old?.lastTrained || null, lastTest: old?.lastTest || 0 };
     await env.SUBS.put(key, JSON.stringify(rec), { expirationTtl: MAX_AGE });
     return json(env, req, { ok: true });
   }

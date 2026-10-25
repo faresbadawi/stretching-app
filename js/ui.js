@@ -251,3 +251,68 @@ export function resizeImage(file, max = 640) {
     img.src = url;
   });
 }
+
+/* ---------- Bild zuschneiden: verschieben, zoomen (quadratischer Ausschnitt) ---------- */
+
+export function cropImage(file, out = 640) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('img.readFail')); };
+    img.onload = () => {
+      const w = img.naturalWidth; const h0 = img.naturalHeight;
+      const B = Math.min(340, window.innerWidth - 56);
+      const base = B / Math.min(w, h0);
+      let zoom = 1; let cx = B / 2; let cy = B / 2; // Mittelpunkt des Bildes im Rahmen
+      let done = false;
+      const view = h('div', { class: 'crop-box', style: `width:${B}px;height:${B}px` }, img);
+      img.className = 'crop-img'; img.draggable = false;
+      const slider = h('input', { type: 'range', class: 'crop-zoom', min: 1, max: 5, step: 0.01, value: 1, 'aria-label': t('crop.zoom') });
+      const apply = () => {
+        const s = base * zoom; const iw = w * s; const ih = h0 * s;
+        cx = Math.min(iw / 2, Math.max(B - iw / 2, cx)); cy = Math.min(ih / 2, Math.max(B - ih / 2, cy));
+        img.style.cssText = `width:${iw}px;height:${ih}px;transform:translate(${cx - iw / 2}px,${cy - ih / 2}px)`;
+        slider.value = zoom;
+      };
+      const setZoom = (z, px = B / 2, py = B / 2) => {
+        const nz = Math.min(5, Math.max(1, z)); const k = nz / zoom;
+        cx = px - (px - cx) * k; cy = py - (py - cy) * k; zoom = nz; apply();
+      };
+      slider.addEventListener('input', () => setZoom(Number(slider.value)));
+      // Ein Finger verschiebt, zwei Finger zoomen; am Computer: Maus ziehen und Mausrad
+      const pts = new Map(); let pinch = null;
+      view.addEventListener('pointerdown', (e) => { view.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); pinch = null; });
+      view.addEventListener('pointermove', (e) => {
+        const p = pts.get(e.pointerId); if (!p) return;
+        if (pts.size === 1) { cx += e.clientX - p.x; cy += e.clientY - p.y; p.x = e.clientX; p.y = e.clientY; apply(); return; }
+        p.x = e.clientX; p.y = e.clientY;
+        const [a, b] = [...pts.values()]; const dist = Math.hypot(a.x - b.x, a.y - b.y);
+        const r = view.getBoundingClientRect();
+        if (pinch) setZoom(zoom * (dist / pinch), (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top);
+        pinch = dist;
+      });
+      const up = (e) => { pts.delete(e.pointerId); pinch = null; };
+      view.addEventListener('pointerup', up); view.addEventListener('pointercancel', up);
+      view.addEventListener('wheel', (e) => { e.preventDefault(); const r = view.getBoundingClientRect(); setZoom(zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1), e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+      const finish = (value) => { if (done) return; done = true; URL.revokeObjectURL(url); resolve(value); };
+      const use = () => {
+        const s = base * zoom; const size = Math.min(out, Math.round(B / s));
+        const cv = document.createElement('canvas'); cv.width = cv.height = size;
+        const c = cv.getContext('2d'); c.fillStyle = '#fff'; c.fillRect(0, 0, size, size);
+        c.drawImage(img, (0 - (cx - (w * s) / 2)) / s, (0 - (cy - (h0 * s) / 2)) / s, B / s, B / s, 0, 0, size, size);
+        let data = cv.toDataURL('image/webp', 0.84);
+        if (!data.startsWith('data:image/webp')) data = cv.toDataURL('image/jpeg', 0.84);
+        sheet.close(); finish(data);
+      };
+      const sheet = openSheet({
+        title: t('crop.title'),
+        body: h('div', { class: 'crop' }, h('p', { class: 'muted small' }, t('crop.hint')), view,
+          h('div', { class: 'crop-zoomrow' }, icon('minus'), slider, icon('plus'))),
+        foot: [h('button', { type: 'button', class: 'btn primary', onclick: use }, icon('check'), t('crop.use'))],
+        onClose: () => finish(null)
+      });
+      apply();
+    };
+    img.src = url;
+  });
+}

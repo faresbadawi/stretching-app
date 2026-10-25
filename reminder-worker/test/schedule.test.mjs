@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { isDue, localParts, validSettings } from '../src/schedule.js';
+import { isDue, localParts, validSettings, timeFor } from '../src/schedule.js';
 
 const sub = (o = {}) => ({ days: [0, 2, 4], time: '18:00', tz: 'Europe/Berlin', lastSent: null, lastTrained: null, ...o });
 
@@ -36,4 +36,14 @@ test('validSettings', () => {
   assert.equal(validSettings({ days: [7], time: '07:30', tz: 'Europe/Berlin' }), false);
   assert.equal(validSettings({ days: [1], time: '25:00', tz: 'Europe/Berlin' }), false);
   assert.equal(validSettings({ days: [1], time: '07:30', tz: 'Nope/Zone' }), false);
+});
+
+test('eigene Uhrzeit pro Tag', () => {
+  const s = sub({ times: { 2: '07:00' } }); // Mittwoch 07:00, sonst 18:00
+  assert.equal(timeFor(s, 2), '07:00'); assert.equal(timeFor(s, 0), '18:00');
+  assert.equal(isDue(s, new Date('2026-01-14T06:00:00Z')), true);   // Mi 07:00 Berlin
+  assert.equal(isDue(s, new Date('2026-01-14T17:00:00Z')), false);  // 18:00 gilt nicht mehr am Mittwoch
+  assert.equal(validSettings({ days: [2], time: '18:00', times: { 2: '07:00' }, tz: 'Europe/Berlin' }), true);
+  assert.equal(validSettings({ days: [2], time: '18:00', times: { 9: '07:00' }, tz: 'Europe/Berlin' }), false);
+  assert.equal(validSettings({ days: [2], time: '18:00', times: { 2: '7:00' }, tz: 'Europe/Berlin' }), false);
 });

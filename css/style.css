@@ -432,3 +432,22 @@ dialog.sheet { will-change: transform; transition: transform .2s ease; }
 /* Zähler (− 3 +) behalten in allen Sprachen dieselbe Anordnung */
 .stepper { direction: ltr; }
 [dir=rtl] .stepper output { unicode-bidi: plaintext; }
+
+/* ===== Foto zuschneiden ===== */
+.crop { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.crop-box { position: relative; overflow: hidden; border-radius: 22px; background: #fff; border: 2px solid var(--accent); touch-action: none; cursor: grab; }
+.crop-img { position: absolute; left: 0; top: 0; max-width: none; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+.crop-zoomrow { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 340px; color: var(--muted); }
+.crop-zoom { flex: 1; accent-color: var(--accent); }
+
+.daytimes { margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--line); }
+
+/* ===== Programme zum Durchwischen ===== */
+.hero-wrap { margin-bottom: 16px; }
+.hero-track { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: -16px; padding: 0 16px 14px; scroll-padding-inline: 16px; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+.hero-track::-webkit-scrollbar { display: none; }
+.hero-slide { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; min-width: 0; }
+.hero-slide .hero { margin-bottom: 0; height: 100%; }
+.hero-dots { display: flex; justify-content: center; gap: 7px; margin-top: -2px; }
+.hero-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: all .2s; }
+.hero-dots i.on { width: 20px; border-radius: 4px; background: var(--accent); }

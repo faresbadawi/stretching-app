@@ -17,7 +17,8 @@ export const DEFAULT_SETTINGS = {
   weeklyGoal: 3,          // = Anzahl der Trainingstage (remindDays)
   remindOn: false,        // Push-Erinnerung eingeschaltet
   remindDays: [0, 2, 4],  // Trainingstage, Mo = 0 … So = 6
-  remindTime: '18:00',    // Uhrzeit der Erinnerung
+  remindTime: '18:00',    // Standard-Uhrzeit der Erinnerung
+  remindTimes: {},        // eigene Uhrzeit je Tag (Mo = 0 …), sonst remindTime
   lang: 'auto',           // 'auto' | 'de' | 'en' | 'ar'
   theme: 'auto',
   accent: 'blue',
@@ -105,6 +106,7 @@ export function setTrainingDays(days) {
   Object.assign(state.settings, { remindDays: d, weeklyGoal: d.length });
   commit();
 }
+export const timeFor = (day) => state.settings.remindTimes?.[day] || state.settings.remindTime;
 export function updateSettings(patch) { Object.assign(state.settings, patch); commit(); }
 export const variants = () => base.variants;
 

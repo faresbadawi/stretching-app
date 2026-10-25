@@ -21,17 +21,25 @@ export function localParts(date, tz) {
 
 // Fällig: heute ein Trainingstag, Uhrzeit erreicht (bis 30 Minuten später, falls ein Lauf ausfällt),
 // heute noch nicht erinnert und noch nicht trainiert.
+// Uhrzeit für einen Wochentag: eigene Zeit des Tages, sonst die allgemeine.
+export const timeFor = (sub, day) => sub.times?.[day] ?? sub.time;
+
 export function isDue(sub, now = new Date()) {
   const { day, minutes, date } = localParts(now, sub.tz);
   if (!sub.days.includes(day)) return false;
   if (sub.lastSent === date || sub.lastTrained === date) return false;
-  const [h, m] = sub.time.split(':').map(Number);
+  const [h, m] = timeFor(sub, day).split(':').map(Number);
   const target = h * 60 + m;
   return minutes >= target && minutes < target + 30;
 }
 
-export function validSettings({ days, time, tz }) {
-  return Array.isArray(days) && days.length > 0 && days.length <= 7 && days.every((d) => Number.isInteger(d) && d >= 0 && d <= 6)
-    && typeof time === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(time)
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+const validTimes = (times) => times === undefined
+  || (times !== null && typeof times === 'object' && !Array.isArray(times)
+    && Object.entries(times).every(([d, v]) => /^[0-6]$/.test(d) && typeof v === 'string' && TIME_RE.test(v)));
+
+export function validSettings({ days, time, tz, times }) {
+  return validTimes(times) && Array.isArray(days) && days.length > 0 && days.length <= 7 && days.every((d) => Number.isInteger(d) && d >= 0 && d <= 6)
+    && typeof time === 'string' && TIME_RE.test(time)
     && typeof tz === 'string' && validTimeZone(tz);
 }

@@ -6,7 +6,7 @@ import * as push from './notifications.js';
 import { t, tm, LANGS, catLabel, locale } from './i18n.js';
 import {
   $, h, fill, icon, iconBtn, thumb, placeholder, stepper, toggle, row, chips,
-  openSheet, confirmDialog, toast, minutesLabel, resizeImage
+  openSheet, confirmDialog, toast, minutesLabel, cropImage
 } from './ui.js';
 
 const TABS = [
@@ -68,18 +68,6 @@ function greeting() {
   return t(hr < 5 ? 'greet.night' : hr < 11 ? 'greet.morning' : hr < 17 ? 'greet.day' : hr < 22 ? 'greet.evening' : 'greet.night');
 }
 
-function openProgramPicker() {
-  const sheet = openSheet({ title: t('picker.program'), body: h('div') });
-  const active = st.activeWorkout();
-  sheet.body.replaceChildren(...st.workouts().map((w) => {
-    const items = st.resolveItems(w);
-    return h('button', { type: 'button', class: 'ex-row pick' + (active && w.id === active.id ? ' on' : ''), style: 'width:100%;text-align:start',
-      onclick: () => { st.setActiveWorkout(w.id); sheet.close(); } },
-      h('div', { class: 'name' }, h('b', {}, st.wname(w)), h('small', {}, `${exCount(items.length)} · ${items.length ? minutesLabel(st.workoutSeconds(w)) : '–'}`)),
-      h('div', { class: 'tick' }, icon('check')));
-  }));
-}
-
 function openHistory() {
   const recent = st.history().slice(-30).reverse();
   openSheet({
@@ -93,30 +81,59 @@ function openHistory() {
   });
 }
 
+// Alle Programme als Karten zum Durchwischen; die sichtbare Karte ist das aktive Programm.
+function heroCard(w) {
+  const items = st.resolveItems(w);
+  const canStart = items.length > 0;
+  return h('div', { class: 'hero' },
+    h('i', { class: 'hero-blob' }),
+    h('div', { class: 'hero-label' }, t('hero.label')),
+    h('h2', {}, st.wname(w)),
+    h('div', { class: 'hero-meta' },
+      h('span', {}, icon('figure'), exCount(items.length)),
+      h('span', {}, icon('clock'), canStart ? minutesLabel(st.workoutSeconds(w)) : '–')),
+    h('div', { class: 'hero-thumbs' }, items.slice(0, 6).map((it) => thumb(it.ex)), items.length > 6 ? h('div', { class: 'more' }, '+' + (items.length - 6)) : null),
+    h('button', { type: 'button', class: 'btn light big', disabled: !canStart, onclick: () => startTraining(w) }, icon('play'), canStart ? t('hero.start') : t('hero.add')));
+}
+
+function heroCarousel() {
+  const list = st.workouts();
+  if (!list.length) return h('div', { class: 'hero' }, h('h2', {}, t('hero.none')));
+  const activeId = st.activeWorkout()?.id;
+  const track = h('div', { class: 'hero-track', role: 'region', 'aria-label': t('hero.label') }, list.map((w) => h('div', { class: 'hero-slide', 'data-id': w.id }, heroCard(w))));
+  const dots = h('div', { class: 'hero-dots' }, list.map((w) => h('i', { class: w.id === activeId ? 'on' : '' })));
+  const slides = () => [...track.children];
+  const current = () => {
+    const mid = track.getBoundingClientRect().left + track.clientWidth / 2;
+    let best = 0; let bestD = Infinity;
+    slides().forEach((el, i) => { const r = el.getBoundingClientRect(); const d = Math.abs(r.left + r.width / 2 - mid); if (d < bestD) { bestD = d; best = i; } });
+    return best;
+  };
+  let timer = null;
+  track.addEventListener('scroll', () => {
+    const i = current();
+    [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
+    clearTimeout(timer);
+    timer = setTimeout(() => { const id = list[current()]?.id; if (id && id !== st.activeWorkout()?.id) st.setActiveWorkout(id); }, 220);
+  }, { passive: true });
+  // Nach dem Einfügen an die aktive Karte springen
+  requestAnimationFrame(() => { const el = slides()[Math.max(0, list.findIndex((w) => w.id === activeId))]; if (el) el.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'instant' }); });
+  return h('div', { class: 'hero-wrap' }, track, list.length > 1 ? dots : null);
+}
+
 function renderHome() {
   const root = $('view-home');
   const active = st.activeWorkout();
   const info = st.weekInfo();
   const tot = st.totals();
   const streak = st.streakWeeks();
-  const items = active ? st.resolveItems(active) : [];
-  const canStart = items.length > 0;
 
   fill(root,
     h('header', { class: 'page-head' },
       h('div', {}, h('h1', {}, greeting()), h('p', {}, todayLine())),
       streak > 0 ? h('div', { class: 'streak', title: t('streak.title') }, icon('flame'), t('streak.n', { n: streak })) : null),
 
-    h('div', { class: 'hero' },
-      h('i', { class: 'hero-blob' }),
-      h('div', { class: 'hero-label' }, t('hero.label')),
-      h('h2', {}, active ? st.wname(active) : t('hero.none')),
-      h('div', { class: 'hero-meta' },
-        h('span', {}, icon('figure'), exCount(items.length)),
-        h('span', {}, icon('clock'), canStart ? minutesLabel(st.workoutSeconds(active)) : '–')),
-      h('div', { class: 'hero-thumbs' }, items.slice(0, 6).map((it) => thumb(it.ex)), items.length > 6 ? h('div', { class: 'more' }, '+' + (items.length - 6)) : null),
-      h('button', { type: 'button', class: 'btn light big', disabled: !canStart, onclick: () => startTraining(active) }, icon('play'), canStart ? t('hero.start') : t('hero.add')),
-      st.workouts().length > 1 ? h('button', { type: 'button', class: 'hero-switch', onclick: openProgramPicker }, t('hero.switch'), icon('down')) : null),
+    heroCarousel(),
 
     h('div', { class: 'week' },
       h('div', { class: 'week-top' }, h('b', {}, t('week.title')),
@@ -367,7 +384,7 @@ function openExerciseEditor(ex) {
 
   const pick = async (file) => {
     if (!file) return;
-    try { d.image = await resizeImage(file); draw(); } catch (err) { toast(tm(err.message)); }
+    try { const out = await cropImage(file); if (out) { d.image = out; draw(); } } catch (err) { toast(tm(err.message)); }
   };
   const fileInput = (capture) => h('input', { type: 'file', accept: 'image/*', hidden: true, ...(capture ? { capture: 'environment' } : {}), onchange: (e) => { pick(e.target.files[0]); e.target.value = ''; } });
   const gallery = fileInput(false);
@@ -426,7 +443,7 @@ function renderSettings() {
   const root = $('view-settings');
   const pushHint = !push.supported() ? t('plan.hint.ios')
     : !push.configured() ? t('plan.hint.noserver')
-      : t('plan.hint.ok', { time: S.remindTime });
+      : new Set(S.remindDays.map((d) => st.timeFor(d))).size === 1 ? t('plan.hint.ok', { time: st.timeFor(S.remindDays[0]) }) : t('plan.hint.mixed');
   const resync = () => { clearTimeout(resync.t); resync.t = setTimeout(() => { if (st.settings().remindOn) push.sync().catch(() => toast(t('plan.syncFail'))); }, 700); };
   const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   const importer = h('input', { type: 'file', accept: 'application/json,.json', hidden: true, onchange: async (e) => {
@@ -452,7 +469,11 @@ function renderSettings() {
         try { if (on) await push.enable(); else await push.disable(); toast(t(on ? 'plan.on' : 'plan.off')); } catch (err) { toast(tm(err.message)); }
         renderSettings();
       }, t('plan.remind')), pushHint),
-      S.remindOn ? row(t('plan.time'), h('input', { type: 'time', class: 'timebox', value: S.remindTime, 'aria-label': t('plan.time'), onchange: (e) => { if (e.target.value) { set({ remindTime: e.target.value }); resync(); } } })) : null,
+      S.remindOn ? row(t('plan.time'), h('input', { type: 'time', class: 'timebox', value: S.remindTime, 'aria-label': t('plan.time'), onchange: (e) => { if (e.target.value) { set({ remindTime: e.target.value, remindTimes: {} }); resync(); renderSettings(); } } }), t('plan.timeHint')) : null,
+      S.remindOn ? h('div', { class: 'daytimes' }, st.weekOrder().filter((i) => S.remindDays.includes(i)).map((i) =>
+        row(t('day.full.' + i), h('input', { type: 'time', class: 'timebox', value: st.timeFor(i), 'aria-label': `${t('day.full.' + i)} – ${t('plan.time')}`, onchange: (e) => {
+          if (e.target.value) { set({ remindTimes: { ...S.remindTimes, [i]: e.target.value } }); resync(); renderSettings(); }
+        } })))) : null,
       S.remindOn ? h('button', { type: 'button', class: 'btn', style: 'margin-top:10px', onclick: async () => {
         try { await push.sendTest(); toast(t('plan.testSent')); } catch (err) { toast(tm(err.message)); }
       } }, t('plan.test')) : null),

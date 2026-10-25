@@ -1,5 +1,5 @@
 // Push-Erinnerungen: Abo im Browser anlegen und Tage/Uhrzeit an den Erinnerungs-Server (Cloudflare Worker) melden.
-import { settings, updateSettings } from './store.js';
+import { settings, updateSettings, timeFor } from './store.js';
 import { REMINDER_API, VAPID_PUBLIC_KEY } from './config.js';
 import { lang } from './i18n.js';
 
@@ -33,7 +33,7 @@ export async function sync(existing) {
   const S = settings();
   const sub = existing || (await getSubscription(false));
   if (!sub) return;
-  await post('/subscribe', { subscription: sub.toJSON(), days: S.remindDays, time: S.remindTime, tz: timeZone(), lang: lang() });
+  await post('/subscribe', { subscription: sub.toJSON(), days: S.remindDays, time: S.remindTime, times: Object.fromEntries(S.remindDays.map((d) => [d, timeFor(d)])), tz: timeZone(), lang: lang() });
 }
 
 export async function enable() {
