@@ -156,7 +156,31 @@ function loadClip(key) {
   return clips.get(id);
 }
 export function preloadVoice(keys) {
-  if (ctx) keys.forEach(loadClip);
+  if (ctx) { keys.forEach(loadClip); loadApplause(); }
+}
+
+// Applaus-Aufnahme (audio/applause.mp3): wird vor dem Training geladen; fehlt sie, bleibt der synthetische Applaus.
+let applauseBuf = null;
+let applauseTried = false;
+function loadApplause() {
+  if (applauseBuf || applauseTried || !ctx) return;
+  applauseTried = true;
+  fetch('audio/applause.mp3')
+    .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('404'))))
+    .then((buf) => ctx.decodeAudioData(buf))
+    .then((b) => { applauseBuf = b; })
+    .catch(() => { applauseBuf = null; });
+}
+// Echter Applaus, sonst der synthetische
+function crowd(delay = 0, vol = 0.5) {
+  if (!applauseBuf) { applause(delay, vol); return; }
+  if (!ready()) return;
+  const g = ctx.createGain();
+  g.gain.value = 0.9;
+  const src = ctx.createBufferSource();
+  src.buffer = applauseBuf;
+  src.connect(g).connect(master);
+  src.start(ctx.currentTime + delay);
 }
 
 let voiceSrc = null;
@@ -217,9 +241,9 @@ export const cue = {
   finish() {
     [523, 659, 784, 1046].forEach((f, i) => tone({ f, t: i * 0.13, dur: 0.4, type: 'triangle', vol: 0.26, wet: 0.3 }));
     [523, 659, 784, 1046].forEach((f) => tone({ f, t: 0.55, dur: 1.9, type: 'sine', vol: 0.16, attack: 0.04, wet: 0.5 }));
-    applause(0.7);
+    crowd(0.7);
     buzz([150, 70, 150, 70, 350]);
   },
-  finishSeconds: 0.7 + APPLAUSE_SECONDS,
+  get finishSeconds() { return 0.7 + (applauseBuf ? Math.min(applauseBuf.duration, 4.5) : APPLAUSE_SECONDS); },
   preview() { this.start(); setTimeout(() => this.rest(), 1400); setTimeout(() => this.tick(1), 2800); }
 };
