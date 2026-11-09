@@ -1,9 +1,9 @@
 // Trainingsablauf: Timer, Phasen (Bereit / Dehnen / Pause), Anzeige, Signale.
-import { buildSegments, totalSeconds, settings, addHistory, weekInfo, wname } from './store.js';
+import { buildSegments, totalSeconds, settings, addHistory, weekInfo, wname, streakWeeks } from './store.js';
 import { t, catLabel } from './i18n.js';
 import * as snd from './sound.js';
 import { $, h, icon, fmtTime, confirmDialog, confetti } from './ui.js';
-import { exerciseDetail } from './views.js';
+import { exerciseDetail, weekDays } from './views.js';
 import { markTrained } from './notifications.js';
 
 const RING = 2 * Math.PI * 136;
@@ -100,6 +100,13 @@ export function startTraining(workout) {
   snd.preloadVoice(['get-ready', 'rest', 'switch', 'complete']);
   const count = segs.filter((x) => x.type === 'work' && x.side === 0).length;
   s = { w: workout, segs, count, i: 0, startTs: performance.now(), elapsedAtPause: 0, paused: false, lastLeft: null, timer: null, total: totalSeconds(segs) };
+  // Fortschrittsleiste: ein Abschnitt pro Übung (Vorbereitung und Pause zählen zur folgenden Übung)
+  s.groupDur = Array(count).fill(0);
+  let before = 0;
+  for (const seg of segs) { seg.group = seg.type === 'prep' ? 0 : seg.idx; seg.before = before; before += seg.dur; s.groupDur[seg.group] += seg.dur; }
+  s.groupStart = s.groupDur.map((_, g) => s.groupDur.slice(0, g).reduce((a, b) => a + b, 0));
+  $('t-bar').replaceChildren(...s.groupDur.map(() => h('span', {}, h('i'))));
+  s.bars = [...$('t-bar').querySelectorAll('i')];
   labelTraining();
   document.body.classList.add('busy');
   const tr = $('training');
@@ -150,7 +157,7 @@ function enter(playCue = true) {
   $('t-kicker').textContent = seg.type === 'work' ? (ex.category ? catLabel(ex.category) : '') : t(seg.type === 'prep' ? 'kicker.first' : 'kicker.next');
   card.classList.toggle('dim', seg.type !== 'work');
 
-  $('t-phase').textContent = seg.type === 'prep' ? t('phase.ready') : seg.type === 'rest' ? t('phase.rest') : seg.sides > 1 ? t('phase.side', { a: seg.side + 1 }) : t('phase.stretch');
+  $('t-phase').textContent = phaseLabel(seg);
   const n = seg.type === 'prep' ? 1 : seg.idx + 1;
   $('t-counter').textContent = t('tr.counter', { a: n, b: s.count });
   $('circle').classList.toggle('breathe', seg.type === 'rest');
@@ -169,6 +176,8 @@ function enter(playCue = true) {
     }
   }
 }
+
+const phaseLabel = (seg) => (seg.type === 'prep' ? t('phase.ready') : seg.type === 'rest' ? t('phase.rest') : seg.sides > 1 ? t('phase.side', { a: seg.side + 1 }) : t('phase.stretch'));
 
 function renderNext(seg) {
   const el = $('t-next');
@@ -212,10 +221,12 @@ function tick() {
 }
 
 function renderTotals(el) {
-  const before = s.segs.slice(0, s.i).reduce((n, x) => n + x.dur, 0);
-  const done = before + el / 1000;
+  const done = s.segs[s.i].before + el / 1000;
   $('t-remaining').textContent = t('tr.remaining', { t: fmtTime(s.total - done) });
-  $('t-bar-fill').style.width = (100 * done / s.total) + '%';
+  s.bars.forEach((bar, g) => {
+    const part = Math.max(0, Math.min(1, (done - s.groupStart[g]) / s.groupDur[g]));
+    bar.style.width = (100 * part) + '%';
+  });
 }
 
 function setPaused(p) {
@@ -232,6 +243,7 @@ function setPaused(p) {
     requestWakeLock();
   }
   $('training').classList.toggle('paused', p);
+  $('t-phase').textContent = p ? t('tr.paused') : phaseLabel(s.segs[s.i]);
   setIcon($('t-toggle'), p ? 'play' : 'pause');
   labelTraining();
 }
@@ -242,6 +254,7 @@ function jumpTo(i) {
   s.elapsedAtPause = 0;
   enter();
   tick();
+  renderTotals(elapsed());
 }
 
 function finish() {
@@ -256,8 +269,13 @@ function finish() {
   markTrained();
   $('done-text').textContent = t('done.text', { name: wname(w), ex: t('exercises.n', { n: count }), m: Math.max(1, Math.round(seconds / 60)) });
   const info = weekInfo();
+  const tile = (value, label) => h('div', {}, h('strong', {}, value), h('span', {}, label));
+  $('done-stats').replaceChildren(
+    tile(Math.max(1, Math.round(seconds / 60)), t('stat.minutes')),
+    tile(count, t('stat.exercises')),
+    tile(streakWeeks(), t('stat.streak')));
   $('done-week').replaceChildren(
-    h('div', { class: 'week-days' }, info.days.map((d) => h('div', { class: 'day' + (d.done ? ' done' : '') + (d.today ? ' today' : '') }, d.label, h('i', {}, icon('check'))))),
+    weekDays(info),
     h('div', { class: 'bar' }, h('i', { style: `width:${Math.min(100, (100 * info.count) / info.goal)}%` })),
     h('p', { class: 'small', style: 'margin:8px 0 0' }, t('done.week', { a: info.count, b: info.goal })));
   $('done').hidden = false;

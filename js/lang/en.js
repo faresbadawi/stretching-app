@@ -97,5 +97,9 @@ export default {
   'plan.selected': 'Workout days: {days}',
   'day.full.0': 'Monday', 'day.full.1': 'Tuesday', 'day.full.2': 'Wednesday', 'day.full.3': 'Thursday', 'day.full.4': 'Friday', 'day.full.5': 'Saturday', 'day.full.6': 'Sunday',
   'tr.tapHint': 'Tap the circle to pause.',
+  'week.left': ({ n }) => (n === 1 ? '1 workout to go this week' : `${n} workouts to go this week`),
+  'week.reached': 'Weekly goal reached – great job!',
+  'activity.title': 'Activity', 'activity.sub': 'Last {n} weeks',
+  'tr.paused': 'Paused', 'stat.exercises': 'Exercises', 'look.colorName.blue': 'Blue', 'look.colorName.green': 'Green', 'look.colorName.violet': 'Violet', 'look.colorName.orange': 'Orange', 'look.colorName.pink': 'Pink',
   'day.0': 'Mon', 'day.1': 'Tue', 'day.2': 'Wed', 'day.3': 'Thu', 'day.4': 'Fri', 'day.5': 'Sat', 'day.6': 'Sun'
 };

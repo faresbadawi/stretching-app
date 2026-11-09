@@ -96,5 +96,9 @@ export default {
   'plan.selected': 'Trainingstage: {days}',
   'day.full.0': 'Montag', 'day.full.1': 'Dienstag', 'day.full.2': 'Mittwoch', 'day.full.3': 'Donnerstag', 'day.full.4': 'Freitag', 'day.full.5': 'Samstag', 'day.full.6': 'Sonntag',
   'tr.tapHint': 'Tippe auf den Kreis, um zu pausieren.',
+  'week.left': ({ n }) => (n === 1 ? 'Noch 1 Training bis zum Wochenziel' : `Noch ${n} Trainings bis zum Wochenziel`),
+  'week.reached': 'Wochenziel erreicht – stark!',
+  'activity.title': 'Aktivität', 'activity.sub': 'Letzte {n} Wochen',
+  'tr.paused': 'Pausiert', 'stat.exercises': 'Übungen', 'look.colorName.blue': 'Blau', 'look.colorName.green': 'Grün', 'look.colorName.violet': 'Violett', 'look.colorName.orange': 'Orange', 'look.colorName.pink': 'Rosa',
   'day.0': 'Mo', 'day.1': 'Di', 'day.2': 'Mi', 'day.3': 'Do', 'day.4': 'Fr', 'day.5': 'Sa', 'day.6': 'So'
 };

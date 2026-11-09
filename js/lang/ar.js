@@ -100,5 +100,9 @@ export default {
   'day.full.0': 'الاثنين', 'day.full.1': 'الثلاثاء', 'day.full.2': 'الأربعاء', 'day.full.3': 'الخميس', 'day.full.4': 'الجمعة', 'day.full.5': 'السبت', 'day.full.6': 'الأحد',
   'tr.tapHint': 'اضغط على الدائرة للإيقاف المؤقت.',
   // حرف واحد لكل يوم (الأحرف المعتمدة في التقاويم العربية): الاثنين ن، الثلاثاء ث، الأربعاء ر، الخميس خ، الجمعة ج، السبت س، الأحد ح
+  'week.left': ({ n }) => `المتبقي لبلوغ هدف الأسبوع: ${n}`,
+  'week.reached': 'تم بلوغ هدف الأسبوع – أحسنت!',
+  'activity.title': 'النشاط', 'activity.sub': 'آخر {n} أسبوعًا',
+  'tr.paused': 'متوقف مؤقتًا', 'stat.exercises': 'تمارين', 'look.colorName.blue': 'أزرق', 'look.colorName.green': 'أخضر', 'look.colorName.violet': 'بنفسجي', 'look.colorName.orange': 'برتقالي', 'look.colorName.pink': 'وردي',
   'day.0': 'ن', 'day.1': 'ث', 'day.2': 'ر', 'day.3': 'خ', 'day.4': 'ج', 'day.5': 'س', 'day.6': 'ح'
 };

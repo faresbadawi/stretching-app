@@ -24,7 +24,7 @@ const lib = { q: '', filter: 'all' };
 function renderTabs() {
   $('tabbar').setAttribute('aria-label', t('nav.label'));
   $('tabbar').replaceChildren(...TABS.map((tab) =>
-    h('button', { type: 'button', 'data-tab': tab.key, class: tab.key === currentTab ? 'active' : '', onclick: () => showTab(tab.key) }, icon(tab.icon), t('tab.' + tab.key))));
+    h('button', { type: 'button', 'data-tab': tab.key, class: tab.key === currentTab ? 'active' : '', 'aria-current': tab.key === currentTab ? 'page' : null, onclick: () => showTab(tab.key) }, icon(tab.icon), t('tab.' + tab.key))));
 }
 
 export function initViews() {
@@ -38,8 +38,14 @@ const scrollMemory = {};
 export function showTab(name) {
   scrollMemory[currentTab] = window.scrollY;
   currentTab = name;
-  for (const tab of TABS) $('view-' + tab.key).hidden = tab.key !== name;
-  document.querySelectorAll('#tabbar button').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
+  for (const tab of TABS) {
+    const v = $('view-' + tab.key);
+    v.hidden = tab.key !== name;
+    v.classList.toggle('enter', tab.key === name);
+  }
+  clearTimeout(showTab.t);
+  showTab.t = setTimeout(() => $('view-' + name).classList.remove('enter'), 900);
+  document.querySelectorAll('#tabbar button').forEach((b) => { const on = b.dataset.tab === name; b.classList.toggle('active', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   window.scrollTo(0, scrollMemory[name] || 0);
 }
 
@@ -68,16 +74,39 @@ function greeting() {
   return t(hr < 5 ? 'greet.night' : hr < 11 ? 'greet.morning' : hr < 17 ? 'greet.day' : hr < 22 ? 'greet.evening' : 'greet.night');
 }
 
+// Kennzahlen als drei Kacheln
+function statTiles(tot, streak) {
+  const tile = (ic, value, label) => h('div', { class: 'stat' }, icon(ic), h('strong', {}, value), h('span', {}, label));
+  return h('div', { class: 'stats' },
+    tile('bolt', tot.sessions, t('stat.sessions')),
+    tile('clock', tot.minutes, t('stat.minutes')),
+    tile('flame', streak, t('stat.streak')));
+}
+
+// Aktivität der letzten Wochen: eine Spalte pro Woche, ein Kästchen pro Tag.
+const HEAT_WEEKS = 16;
+function heatmap() {
+  const fmt = (d) => d.toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short' });
+  return h('div', { class: 'heat', role: 'img', 'aria-label': `${t('activity.title')} – ${t('activity.sub', { n: HEAT_WEEKS })}`, style: `grid-template-columns:repeat(${HEAT_WEEKS},1fr)` },
+    st.activity(HEAT_WEEKS).map((d) => h('i', {
+      class: (d.future ? 'off' : d.count > 1 ? 'on on2' : d.count ? 'on' : '') + (d.today ? ' now' : ''),
+      title: d.future ? null : fmt(d.date) + (d.count ? ' ✓' : '')
+    })));
+}
+
 function openHistory() {
-  const recent = st.history().slice(-30).reverse();
+  const recent = st.history().slice(-40).reverse();
   openSheet({
     title: t('history.title'),
-    body: recent.length ? h('ul', { class: 'hist' }, recent.map((e) => {
-      const d = new Date(e.t);
-      return h('li', {}, h('div', { class: 'dot' }, icon('check')),
-        h('div', {}, h('b', {}, e.nameKey ? t('wk.' + e.nameKey) : (e.name && e.name !== 'Training' ? e.name : t('history.default'))),
-          h('small', {}, d.toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + minutesLabel(e.seconds || 600))));
-    })) : h('div', { class: 'empty' }, icon('clock'), h('p', {}, t('history.empty')))
+    tall: recent.length > 4,
+    body: recent.length ? h('div', {},
+      statTiles(st.totals(), st.streakWeeks()),
+      h('ul', { class: 'hist' }, recent.map((e) => {
+        const d = new Date(e.t);
+        return h('li', {}, h('div', { class: 'dot' }, icon('check')),
+          h('div', {}, h('b', {}, e.nameKey ? t('wk.' + e.nameKey) : (e.name && e.name !== 'Training' ? e.name : t('history.default'))),
+            h('small', {}, d.toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + minutesLabel(e.seconds || 600))));
+      }))) : h('div', { class: 'empty' }, icon('clock'), h('p', {}, t('history.empty')))
   });
 }
 
@@ -110,31 +139,51 @@ function heroCarousel() {
       arrow(1, t('hero.next'))) : null);
 }
 
+// Fortschrittsring für das Wochenziel
+function goalRing(count, goal) {
+  const C = 2 * Math.PI * 26;
+  const off = C * (1 - Math.min(1, count / goal));
+  const el = h('div', { class: 'goal-ring' + (count >= goal ? ' ok' : ''), html:
+    `<svg viewBox="0 0 62 62" aria-hidden="true"><circle class="tr" cx="31" cy="31" r="26"/><circle class="pr" cx="31" cy="31" r="26" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/></svg>` });
+  el.append(h('b', {}, `${Math.min(count, 99)}/${goal}`));
+  requestAnimationFrame(() => requestAnimationFrame(() => { el.querySelector('.pr').style.strokeDashoffset = off.toFixed(1); }));
+  return el;
+}
+
+export function weekDays(info) {
+  return h('div', { class: 'week-days' }, info.days.map((d) =>
+    h('div', { class: 'day' + (d.done ? ' done' : '') + (d.today ? ' today' : '') + (d.plan && !d.done ? ' plan' : '') }, d.label, h('i', {}, icon('check')))));
+}
+
 function renderHome() {
   const root = $('view-home');
-  const active = st.activeWorkout();
   const info = st.weekInfo();
   const tot = st.totals();
   const streak = st.streakWeeks();
+  const left = info.goal - info.count;
 
   fill(root,
     h('header', { class: 'page-head' },
-      h('div', {}, h('h1', {}, greeting()), h('p', {}, todayLine())),
+      h('div', {},
+        h('div', { class: 'eyebrow' }, new Date().toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long' })),
+        h('h1', {}, greeting()), h('p', {}, todayLine())),
       streak > 0 ? h('div', { class: 'streak', title: t('streak.title') }, icon('flame'), t('streak.n', { n: streak })) : null),
 
     heroCarousel(),
 
-    h('div', { class: 'week' },
-      h('div', { class: 'week-top' }, h('b', {}, t('week.title')),
-        h('span', { class: info.count >= info.goal ? 'goal ok' : 'goal' }, `${Math.min(info.count, 99)} / ${info.goal}`)),
-      h('div', { class: 'week-days' }, info.days.map((d) =>
-        h('div', { class: 'day' + (d.done ? ' done' : '') + (d.today ? ' today' : '') }, d.label, h('i', {}, icon('check')))))),
+    h('div', { class: 'card week-card' },
+      h('div', { class: 'week-top' },
+        goalRing(info.count, info.goal),
+        h('div', { class: 'week-text' }, h('b', {}, t('week.title')),
+          h('span', {}, left > 0 ? t('week.left', { n: left }) : t('week.reached')))),
+      weekDays(info)),
 
-    h('div', { class: 'statline' },
-      h('div', {}, h('strong', {}, tot.sessions), h('span', {}, t('stat.sessions'))),
-      h('div', {}, h('strong', {}, tot.minutes), h('span', {}, t('stat.minutes'))),
-      h('div', {}, h('strong', {}, streak), h('span', {}, t('stat.streak')))),
-    h('button', { type: 'button', class: 'link', onclick: openHistory }, t('history.show')));
+    statTiles(tot, streak),
+
+    h('div', { class: 'card' },
+      h('div', { class: 'card-head' }, h('h2', {}, t('activity.title')), h('span', {}, t('activity.sub', { n: HEAT_WEEKS }))),
+      heatmap(),
+      h('button', { type: 'button', class: 'card-link', onclick: openHistory }, t('history.show'), icon('chevron'))));
 }
 
 /* =============== Programme =============== */
@@ -160,14 +209,14 @@ function renderPlans() {
           h('button', { type: 'button', class: 'grip', 'aria-label': t('plans.drag'), title: t('plans.drag') }, icon('grip')),
           h('div', {}, h('h3', {}, st.wname(w)),
             h('div', { class: 'meta' }, `${exCount(items.length)} · ${items.length ? minutesLabel(st.workoutSeconds(w)) : '–'} · ${t('plans.rest', { n: w.rest })}`)),
-          iconBtn('pin', t(w.pinned ? 'plans.unpin' : 'plans.pin'), () => st.togglePin(w.id), 'sm' + (w.pinned ? ' on' : '')),
-          iconBtn('copy', t('common.copy'), () => { st.duplicateWorkout(w.id); toast(t('plans.dup')); }, 'sm'),
+          iconBtn('pin', t(w.pinned ? 'plans.unpin' : 'plans.pin'), () => st.togglePin(w.id), 'sm' + (w.pinned ? ' on' : ''))),
+        h('div', { class: 'thumbs' }, items.slice(0, 7).map((it) => thumb(it.ex)), items.length > 7 ? h('div', { class: 'more' }, '+' + (items.length - 7)) : null),
+        h('div', { class: 'plan-actions' },
+          iconBtn('edit', t('common.edit'), () => openWorkoutEditor(w)),
+          iconBtn('copy', t('common.copy'), () => { st.duplicateWorkout(w.id); toast(t('plans.dup')); }),
           iconBtn('trash', t('common.delete'), async () => {
             if (await confirmDialog(t('plans.del', { name: st.wname(w) }))) st.deleteWorkout(w.id);
-          }, 'sm danger')),
-        h('div', { class: 'thumbs' }, items.slice(0, 7).map((it) => thumb(it.ex)), items.length > 7 ? h('div', { class: 'more' }, '+' + (items.length - 7)) : null),
-        h('div', { class: 'btn-row' },
-          h('button', { type: 'button', class: 'btn', onclick: () => openWorkoutEditor(w) }, icon('edit'), t('common.edit')),
+          }, 'danger'),
           h('button', { type: 'button', class: 'btn primary', disabled: !items.length, onclick: () => { st.setActiveWorkout(w.id); startTraining(w); } }, icon('play'), t('hero.start'))));
     })) : h('div', { class: 'empty' }, icon('tabPlans'), h('p', {}, t('plans.empty'))),
     h('button', { type: 'button', class: 'btn primary', style: 'margin-top:6px', onclick: () => openWorkoutEditor(null) }, icon('plus'), t('plans.new')));
@@ -292,11 +341,11 @@ function renderLibrary() {
     bar.replaceChildren(chips(filterItems(), lib.filter, (k) => { lib.filter = k; drawGrid(); }));
     const exs = filterExercises(lib.q, lib.filter);
     grid.replaceChildren(...(exs.length ? exs.map((ex, i) =>
-      h('div', { class: 'ex-card', style: `animation-delay:${Math.min(i, 10) * 25}ms`, role: 'button', tabindex: 0, onclick: () => exerciseDetail(ex) },
+      h('div', { class: 'ex-card', style: `animation-delay:${Math.min(i, 10) * 25}ms`, role: 'button', tabindex: 0, 'aria-label': ex.name, onclick: () => exerciseDetail(ex), onkeydown: (e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); exerciseDetail(ex); } } },
         h('span', { class: 'pic' }, ex.image ? h('img', { src: ex.image, alt: '', loading: 'lazy', draggable: 'false' }) : placeholder(ex.category)),
         !ex.builtin ? h('span', { class: 'own' }, t('lib.own')) : null,
         iconBtn('star', ex.favorite ? t('lib.favRemove') : t('lib.favAdd'), (e) => { e.stopPropagation(); st.toggleFavorite(ex.id); }, 'sm fav' + (ex.favorite ? ' on' : '')),
-        h('div', { class: 'info' }, h('b', {}, ex.name), h('small', {}, catLabel(ex.category))))) :
+        h('div', { class: 'info' }, h('b', {}, ex.name), h('small', {}, catLabel(ex.category) + (ex.perSide ? ' · ' + t('pill.sides') : ''))))) :
       [h('div', { class: 'empty', style: 'grid-column:1/-1' }, icon('search'), h('p', {}, t('lib.none')))]));
   };
   const hidden = st.hiddenExercises();
@@ -340,7 +389,7 @@ export function exerciseDetail(ex, { readOnly = false, onClose } = {}) {
     foot,
     body: h('div', {},
       h('div', { class: 'detail-pic' }, ex.image ? h('img', { src: ex.image, alt: ex.name, draggable: 'false' }) : placeholder(ex.category)),
-      h('div', {}, h('span', { class: 'pill' }, ex.category ? catLabel(ex.category) : t('detail.noCat')), ex.perSide ? h('span', { class: 'pill' }, t('pill.sides')) : null, ex.duration ? h('span', { class: 'pill' }, ex.duration + ' s') : null),
+      h('div', { class: 'pills' }, h('span', { class: 'pill' }, ex.category ? catLabel(ex.category) : t('detail.noCat')), ex.perSide ? h('span', { class: 'pill' }, t('pill.sides')) : null, ex.duration ? h('span', { class: 'pill' }, ex.duration + ' s') : null),
       ex.description ? h('p', { class: 'muted' }, ex.description) : null,
       ex.steps?.length ? h('ol', { class: 'steps' }, ex.steps.map((x) => h('li', {}, x))) : null)
   });
@@ -432,7 +481,7 @@ function download(name, text) {
 }
 
 function seg(options, value, onPick) {
-  return h('div', { class: 'seg' }, options.map(([k, label]) => h('button', { type: 'button', class: k === value ? 'on' : '', onclick: () => onPick(k) }, label)));
+  return h('div', { class: 'seg', role: 'group' }, options.map(([k, label]) => h('button', { type: 'button', class: k === value ? 'on' : '', 'aria-pressed': k === value, onclick: () => onPick(k) }, label)));
 }
 
 function renderSettings() {
@@ -498,7 +547,7 @@ function renderSettings() {
         LANGS.map(([k, label]) => h('option', { value: k, ...(S.lang === k ? { selected: true } : {}) }, label)))),
       row(t('look.theme'), seg([['auto', t('look.auto')], ['light', t('look.light')], ['dark', t('look.dark')]], S.theme, (k) => set({ theme: k }))),
       row(t('look.color'), h('div', { class: 'swatches' }, [['blue', '#2f7df6'], ['green', '#14a86f'], ['violet', '#7a5cff'], ['orange', '#f2780c'], ['pink', '#e5489b']].map(([k, c]) =>
-        h('button', { type: 'button', class: 'swatch' + (S.accent === k ? ' on' : ''), style: `background:${c}`, 'aria-label': k, onclick: () => set({ accent: k }) }))))),
+        h('button', { type: 'button', class: 'swatch' + (S.accent === k ? ' on' : ''), style: `background:${c}`, 'aria-label': t('look.colorName.' + k), title: t('look.colorName.' + k), 'aria-pressed': S.accent === k, onclick: () => set({ accent: k }) }))))),
 
     h('p', { class: 'section-title' }, t('sec.data')),
     h('div', { class: 'card' },
@@ -507,12 +556,13 @@ function renderSettings() {
       h('div', { class: 'btn-row' },
         h('button', { type: 'button', class: 'btn', onclick: () => download(`stretch-backup-${new Date().toISOString().slice(0, 10)}.json`, st.exportData()) }, t('data.backup')),
         h('button', { type: 'button', class: 'btn', onclick: () => importer.click() }, t('data.restore'))),
-      h('button', { type: 'button', class: 'btn danger', style: 'margin-top:10px', onclick: async () => {
+      h('button', { type: 'button', class: 'btn danger soft', style: 'margin-top:10px', onclick: async () => {
         if (await confirmDialog(t('data.resetConfirm'), { ok: t('data.resetOk'), title: t('data.resetTitle') })) { st.resetAll(); toast(t('data.resetDone')); }
       } }, t('data.reset'))),
 
     !standalone ? h('div', { class: 'card' }, h('h2', {}, t('install.title')),
       h('p', { class: 'muted small', style: 'margin:0' }, t('install.text'))) : null,
-    h('p', { id: 'offline-status', class: 'muted small', style: 'text-align:center' }, offlineReady ? t('status.offline') : ''),
-    h('p', { class: 'muted small', style: 'text-align:center;margin-top:0' }, t('credits.voice')));
+    h('div', { class: 'about' },
+      h('p', { id: 'offline-status' }, offlineReady ? t('status.offline') : ''),
+      h('p', {}, t('credits.voice'))));
 }

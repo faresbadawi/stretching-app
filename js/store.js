@@ -288,7 +288,7 @@ export function weekInfo() {
   const todayKey = dayKey(new Date());
   const days = weekOrder().map((i, pos) => {
     const d = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + pos);
-    return { label: t('day.' + i), done: done.has(dayKey(d)), today: dayKey(d) === todayKey };
+    return { label: t('day.' + i), done: done.has(dayKey(d)), today: dayKey(d) === todayKey, plan: state.settings.remindDays.includes(i) };
   });
   const count = state.history.filter((h) => new Date(h.t) >= mon).length;
   return { days, count, goal: state.settings.weeklyGoal };
@@ -307,6 +307,22 @@ export function streakWeeks() {
   let n = 0;
   while ((perWeek.get(w.getTime()) || 0) >= goal) { n++; w = new Date(w.getFullYear(), w.getMonth(), w.getDate() - 7); }
   return n;
+}
+// Aktivität der letzten Wochen (älteste zuerst), je Woche 7 Tage in Anzeige-Reihenfolge.
+export function activity(weeks = 16) {
+  const perDay = new Map();
+  for (const h of state.history) { const k = dayKey(new Date(h.t)); perDay.set(k, (perDay.get(k) || 0) + 1); }
+  const start = startOfWeek();
+  const today = new Date();
+  const todayKey = dayKey(today);
+  const out = [];
+  for (let w = weeks - 1; w >= 0; w--) {
+    for (let p = 0; p < 7; p++) {
+      const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() - w * 7 + p);
+      out.push({ date: d, count: perDay.get(dayKey(d)) || 0, today: dayKey(d) === todayKey, future: d > today });
+    }
+  }
+  return out;
 }
 export function totals() {
   return { sessions: state.history.length, minutes: Math.round(state.history.reduce((n, h) => n + (h.seconds || 0), 0) / 60) };

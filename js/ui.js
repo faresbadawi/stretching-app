@@ -123,15 +123,15 @@ export function row(label, control, hint) {
 }
 
 export function chips(items, active, onPick) {
-  return h('div', { class: 'chips', role: 'tablist' }, items.map(({ key, label, iconName }) =>
-    h('button', { type: 'button', class: 'chip' + (key === active ? ' on' : ''), onclick: () => onPick(key) },
+  return h('div', { class: 'chips', role: 'group' }, items.map(({ key, label, iconName }) =>
+    h('button', { type: 'button', class: 'chip' + (key === active ? ' on' : ''), 'aria-pressed': key === active, onclick: () => onPick(key) },
       iconName ? icon(iconName) : null, label)));
 }
 
 /* ---------- Sheets & Dialoge ---------- */
 
 export function openSheet({ title, body, foot, onClose, tall = false }) {
-  const dlg = h('dialog', { class: 'sheet' + (tall ? ' tall' : '') });
+  const dlg = h('dialog', { class: 'sheet' + (tall ? ' tall' : ''), tabindex: -1, 'aria-label': title || '' });
   let closed = false;
   const close = () => {
     if (closed) return;
@@ -167,6 +167,7 @@ export function openSheet({ title, body, foot, onClose, tall = false }) {
   dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });
   document.body.append(dlg);
   dlg.showModal();
+  dlg.focus(); // kein Fokusrahmen auf dem Schließen-Knopf beim Öffnen
   return { close, dlg, body: dlg.querySelector('.sheet-body') };
 }
 

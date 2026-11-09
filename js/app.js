@@ -5,14 +5,14 @@ import { initTraining, labelTraining } from './training.js';
 import { setLang, resolveLang, applyStatic } from './i18n.js';
 import { refresh as refreshReminders } from './notifications.js';
 
-const ACCENT_THEME_COLOR = { blue: '#2f7df6', green: '#14a86f', violet: '#7a5cff', orange: '#f2780c', pink: '#e5489b' };
 
 function applyAppearance() {
   const S = st.settings();
   const root = document.documentElement;
   if (S.theme === 'auto') root.removeAttribute('data-theme'); else root.dataset.theme = S.theme;
   root.dataset.accent = S.accent;
-  document.querySelector('meta[name=theme-color]').content = ACCENT_THEME_COLOR[S.accent] || '#2f7df6';
+  // Statusleiste des Geräts in der Farbe des Hintergrunds (hell/dunkel)
+  document.querySelector('meta[name=theme-color]').content = getComputedStyle(root).getPropertyValue('--bg').trim() || '#f4f5f8';
   setLang(resolveLang(S.lang));
   applyStatic();
   labelTraining();
@@ -34,6 +34,7 @@ async function init() {
   }
   applyAppearance();
   st.onChange(applyAppearance);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyAppearance);
   initViews();
   initTraining();
 

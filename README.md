@@ -15,8 +15,8 @@ Dann `http://localhost:8000` öffnen. (Service Worker laufen nur über `localhos
 
 - **Bibliothek:** alle Übungen mit Suche, Kategorien, Favoriten; eigene Übungen mit Foto anlegen, bearbeiten und löschen (auch die mitgelieferten, sie lassen sich wiederherstellen).
 - **Programme:** beliebig viele Trainings aus der Bibliothek zusammenstellen (Reihenfolge, Zeit pro Übung, Pause).
-- **Training:** Kreis-Timer, Bild der Übung oberhalb, Vorschau, Glockenklänge, Countdown, Sprachansagen, Vibration, Bildschirm bleibt an.
-- **Statistik:** Wochenziel, Wochen-Serie, Verlauf.
+- **Training:** Kreis-Timer, Bild der Übung oberhalb, Fortschritt je Übung, Vorschau, Glockenklänge, Countdown, Sprachansagen, Vibration, Bildschirm bleibt an.
+- **Statistik:** Wochenziel mit Fortschrittsring, Wochen-Serie, Aktivität der letzten 16 Wochen, Verlauf.
 - **Optionen:** Ton, Lautstärke, Design (hell/dunkel), Farbe, Sicherung und Wiederherstellung der eigenen Daten.
 
 Eigene Übungen, Fotos und Programme liegen im Browser des jeweiligen Geräts (localStorage). Über „Optionen → Sichern“ lässt sich eine Datei erzeugen und auf einem anderen Gerät einspielen.
@@ -91,6 +91,6 @@ Einmal online öffnen, danach läuft die App auch ohne Internet.
 
 Hinweis iPhone: Der Ton wird vom Stummschalter (Seitenschalter) unterdrückt. Für die Signale also auf „laut“ stellen.
 
-## Push-Benachrichtigungen (später)
+## Push-Erinnerungen
 
-Bewusst noch nicht eingebaut. Vorbereitet sind `js/notifications.js` (Ablauf als Kommentar), die auskommentierten `push`/`notificationclick`-Handler in `sw.js` und das Feld `reminders` in den Einstellungen. Für echte Pushes wird zusätzlich ein kleiner Server (oder Cloudflare Worker) benötigt; auf dem iPhone funktionieren Pushes nur für die installierte App (ab iOS 16.4).
+Unter „Optionen → Trainingsplan“ lassen sich Erinnerungen einschalten (Uhrzeit je Tag wählbar). Der Client steckt in `js/notifications.js`, die Server-Adresse in `js/config.js`, der Cloudflare-Worker in `reminder-worker/`. Auf dem iPhone funktionieren Pushes nur für die installierte App (ab iOS 16.4).

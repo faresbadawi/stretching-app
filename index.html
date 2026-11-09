@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Dehnen</title>
   <meta name="description" content="Kurzes Dehnprogramm für Rücken und Beweglichkeit – ca. 10 Minuten, dreimal pro Woche.">
-  <meta name="theme-color" content="#0a66b5">
+  <meta name="theme-color" content="#f4f5f8">
+  <meta name="color-scheme" content="light dark">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png" type="image/png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -33,7 +34,7 @@
       <div class="t-meta"><b id="t-counter"></b><span id="t-remaining"></span></div>
       <button id="t-info" class="t-btn" type="button"></button>
     </header>
-    <div class="t-bar" aria-hidden="true"><i id="t-bar-fill"></i></div>
+    <div id="t-bar" class="t-bar" aria-hidden="true"></div>
 
     <div class="t-hero">
       <div id="t-card" class="t-card">
@@ -78,6 +79,7 @@
       <div id="done-icon" class="done-icon"></div>
       <h1 data-i18n="done.title"></h1>
       <p id="done-text"></p>
+      <div id="done-stats" class="done-stats"></div>
       <div id="done-week" class="done-week"></div>
       <button id="done-close" class="btn light big" type="button" data-i18n="done.close"></button>
     </div>
