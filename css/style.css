@@ -619,3 +619,74 @@ body.busy .toast { bottom: calc(28px + var(--safe-b)); }
 
 /* Training: lange Beschreibungen in der Pause kürzen */
 .t-next > span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ===== Tablet (z. B. iPad hochkant) ===== */
+@media (min-width: 720px) {
+  #main { max-width: 760px; padding-inline: 28px; }
+  .grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .fab { inset-inline-end: max(22px, calc(50% - 352px)); }
+  .hero { padding: 28px; }
+  .hero h2 { font-size: 2.1rem; }
+  .stats { gap: 14px; }
+}
+/* Training auf großen Hochformat-Bildschirmen: Bild und Kreis größer */
+@media (min-width: 700px) and (min-height: 900px) {
+  .training { --img: clamp(200px, 30dvh, 400px); --c: clamp(200px, 28dvh, 360px); }
+  .t-title h2 { font-size: 2.1rem; }
+  .t-next { font-size: 1.05rem; }
+}
+
+/* ===== PC / Querformat: Navigation links, Inhalte nebeneinander ===== */
+@media (min-width: 1100px) {
+  :root { --rail: 104px; }
+  #main { max-width: calc(1120px + var(--rail)); padding: 44px 36px 48px calc(var(--rail) + 36px); }
+  .tabbar {
+    left: 20px; top: 50%; bottom: auto; transform: translateY(-50%);
+    width: 84px; height: auto; flex-direction: column; gap: 6px; padding: 8px; border-radius: 26px;
+  }
+  .tabbar button { flex: none; height: 70px; font-size: .72rem; }
+  body.busy .tabbar { transform: translate(-160%, -50%); }
+  .toast { bottom: 32px; }
+  .fab { bottom: 36px; inset-inline-end: max(36px, calc(50% - 560px - var(--rail) / 2 + 36px)); }
+  [dir=rtl] .tabbar { left: auto; right: 20px; }
+  [dir=rtl] body.busy .tabbar { transform: translate(160%, -50%); }
+  [dir=rtl] #main { padding: 44px calc(var(--rail) + 36px) 48px 36px; }
+
+  /* Start: Programm und Aktivität links, Woche und Zahlen rechts */
+  #view-home:not([hidden]) { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); column-gap: 24px; align-items: start; }
+  #view-home > .page-head { grid-column: 1 / -1; }
+  #view-home > .hero-wrap { grid-column: 1; grid-row: 2; }
+  #view-home > .week-card { grid-column: 2; grid-row: 2; }
+  #view-home > .activity-card { grid-column: 1; grid-row: 3; }
+  #view-home > .stats { grid-column: 2; grid-row: 3; }
+
+  /* Bibliothek: so viele Spalten, wie Platz ist */
+  .grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
+  .ex-card .info { min-height: 72px; }
+  .chips { flex-wrap: wrap; overflow: visible; margin: 0; padding: 2px 0 12px; }
+  .equip-bar .seg { min-width: 0; }
+  .equip-bar .seg button { padding-inline: 18px; }
+
+  /* Programme und Optionen: lesbare Breite */
+  #view-plans, #view-settings { max-width: 780px; }
+
+  /* Fenster etwas breiter */
+  dialog.sheet { width: min(100%, 680px); }
+
+  /* Training: Bild links, Timer rechts */
+  .training {
+    display: grid; justify-content: center; align-content: center; column-gap: 72px;
+    grid-template-columns: minmax(0, 480px) minmax(0, 480px);
+    grid-template-rows: auto auto 1fr auto auto auto 1fr;
+    grid-template-areas: "top top" "bar bar" ". ." "hero timer" "title next" "title ctl" ". .";
+    --img: clamp(260px, 44dvh, 460px); --c: clamp(240px, 40dvh, 400px);
+  }
+  .training > :not(.t-bg) { max-width: none; }
+  .t-top { grid-area: top; } .t-bar { grid-area: bar; }
+  .t-hero { grid-area: hero; padding-top: 0; align-items: center; }
+  .t-title { grid-area: title; align-self: start; }
+  .t-title h2 { font-size: 2.2rem; }
+  .t-timer { grid-area: timer; padding: 0; }
+  .t-next { grid-area: next; font-size: 1.05rem; }
+  .t-controls { grid-area: ctl; }
+}

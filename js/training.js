@@ -70,6 +70,7 @@ export function initTraining() {
     if (e.code === 'Space') { e.preventDefault(); setPaused(!s.paused); }
     else if (e.code === 'ArrowRight') $(document.documentElement.dir === 'rtl' ? 't-prev' : 't-skip').click();
     else if (e.code === 'ArrowLeft') $(document.documentElement.dir === 'rtl' ? 't-skip' : 't-prev').click();
+    else if (e.key === 'Escape') { e.preventDefault(); $('t-stop').click(); }
   });
 }
 

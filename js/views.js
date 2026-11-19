@@ -180,7 +180,7 @@ function renderHome() {
 
     statTiles(tot, streak),
 
-    h('div', { class: 'card' },
+    h('div', { class: 'card activity-card' },
       h('div', { class: 'card-head' }, h('h2', {}, t('activity.title')), h('span', {}, t('activity.sub', { n: HEAT_WEEKS }))),
       heatmap(),
       h('button', { type: 'button', class: 'card-link', onclick: openHistory }, t('history.show'), icon('chevron'))));
