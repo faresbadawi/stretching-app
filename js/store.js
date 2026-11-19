@@ -48,7 +48,8 @@ export async function init() {
     favorites: s.favorites || [],
     workouts: s.workouts || null,
     activeWorkout: s.activeWorkout || null,
-    history: s.history || []
+    history: s.history || [],
+    presetsSeen: s.presetsSeen || null
   };
   if (!s.settings && v1) {
     state.settings.sound = v1.sound ?? true;
@@ -61,7 +62,11 @@ export async function init() {
     const k = localStorage.key(i);
     if (k.startsWith(IMG_PREFIX)) imgs.set(k.slice(IMG_PREFIX.length), localStorage.getItem(k));
   }
-  if (!state.workouts) state.workouts = defaultWorkouts(v1?.duration ?? 30, v1?.rest ?? 10);
+  if (!state.workouts) {
+    state.workouts = defaultWorkouts(v1?.duration ?? 30, v1?.rest ?? 10);
+    state.presetsSeen = PRESETS.map((p) => p.id);
+  }
+  migrate(s);
   // Mitgelieferte Programme behalten ihren Namen nur, solange er nicht geändert wurde (dann wird er übersetzt).
   const GERMAN_DEFAULT = { 'w-rueken': 'Rücken-Programm', 'w-buero': 'Büro-Kurzpause', 'w-beine': 'Beine & Hüfte' };
   for (const w of state.workouts) if (w.nameKey === undefined) w.nameKey = GERMAN_DEFAULT[w.id] === w.name ? w.id : null;
@@ -76,15 +81,56 @@ export async function init() {
   save();
 }
 
-function defaultWorkouts(duration, rest) {
-  const mk = (id, name, ids) => ({ id, name, nameKey: id, duration, rest, items: ids.map((x) => ({ id: x, duration: null })) });
-  const main = base.exercises.filter((e) => e.defaultEnabled !== false).map((e) => e.id);
-  return [
-    mk('w-rueken', 'Rücken-Programm', main),
-    mk('w-buero', 'Büro-Kurzpause', ['nacken-dehnen', 'schulterkreisen', 'schulter-stretch', 'brustoeffnung', 'rumpfdrehung', 'seitbeuge']),
-    mk('w-beine', 'Beine & Hüfte', ['hueftbeuger-dehnung', 'oberschenkelvorderseite', 'wadendehnung', 'schmetterlingssitz', 'vorwaertsbeuge', 'herabschauender-hund', 'kindspose'])
-  ];
+// Mitgelieferte Programme (Vorlagen). Neue Vorlagen werden bestehenden Nutzern einmalig hinzugefügt;
+// was jemand gelöscht hat, bleibt gelöscht und lässt sich über „Vorlagen“ wieder holen.
+export const PRESETS = [
+  { id: 'w-morgen', duration: 30, rest: 5, items: ['rumpf-drehen', 'seitbeuge-wechsel', 'katzen-kuh-dehnung', 'nadeloehr-wechsel', 'hund-fersenwippen', 'hund-ausfallschritt', 'worlds-greatest-stretch', 'hueftbeuger-wippen', 'beinschwingen', 'abrollen', 'vorbeuge-aufrichten'] },
+  { id: 'w-buero', duration: 30, rest: 5, items: ['nacken-dehnen', 'kinn-zurueck', 'schulter-stretch', 'brustoeffnung', 'trizeps', 'seitbeuge', 'rumpf-drehen', 'vorwaertsbeuge', 'oberschenkelvorderseite', 'wadendehnung'] },
+  { id: 'w-abend', duration: 40, rest: 10, items: ['katzen-kuh-dehnung', 'kindspose', 'sphinx', 'knie-zur-brust', 'drehung-liegend', 'schmetterling-liegend', 'happy-baby', 'beine-an-der-wand', 'entspannungslage'] },
+  { id: 'w-rueken', duration: 30, rest: 10, items: ['katzen-kuh-dehnung', 'kindspose', 'kobra-stretch', 'sphinx', 'nadeloehr', 'welpe', 'knie-zur-brust', 'drehung-liegend', 'rumpfdrehung', 'herabschauender-hund', 'vorwaertsbeuge'] },
+  { id: 'w-becken', duration: 40, rest: 10, items: ['hueftbeuger-dehnung', 'tiefer-ausfallschritt', 'eidechse', 'taube', 'sitz-90-90', 'schmetterlingssitz', 'frosch', 'tiefe-hocke', 'happy-baby', 'schmetterling-liegend'] },
+  { id: 'w-spagat', duration: 45, rest: 10, items: ['hueftbeuger-wippen', 'tiefer-ausfallschritt', 'halber-spagat', 'eidechse', 'pyramide', 'oberschenkel-liegend', 'kopf-zum-knie', 'adduktoren-stehend', 'graetsche', 'frosch', 'weite-vorbeuge'] },
+  { id: 'w-oben', duration: 30, rest: 10, items: ['nacken-dehnen', 'kinn-zurueck', 'schulter-stretch', 'trizeps', 'brustoeffnung', 'welpe', 'nadeloehr', 'kuhgesicht', 'seitbeuge', 'rumpfdrehung', 'kobra-stretch', 'handgelenke'] },
+  { id: 'w-unten', duration: 30, rest: 10, items: ['wadendehnung', 'oberschenkelvorderseite', 'hueftbeuger-dehnung', 'vorwaertsbeuge', 'adduktoren-stehend', 'taube', 'sitz-90-90', 'kopf-zum-knie', 'schmetterlingssitz', 'beinrueckseite-wand', 'tiefe-hocke'] },
+  { id: 'w-beine', duration: 30, rest: 10, items: ['hueftbeuger-dehnung', 'oberschenkelvorderseite', 'wadendehnung', 'schmetterlingssitz', 'vorwaertsbeuge', 'herabschauender-hund', 'kindspose'] },
+  { id: 'w-band', duration: 30, rest: 10, items: ['band-schulter', 'band-hintere-schulter', 'band-brust', 'band-trizeps', 'band-latissimus', 'band-beinrueckseite', 'band-oberschenkel-aussen', 'band-adduktoren', 'band-vierer', 'band-wade'] }
+];
+
+function presetWorkout(p, duration = p.duration, rest = p.rest) {
+  return { id: p.id, name: t('wk.' + p.id), nameKey: p.id, duration, rest, items: p.items.map((x) => ({ id: x, duration: null })) };
 }
+function defaultWorkouts(duration, rest) {
+  // Frühere Zeit-Einstellungen (v1) gelten nur für das Rücken-Programm.
+  return PRESETS.map((p) => (p.id === 'w-rueken' ? presetWorkout(p, duration, rest) : presetWorkout(p)));
+}
+
+// Datenstand älterer Versionen anpassen.
+function migrate(s) {
+  // Schulterkreisen wurde durch das Nadelöhr ersetzt (kein einheitliches Bild verfügbar).
+  const swap = { schulterkreisen: 'nadeloehr' };
+  for (const w of state.workouts) w.items.forEach((it) => { if (swap[it.id]) it.id = swap[it.id]; });
+  state.favorites = [...new Set(state.favorites.map((f) => swap[f] || f))];
+  state.hidden = state.hidden.filter((h) => !swap[h]);
+  for (const k of Object.keys(swap)) delete state.edits[k];
+  // Neue Vorlagen einmalig hinzufügen
+  if (!state.presetsSeen) state.presetsSeen = s.workouts ? ['w-rueken', 'w-buero', 'w-beine'] : [];
+  for (const p of PRESETS) {
+    if (state.presetsSeen.includes(p.id)) continue;
+    if (!state.workouts.some((w) => w.id === p.id)) state.workouts.push(presetWorkout(p));
+    state.presetsSeen.push(p.id);
+  }
+}
+
+export function addPreset(id) {
+  const p = PRESETS.find((x) => x.id === id);
+  const w = presetWorkout(p);
+  if (state.workouts.some((x) => x.id === w.id)) w.id = newId();
+  state.workouts.push(w);
+  commit();
+  return w;
+}
+export const presetSeconds = (id) => workoutSeconds(presetWorkout(PRESETS.find((x) => x.id === id)));
+export const presetItems = (id) => resolveItems(presetWorkout(PRESETS.find((x) => x.id === id)));
 
 export function onChange(fn) { listeners.add(fn); }
 export function save() {
@@ -120,6 +166,8 @@ function imageOf(e) {
 function decorate(e) {
   e.favorite = state.favorites.includes(e.id);
   e.image = imageOf(e);
+  // Bewegungsübungen mit Start- und Endbild werden im Training im Wechsel gezeigt (nicht bei eigenem Foto).
+  e.frames = !imgs.has(e.id) && e.frames?.length > 1 ? e.frames : null;
   e.ownImage = imgs.has(e.id);
   e.edited = e.builtin && !!state.edits[e.id];
   return e;
@@ -135,14 +183,13 @@ export function allExercises({ includeHidden = false } = {}) {
 }
 export const getExercise = (id) => allExercises({ includeHidden: true }).find((e) => e.id === id) || null;
 export const hiddenExercises = () => allExercises({ includeHidden: true }).filter((e) => state.hidden.includes(e.id));
+export const CAT_ORDER = ['Nacken', 'Schultern', 'Brust', 'Arme', 'Rücken', 'Hüfte', 'Beine', 'Ganzkörper', 'Entspannung'];
 export function categories() {
   const set = new Set(allExercises().map((e) => e.category).filter(Boolean));
-  const order = ['Nacken', 'Schultern', 'Arme', 'Rücken', 'Hüfte', 'Beine', 'Ganzkörper', 'Entspannung'];
-  return [...order.filter((c) => set.has(c)), ...[...set].filter((c) => !order.includes(c)).sort()];
+  return [...CAT_ORDER.filter((c) => set.has(c)), ...[...set].filter((c) => !CAT_ORDER.includes(c)).sort()];
 }
 export function allCategories() {
-  const order = ['Nacken', 'Schultern', 'Arme', 'Rücken', 'Hüfte', 'Beine', 'Ganzkörper', 'Entspannung'];
-  return [...new Set([...order, ...categories()])];
+  return [...new Set([...CAT_ORDER, ...categories()])];
 }
 
 export function saveExercise(ex, imageDataUrl) {
@@ -347,7 +394,7 @@ export function importData(text) {
 export function resetAll() {
   imgs.forEach((_, k) => localStorage.removeItem(IMG_PREFIX + k));
   imgs.clear();
-  state = { ...state, settings: { ...DEFAULT_SETTINGS }, custom: [], edits: {}, hidden: [], favorites: [], history: [], workouts: defaultWorkouts(30, 10) };
+  state = { ...state, settings: { ...DEFAULT_SETTINGS }, custom: [], edits: {}, hidden: [], favorites: [], history: [], workouts: defaultWorkouts(30, 10), presetsSeen: PRESETS.map((p) => p.id) };
   state.activeWorkout = state.workouts[0].id;
   commit();
 }

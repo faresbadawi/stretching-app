@@ -13,8 +13,8 @@ Dann `http://localhost:8000` öffnen. (Service Worker laufen nur über `localhos
 
 ## Funktionen
 
-- **Bibliothek:** alle Übungen mit Suche, Kategorien, Favoriten; eigene Übungen mit Foto anlegen, bearbeiten und löschen (auch die mitgelieferten, sie lassen sich wiederherstellen).
-- **Programme:** beliebig viele Trainings aus der Bibliothek zusammenstellen (Reihenfolge, Zeit pro Übung, Pause).
+- **Bibliothek:** 90 Übungen, nach Körperbereich gruppiert, mit Suche, Kategorien, Favoriten und Filter „ohne Gerät / Band / Bank“; eigene Übungen mit Foto anlegen, bearbeiten und löschen (auch die mitgelieferten, sie lassen sich wiederherstellen).
+- **Programme:** zehn fertige Programme (Morgen, Büro, Abend, Rücken, Becken & Hüfte, Spagat, Ober- und Unterkörper, Beine & Hüfte, mit Band) plus beliebig viele eigene (Reihenfolge, Zeit pro Übung, Pause). Gelöschte Vorlagen lassen sich unter „Vorlagen“ wieder hinzufügen.
 - **Training:** Kreis-Timer, Bild der Übung oberhalb, Fortschritt je Übung, Vorschau, Glockenklänge, Countdown, Sprachansagen, Vibration, Bildschirm bleibt an.
 - **Statistik:** Wochenziel mit Fortschrittsring, Wochen-Serie, Aktivität der letzten 16 Wochen, Verlauf.
 - **Optionen:** Ton, Lautstärke, Design (hell/dunkel), Farbe, Sicherung und Wiederherstellung der eigenen Daten.
@@ -29,7 +29,7 @@ Eigene Übungen, Fotos und Programme liegen im Browser des jeweiligen Geräts (l
 | `js/app.js`, `js/views.js`, `js/training.js` | Start, Programme, Bibliothek, Optionen, Training |
 | `js/store.js`, `js/sound.js`, `js/ui.js` | Daten, Signale/Sprache, Hilfsfunktionen |
 | `data/exercises.json` | Übungen (Name, Beschreibung, Schritte, Bilder je Variante) |
-| `images/man/` | Übungsbilder (Männer-Figuren, WebP) |
+| `images/man/` | Übungsbilder (WebP, von RepDB; `<id>-start.webp` = Startbild bei Bewegungsübungen) |
 | `manifest.webmanifest`, `icons/` | PWA-Manifest und App-Icons |
 | `sw.js` | Service Worker (Offline-Cache) |
 | `tools/update-sw.mjs` | Trägt Dateiliste und Cache-Version in `sw.js` ein |
@@ -46,6 +46,16 @@ Deutsch, Englisch und Arabisch (Arabisch von rechts nach links). Die Sprache fol
 - **Arabisch:** Vier Clips (`audio/voice/ar/*.mp3`: اِسْتَعِدَّ، اِسْتِرَاحَة، تَبْدِيلُ الجَانِب، أَحْسَنْتَ. لَقَدْ نَجَحْتَ.), erzeugt mit ElevenLabs (Modell `eleven_v4`, Stimme „Rawi – Calm & Clear Fusha Narrator“, Hocharabisch, männlich). Die kostenlose Stufe verlangt die Nennung der Quelle (steht in den Optionen) und gilt nicht für kommerzielle Nutzung.
 - Am Ende: Applaus, nach ein paar Sekunden die Abschlussansage.
 
+## Übungsbilder und -texte: Quelle und Lizenz
+
+Exercise data by [RepDB (repdb.co)](https://repdb.co).
+
+Bilder sowie deutsche und englische Übungstexte stammen aus dem kostenlosen RepDB-Datensatz (Free Tier License v1.0). Er darf in Apps und auf Websites genutzt werden, auch kommerziell, wenn die Quelle sichtbar genannt wird. Das geschieht hier und in der App unter „Optionen“ (ganz unten). Die arabischen Übungstexte sind eigene Übersetzungen.
+
+**Wichtig:** Dieses Repository enthält nur die Bilder und Texte, die die App braucht, umgeschrieben in das Format der App. Es ist kein Datensatz. Bilder und Texte dürfen nicht als Datensatz weiterverbreitet und nicht als Vorlage für KI-Bildgeneratoren verwendet werden. Wer sie außerhalb dieser App nutzen will, holt sie sich direkt bei RepDB und hält sich an deren Lizenz.
+
+Zu jeder Übung speichert `data/exercises.json` zusätzlich `equipment` (`band` oder `bank`, ohne Angabe = kein Gerät), `level` (2 = mittel, 3 = fortgeschritten), `moving` (Bewegungsübung) und `frames` (Start- und Endbild, im Training im Wechsel gezeigt).
+
 ## Weitere Bildvariante ergänzen (optional)
 
 Die Daten sind dafür vorbereitet, in der Oberfläche gibt es aktuell aber nur eine Variante.
@@ -56,7 +66,7 @@ Die Daten sind dafür vorbereitet, in der Oberfläche gibt es aktuell aber nur e
 
 ## Übungen ändern / ergänzen
 
-Neuen Eintrag in `data/exercises.json` anlegen (`id` = Dateiname ohne Endung, `perSide: true` für einseitige Übungen, `defaultEnabled` steuert, ob sie im Standardprogramm sind). Danach `node tools/update-sw.mjs`.
+Neuen Eintrag in `data/exercises.json` anlegen (`id` = Dateiname ohne Endung, `perSide: true` für einseitige Übungen). Die fertigen Programme stehen in `js/store.js` (`PRESETS`), ihre Namen und Beschreibungen in `js/lang/*.js` (`wk.*`, `wkd.*`). Danach `node tools/update-sw.mjs`.
 
 ## Veröffentlichen auf GitHub Pages
 
@@ -66,7 +76,7 @@ Vor **jedem** Veröffentlichen:
 node tools/update-sw.mjs
 ```
 
-Das aktualisiert die Cache-Version, sonst bekommen installierte Apps Änderungen nicht mit.
+Das aktualisiert die Cache-Version, sonst bekommen installierte Apps Änderungen nicht mit. Das Skript nimmt nur Dateien auf, die Git kennt. Neue Bilder oder Dateien also vorher mit `git add` aufnehmen.
 
 1. Auf github.com ein neues **öffentliches** Repository anlegen (z. B. `stretching-app`), ohne README/Lizenz.
 2. Im Projektordner:

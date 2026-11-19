@@ -592,3 +592,30 @@ body.busy .toast { bottom: calc(28px + var(--safe-b)); }
   #main { padding-top: 44px; }
   .page-head h1 { font-size: 2.3rem; }
 }
+
+/* Bibliothek: Gruppen je Körperbereich und Gerätefilter */
+.equip-bar { margin: -2px 0 14px; overflow-x: auto; scrollbar-width: none; }
+.equip-bar::-webkit-scrollbar { display: none; }
+.equip-bar .seg { display: flex; width: max-content; min-width: 100%; }
+.equip-bar .seg button { flex: 1; white-space: nowrap; }
+.grid-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 8px; font-size: 1.05rem; font-weight: 750; letter-spacing: -.01em; margin: 14px 4px -2px; }
+.grid-head:first-child { margin-top: 2px; }
+.grid-head span { color: var(--faint); font-size: .8rem; font-weight: 700; }
+.ex-card .own.equip { background: rgba(255, 255, 255, .88); color: #3b4656; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0, 0, 0, .08); }
+.pill.warn { background: color-mix(in srgb, var(--gold) 20%, transparent); color: var(--text); }
+.tips { margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: var(--card-2); border: 1px solid var(--line-2); font-size: .9rem; line-height: 1.45; }
+.tips b { display: block; font-size: .8rem; color: var(--muted); margin-bottom: 4px; }
+.tips ul { margin: 0; padding-inline-start: 18px; }
+.tips li + li { margin-top: 4px; }
+
+/* Vorlagen */
+.tpl { display: flex; flex-direction: column; gap: 10px; box-shadow: none; }
+.tpl-top { display: flex; align-items: center; gap: 12px; }
+.tpl-top > div { flex: 1; min-width: 0; }
+.tpl h3 { font-size: 1.05rem; font-weight: 750; }
+.tpl .meta { color: var(--muted); font-size: .84rem; margin-top: 2px; }
+.tpl p { margin: 0; }
+.about a { color: inherit; }
+
+/* Training: lange Beschreibungen in der Pause kürzen */
+.t-next > span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }

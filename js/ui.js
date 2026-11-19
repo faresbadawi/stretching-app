@@ -142,8 +142,8 @@ export function openSheet({ title, body, foot, onClose, tall = false }) {
   dlg.append(
     h('div', { class: 'sheet-grab' }),
     h('div', { class: 'sheet-head' }, h('h2', {}, title || ''), iconBtn('close', t('common.close'), close, 'flat')),
-    h('div', { class: 'sheet-body' }, body),
-    foot ? h('div', { class: 'sheet-foot' }, foot) : null);
+    h('div', { class: 'sheet-body' }, body));
+  if (foot) dlg.append(h('div', { class: 'sheet-foot' }, foot));
   // Zum Schließen nach unten wischen (am oberen Rand des Fensters)
   let startY = null;
   const head = dlg.querySelector('.sheet-grab');

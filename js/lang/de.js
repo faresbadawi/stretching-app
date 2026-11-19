@@ -100,5 +100,22 @@ export default {
   'week.reached': 'Wochenziel erreicht – stark!',
   'activity.title': 'Aktivität', 'activity.sub': 'Letzte {n} Wochen',
   'tr.paused': 'Pausiert', 'stat.exercises': 'Übungen', 'look.colorName.blue': 'Blau', 'look.colorName.green': 'Grün', 'look.colorName.violet': 'Violett', 'look.colorName.orange': 'Orange', 'look.colorName.pink': 'Rosa',
-  'day.0': 'Mo', 'day.1': 'Di', 'day.2': 'Mi', 'day.3': 'Do', 'day.4': 'Fr', 'day.5': 'Sa', 'day.6': 'So'
+  'day.0': 'Mo', 'day.1': 'Di', 'day.2': 'Mi', 'day.3': 'Do', 'day.4': 'Fr', 'day.5': 'Sa', 'day.6': 'So',
+  'equip.all': 'Alle', 'equip.none': 'Ohne Gerät', 'equip.band': 'Band', 'equip.bank': 'Bank',
+  'pill.moving': 'In Bewegung', 'level.2': 'Mittel', 'level.3': 'Fortgeschritten', 'detail.tips': 'Tipps',
+  'plans.templates': 'Vorlagen', 'templates.title': 'Fertige Programme',
+  'templates.sub': 'Füge ein fertiges Programm hinzu – danach kannst du es wie jedes andere anpassen.',
+  'templates.add': 'Hinzufügen', 'templates.again': 'Nochmal', 'templates.added': 'Hinzugefügt', 'templates.toast': '„{name}“ hinzugefügt',
+  'wk.w-morgen': 'Morgen-Mobilisation', 'wk.w-abend': 'Abend-Entspannung', 'wk.w-becken': 'Becken & Hüfte öffnen',
+  'wk.w-spagat': 'Spagat lernen', 'wk.w-oben': 'Beweglichkeit Oberkörper', 'wk.w-unten': 'Beweglichkeit Unterkörper', 'wk.w-band': 'Dehnen mit Band',
+  'wkd.w-morgen': 'Sanft wach werden: fließende Bewegungen für Wirbelsäule, Hüfte und Beine.',
+  'wkd.w-buero': 'Im Stehen, ohne Matte: Nacken, Schultern, Brust und Beine nach langem Sitzen.',
+  'wkd.w-abend': 'Ruhige Haltungen am Boden zum Abschalten vor dem Schlafen.',
+  'wkd.w-rueken': 'Mobilisiert und entlastet den ganzen Rücken.',
+  'wkd.w-becken': 'Öffnet Hüftbeuger, Leisten und Gesäß – gut gegen ein steifes Becken vom Sitzen.',
+  'wkd.w-spagat': 'Längere Haltezeiten für Beinrückseite, Hüftbeuger und Adduktoren – Schritt für Schritt Richtung Spagat.',
+  'wkd.w-oben': 'Nacken, Schultern, Brust, Arme und Brustwirbelsäule.',
+  'wkd.w-unten': 'Waden, Oberschenkel, Hüfte und Gesäß.',
+  'wkd.w-beine': 'Kurzes Programm für Beine und Hüfte.',
+  'wkd.w-band': 'Für alle mit Gymnastikband: Schultern, Rücken und Beine.'
 };

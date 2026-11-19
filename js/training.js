@@ -121,6 +121,7 @@ export function startTraining(workout) {
 function stop() {
   if (!s) return;
   clearInterval(s.timer);
+  clearInterval(s.frameTimer);
   s = null;
   snd.stopSpeech();
   releaseWakeLock();
@@ -151,6 +152,13 @@ function enter(playCue = true) {
   const img = $('t-img');
   img.hidden = !ex.image;
   if (ex.image) img.src = ex.image;
+  // Bewegungsübungen: Start- und Endbild im Wechsel zeigen, solange gedehnt wird.
+  clearInterval(s.frameTimer);
+  if (seg.type === 'work' && ex.frames) {
+    let f = 0;
+    img.src = ex.frames[0];
+    s.frameTimer = setInterval(() => { if (s && !s.paused) img.src = ex.frames[(f = 1 - f)]; }, 1400);
+  }
   $('t-ph').hidden = !!ex.image;
   $('t-ph').replaceChildren(icon('figure'));
   $('t-name').textContent = ex.name;

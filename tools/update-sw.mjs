@@ -1,8 +1,9 @@
 // Schreibt Dateiliste und Cache-Version (Hash über alle Dateien) in sw.js.
-// Aufruf im Projektordner:  node tools/update-sw.mjs
+// Aufruf im Projektordner:  git add -A images data js css  &&  node tools/update-sw.mjs
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 
 const root = path.resolve(import.meta.dirname, '..');
 const skip = new Set(['.git', 'tools', 'sw.js', 'README.md', '.gitignore', '.nojekyll', '.claude', 'node_modules', 'reminder-worker']);
@@ -15,7 +16,10 @@ function walk(dir, rel = '') {
   });
 }
 
-const files = walk(root).sort();
+// Nur Dateien, die Git kennt (neue vorher mit `git add` aufnehmen): Lokale, private oder ignorierte
+// Dateien würden auf GitHub Pages fehlen und die Offline-Installation abbrechen lassen.
+const tracked = new Set(execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean));
+const files = walk(root).filter((f) => tracked.has(f) && !f.endsWith('.md')).sort();
 const hash = crypto.createHash('sha1');
 for (const f of files) hash.update(f).update(fs.readFileSync(path.join(root, f)));
 const version = hash.digest('hex').slice(0, 10);

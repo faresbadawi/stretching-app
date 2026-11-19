@@ -19,7 +19,7 @@ const exCount = (n) => t('exercises.n', { n });
 let currentTab = 'home';
 let offlineReady = false;
 export function setOfflineReady(v) { offlineReady = v; const el = $('offline-status'); if (el) el.textContent = v ? t('status.offline') : ''; }
-const lib = { q: '', filter: 'all' };
+const lib = { q: '', filter: 'all', equip: 'all' };
 
 function renderTabs() {
   $('tabbar').setAttribute('aria-label', t('nav.label'));
@@ -219,7 +219,36 @@ function renderPlans() {
           }, 'danger'),
           h('button', { type: 'button', class: 'btn primary', disabled: !items.length, onclick: () => { st.setActiveWorkout(w.id); startTraining(w); } }, icon('play'), t('hero.start'))));
     })) : h('div', { class: 'empty' }, icon('tabPlans'), h('p', {}, t('plans.empty'))),
-    h('button', { type: 'button', class: 'btn primary', style: 'margin-top:6px', onclick: () => openWorkoutEditor(null) }, icon('plus'), t('plans.new')));
+    h('div', { class: 'btn-row', style: 'margin-top:6px' },
+      h('button', { type: 'button', class: 'btn primary', onclick: () => openWorkoutEditor(null) }, icon('plus'), t('plans.new')),
+      h('button', { type: 'button', class: 'btn', onclick: openTemplates }, icon('copy'), t('plans.templates'))));
+}
+
+// Vorlagen: fertige Programme, die man (wieder) zu den eigenen Programmen hinzufügen kann.
+function openTemplates() {
+  const have = new Set(st.workouts().map((w) => w.nameKey).filter(Boolean));
+  openSheet({
+    title: t('templates.title'),
+    tall: true,
+    body: h('div', {},
+      h('p', { class: 'muted small', style: 'margin-top:0' }, t('templates.sub')),
+      st.PRESETS.map((p) => {
+        const items = st.presetItems(p.id);
+        const btn = h('button', { type: 'button', class: 'btn' + (have.has(p.id) ? '' : ' primary'), style: 'width:auto;padding:8px 14px;flex:none', onclick: () => {
+          st.addPreset(p.id);
+          btn.textContent = t('templates.added');
+          btn.disabled = true;
+          toast(t('templates.toast', { name: t('wk.' + p.id) }));
+        } }, have.has(p.id) ? t('templates.again') : t('templates.add'));
+        return h('div', { class: 'card tpl' },
+          h('div', { class: 'tpl-top' },
+            h('div', {}, h('h3', {}, t('wk.' + p.id)),
+              h('div', { class: 'meta' }, `${exCount(items.length)} · ${minutesLabel(st.presetSeconds(p.id))}`)),
+            btn),
+          h('p', { class: 'muted small' }, t('wkd.' + p.id)),
+          h('div', { class: 'thumbs' }, items.slice(0, 7).map((it) => thumb(it.ex)), items.length > 7 ? h('div', { class: 'more' }, '+' + (items.length - 7)) : null));
+      }))
+  });
 }
 
 function openWorkoutEditor(existing) {
@@ -279,6 +308,7 @@ function openWorkoutEditor(existing) {
 function openPicker(onDone) {
   let q = '';
   let filter = 'all';
+  let equip = 'all';
   const picked = [];
   const list = h('div');
   const bar = h('div');
@@ -294,8 +324,8 @@ function openPicker(onDone) {
   btn.addEventListener('click', () => { onDone(picked); sheet.close(); });
 
   function draw() {
-    bar.replaceChildren(chips(filterItems(), filter, (k) => { filter = k; draw(); }));
-    const exs = filterExercises(q, filter);
+    bar.replaceChildren(chips(filterItems(), filter, (k) => { filter = k; draw(); }), equipBar(equip, (k) => { equip = k; draw(); }));
+    const exs = filterExercises(q, filter, equip);
     list.replaceChildren(...(exs.length ? exs.map((ex) => {
       const n = picked.filter((x) => x === ex.id).length;
       return h('div', { class: 'ex-row pick' + (n ? ' on' : ''), onclick: () => {
@@ -304,7 +334,7 @@ function openPicker(onDone) {
         draw();
       } },
         thumb(ex),
-        h('div', { class: 'name' }, h('b', {}, ex.name), h('small', {}, catLabel(ex.category))),
+        h('div', { class: 'name' }, h('b', {}, ex.name), h('small', {}, exMeta(ex))),
         h('div', { class: 'tick' }, icon('check')));
     }) : [h('div', { class: 'empty' }, t('picker.none'))]));
     btn.disabled = !picked.length;
@@ -323,13 +353,23 @@ function filterItems() {
     ...st.categories().map((c) => ({ key: 'cat:' + c, label: catLabel(c) }))
   ];
 }
-function filterExercises(q, filter) {
+// Kurzinfo unter dem Namen: Kategorie, Seiten, Gerät
+function exMeta(ex) {
+  return [catLabel(ex.category), ex.perSide ? t('pill.sides') : null, ex.equipment ? t('equip.' + ex.equipment) : null].filter(Boolean).join(' · ');
+}
+// Gerätefilter: alle, nur ohne Gerät, nur mit Band, nur mit Bank
+function equipBar(value, onPick) {
+  return h('div', { class: 'equip-bar' }, seg([['all', t('equip.all')], ['none', t('equip.none')], ['band', t('equip.band')], ['bank', t('equip.bank')]], value, onPick));
+}
+function filterExercises(q, filter, equip = 'all') {
   const needle = q.trim().toLowerCase();
   return st.allExercises().filter((e) => {
+    if (equip === 'none' && e.equipment) return false;
+    if ((equip === 'band' || equip === 'bank') && e.equipment !== equip) return false;
     if (filter === 'fav' && !e.favorite) return false;
     if (filter === 'own' && e.builtin) return false;
     if (filter.startsWith('cat:') && e.category !== filter.slice(4)) return false;
-    return !needle || `${e.name} ${catLabel(e.category)} ${e.description}`.toLowerCase().includes(needle);
+    return !needle || `${e.name} ${catLabel(e.category)} ${e.description} ${e.equipment ? t('equip.' + e.equipment) : ''}`.toLowerCase().includes(needle);
   });
 }
 
@@ -337,20 +377,29 @@ function renderLibrary() {
   const root = $('view-library');
   const grid = h('div', { class: 'grid' });
   const bar = h('div');
+  const count = h('p');
+  const card = (ex, i) =>
+    h('div', { class: 'ex-card', style: `animation-delay:${Math.min(i, 10) * 25}ms`, role: 'button', tabindex: 0, 'aria-label': ex.name, onclick: () => exerciseDetail(ex), onkeydown: (e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); exerciseDetail(ex); } } },
+      h('span', { class: 'pic' }, ex.image ? h('img', { src: ex.image, alt: '', loading: 'lazy', draggable: 'false' }) : placeholder(ex.category)),
+      !ex.builtin ? h('span', { class: 'own' }, t('lib.own')) : ex.equipment ? h('span', { class: 'own equip' }, t('equip.' + ex.equipment)) : null,
+      iconBtn('star', ex.favorite ? t('lib.favRemove') : t('lib.favAdd'), (e) => { e.stopPropagation(); st.toggleFavorite(ex.id); }, 'sm fav' + (ex.favorite ? ' on' : '')),
+      h('div', { class: 'info' }, h('b', {}, ex.name), h('small', {}, catLabel(ex.category) + (ex.perSide ? ' · ' + t('pill.sides') : ''))));
   const drawGrid = () => {
-    bar.replaceChildren(chips(filterItems(), lib.filter, (k) => { lib.filter = k; drawGrid(); }));
-    const exs = filterExercises(lib.q, lib.filter);
-    grid.replaceChildren(...(exs.length ? exs.map((ex, i) =>
-      h('div', { class: 'ex-card', style: `animation-delay:${Math.min(i, 10) * 25}ms`, role: 'button', tabindex: 0, 'aria-label': ex.name, onclick: () => exerciseDetail(ex), onkeydown: (e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); exerciseDetail(ex); } } },
-        h('span', { class: 'pic' }, ex.image ? h('img', { src: ex.image, alt: '', loading: 'lazy', draggable: 'false' }) : placeholder(ex.category)),
-        !ex.builtin ? h('span', { class: 'own' }, t('lib.own')) : null,
-        iconBtn('star', ex.favorite ? t('lib.favRemove') : t('lib.favAdd'), (e) => { e.stopPropagation(); st.toggleFavorite(ex.id); }, 'sm fav' + (ex.favorite ? ' on' : '')),
-        h('div', { class: 'info' }, h('b', {}, ex.name), h('small', {}, catLabel(ex.category) + (ex.perSide ? ' · ' + t('pill.sides') : ''))))) :
-      [h('div', { class: 'empty', style: 'grid-column:1/-1' }, icon('search'), h('p', {}, t('lib.none')))]));
+    bar.replaceChildren(chips(filterItems(), lib.filter, (k) => { lib.filter = k; drawGrid(); }), equipBar(lib.equip, (k) => { lib.equip = k; drawGrid(); }));
+    const exs = filterExercises(lib.q, lib.filter, lib.equip);
+    count.textContent = exCount(exs.length);
+    if (!exs.length) return grid.replaceChildren(h('div', { class: 'empty', style: 'grid-column:1/-1' }, icon('search'), h('p', {}, t('lib.none'))));
+    // Ohne Suche und Kategorie-Filter: nach Körperbereich gruppiert, mit Überschrift je Gruppe.
+    if (lib.filter.startsWith('cat:') || lib.q.trim()) return grid.replaceChildren(...exs.map(card));
+    const groups = st.categories().map((c) => [c, exs.filter((e) => e.category === c)]).filter(([, list]) => list.length);
+    let i = 0;
+    grid.replaceChildren(...groups.flatMap(([c, list]) => [
+      h('h2', { class: 'grid-head' }, catLabel(c), h('span', {}, String(list.length))),
+      ...list.map((ex) => card(ex, i++))]));
   };
   const hidden = st.hiddenExercises();
   fill(root, 
-    h('header', { class: 'page-head' }, h('div', {}, h('h1', {}, t('lib.title')), h('p', {}, exCount(st.allExercises().length)))),
+    h('header', { class: 'page-head' }, h('div', {}, h('h1', {}, t('lib.title')), count)),
     h('div', { class: 'search' }, icon('search'),
       h('input', { type: 'search', placeholder: t('lib.search'), value: lib.q, oninput: (e) => { lib.q = e.target.value; drawGrid(); } })),
     bar, grid,
@@ -366,7 +415,7 @@ function openRestore() {
     const hid = st.hiddenExercises();
     if (!hid.length) return sheet.close();
     fill(body, ...hid.map((ex) => h('div', { class: 'ex-row' }, thumb(ex),
-      h('div', { class: 'name' }, h('b', {}, ex.name), h('small', {}, catLabel(ex.category))),
+      h('div', { class: 'name' }, h('b', {}, ex.name), h('small', {}, exMeta(ex))),
       h('button', { type: 'button', class: 'btn', style: 'width:auto;padding:8px 14px', onclick: () => { st.restoreExercise(ex.id); draw(); } }, t('restore.back')))));
   };
   draw();
@@ -389,9 +438,15 @@ export function exerciseDetail(ex, { readOnly = false, onClose } = {}) {
     foot,
     body: h('div', {},
       h('div', { class: 'detail-pic' }, ex.image ? h('img', { src: ex.image, alt: ex.name, draggable: 'false' }) : placeholder(ex.category)),
-      h('div', { class: 'pills' }, h('span', { class: 'pill' }, ex.category ? catLabel(ex.category) : t('detail.noCat')), ex.perSide ? h('span', { class: 'pill' }, t('pill.sides')) : null, ex.duration ? h('span', { class: 'pill' }, ex.duration + ' s') : null),
+      h('div', { class: 'pills' }, h('span', { class: 'pill' }, ex.category ? catLabel(ex.category) : t('detail.noCat')),
+        ex.perSide ? h('span', { class: 'pill' }, t('pill.sides')) : null,
+        ex.moving ? h('span', { class: 'pill' }, t('pill.moving')) : null,
+        h('span', { class: 'pill' }, ex.equipment ? t('equip.' + ex.equipment) : t('equip.none')),
+        ex.level > 1 ? h('span', { class: 'pill' + (ex.level > 2 ? ' warn' : '') }, t('level.' + ex.level)) : null,
+        ex.duration ? h('span', { class: 'pill' }, ex.duration + ' s') : null),
       ex.description ? h('p', { class: 'muted' }, ex.description) : null,
-      ex.steps?.length ? h('ol', { class: 'steps' }, ex.steps.map((x) => h('li', {}, x))) : null)
+      ex.steps?.length ? h('ol', { class: 'steps' }, ex.steps.map((x) => h('li', {}, x))) : null,
+      ex.tips?.length ? h('div', { class: 'tips' }, h('b', {}, t('detail.tips')), h('ul', {}, ex.tips.map((x) => h('li', {}, x)))) : null)
   });
   return sheet;
 }
@@ -564,5 +619,6 @@ function renderSettings() {
       h('p', { class: 'muted small', style: 'margin:0' }, t('install.text'))) : null,
     h('div', { class: 'about' },
       h('p', { id: 'offline-status' }, offlineReady ? t('status.offline') : ''),
-      h('p', {}, t('credits.voice'))));
+      h('p', {}, t('credits.voice')),
+      h('p', {}, h('a', { href: 'https://repdb.co', target: '_blank', rel: 'noopener' }, 'Exercise data by RepDB (repdb.co)'))));
 }
