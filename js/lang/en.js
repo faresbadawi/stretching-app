@@ -42,7 +42,7 @@ export default {
   'ex.new': 'New exercise', 'ex.edit': 'Edit exercise', 'ex.photo': 'Take photo', 'ex.gallery': 'From gallery',
   'ex.removeImg': 'Remove image', 'ex.name': 'Name', 'ex.namePh': 'e.g. neck rolls', 'ex.category': 'Category',
   'ex.newCat': 'New category …', 'ex.newCatName': 'Name of the new category',
-  'ex.sides': 'Two sides (left & right)', 'ex.sidesHint': 'Time is split between both sides, with a signal to switch',
+  'ex.sides': 'Two sides (left & right)', 'ex.sidesHint': 'The time applies to each side, with a signal to switch',
   'ex.duration': 'Own duration', 'ex.durationStd': 'Default', 'ex.durationHint': 'Overrides the program time',
   'ex.desc': 'Description', 'ex.descPh': 'What is this exercise good for?', 'ex.steps': 'Instructions (one step per line)',
   'ex.nameMissing': 'Please enter a name.', 'ex.other': 'Other', 'ex.saved': 'Changes saved', 'ex.created': 'Exercise created',

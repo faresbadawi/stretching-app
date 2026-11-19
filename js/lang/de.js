@@ -42,7 +42,7 @@ export default {
   'ex.new': 'Neue Übung', 'ex.edit': 'Übung bearbeiten', 'ex.photo': 'Foto aufnehmen', 'ex.gallery': 'Aus Galerie',
   'ex.removeImg': 'Bild entfernen', 'ex.name': 'Name', 'ex.namePh': 'z. B. Nackenrollen', 'ex.category': 'Kategorie',
   'ex.newCat': 'Neue Kategorie …', 'ex.newCatName': 'Name der neuen Kategorie',
-  'ex.sides': 'Zwei Seiten (links & rechts)', 'ex.sidesHint': 'Die Zeit wird auf beide Seiten verteilt, mit Signal zum Wechseln',
+  'ex.sides': 'Zwei Seiten (links & rechts)', 'ex.sidesHint': 'Die Zeit gilt für jede Seite, mit Signal zum Wechseln',
   'ex.duration': 'Eigene Dauer', 'ex.durationStd': 'Standard', 'ex.durationHint': 'Überschreibt die Programm-Zeit',
   'ex.desc': 'Beschreibung', 'ex.descPh': 'Wofür ist die Übung gut?', 'ex.steps': 'Anleitung (ein Schritt pro Zeile)',
   'ex.nameMissing': 'Bitte gib einen Namen ein.', 'ex.other': 'Sonstiges', 'ex.saved': 'Änderungen gespeichert', 'ex.created': 'Übung angelegt',

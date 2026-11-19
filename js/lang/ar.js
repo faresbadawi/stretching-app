@@ -44,7 +44,7 @@ export default {
   'ex.new': 'تمرين جديد', 'ex.edit': 'تعديل التمرين', 'ex.photo': 'التقاط صورة', 'ex.gallery': 'من المعرض',
   'ex.removeImg': 'إزالة الصورة', 'ex.name': 'الاسم', 'ex.namePh': 'مثال: دوران الرقبة', 'ex.category': 'الفئة',
   'ex.newCat': 'فئة جديدة …', 'ex.newCatName': 'اسم الفئة الجديدة',
-  'ex.sides': 'جانبان (يمين ويسار)', 'ex.sidesHint': 'يُقسَّم الوقت على الجانبين مع إشارة للتبديل',
+  'ex.sides': 'جانبان (يمين ويسار)', 'ex.sidesHint': 'الوقت لكل جانب على حدة، مع إشارة للتبديل',
   'ex.duration': 'مدة خاصة', 'ex.durationStd': 'افتراضي', 'ex.durationHint': 'تتجاوز وقت البرنامج',
   'ex.desc': 'الوصف', 'ex.descPh': 'ما فائدة هذا التمرين؟', 'ex.steps': 'التعليمات (خطوة في كل سطر)',
   'ex.nameMissing': 'الرجاء إدخال اسم.', 'ex.other': 'أخرى', 'ex.saved': 'تم حفظ التغييرات', 'ex.created': 'تمت إضافة التمرين',
