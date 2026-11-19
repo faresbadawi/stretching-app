@@ -620,5 +620,6 @@ function renderSettings() {
     h('div', { class: 'about' },
       h('p', { id: 'offline-status' }, offlineReady ? t('status.offline') : ''),
       h('p', {}, t('credits.voice')),
-      h('p', {}, h('a', { href: 'https://repdb.co', target: '_blank', rel: 'noopener' }, 'Exercise data by RepDB (repdb.co)'))));
+      h('p', {}, h('a', { href: 'https://repdb.co', target: '_blank', rel: 'noopener' }, 'Exercise data by RepDB (repdb.co)')),
+      h('p', { class: 'signature' }, 'Designed by Fares · 2026')));
 }

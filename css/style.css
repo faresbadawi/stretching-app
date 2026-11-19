@@ -690,3 +690,6 @@ body.busy .toast { bottom: calc(28px + var(--safe-b)); }
   .t-next { grid-area: next; font-size: 1.05rem; }
   .t-controls { grid-area: ctl; }
 }
+
+/* Signatur unten in den Optionen */
+.about .signature { margin-top: 14px; font-weight: 700; letter-spacing: .04em; color: var(--muted); }
